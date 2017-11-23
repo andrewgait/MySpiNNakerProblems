@@ -72,7 +72,8 @@ all_populations = []
 print "Creating ", n_groups, " SynfireGroups"
 for group_index in range(n_groups):
     # create the excitatory Population
-    exc_pop = Population(n_exc, IF_cond_exp, cell_params, label = ("pop_exc_%s" % group_index) )
+    exc_pop = Population(n_exc, IF_cond_exp, cell_params,
+                         label=("pop_exc_%s" % group_index))
     #exc_pop2 = Population(n_exc, SpikeSourcePoisson, {"rate": 500})
     #Projection(exc_pop2, exc_pop, OneToOneConnector( weights=weight_exc/1, delays=8. ), target='excitatory', rng = rng)
 
@@ -80,12 +81,15 @@ for group_index in range(n_groups):
     all_populations += [ exc_pop ]  # and to the Assembly
 
 	# create the inhibitory Population
-    inh_pop = Population(n_inh, IF_cond_exp, cell_params, label = ("pop_inh_%s" % group_index) )
+    inh_pop = Population(n_inh, IF_cond_exp, cell_params,
+                         label=("pop_inh_%s" % group_index))
     inh_pops.append(inh_pop)
-    all_populations += [ inh_pop ]
+    all_populations += [inh_pop]
 
 	# connect Inhibitory to excitatory Population
-    Projection(inh_pop, exc_pop, AllToAllConnector( weights=weight_inh, delays=8. ), target='inhibitory',rng = rng)
+    Projection(inh_pop, exc_pop,
+               AllToAllConnector(weights=weight_inh, delays=8.),
+               target='inhibitory', rng=rng)
 
 
 
@@ -116,18 +120,33 @@ pop_stim.tset('spike_times', all_spiketimes) # 'topographic' setting of paramete
 print "Connecting Groups with subsequent ones"
 for group_index in range(n_groups-1):
 #for group_index in range(n_groups):
-    Projection( exc_pops[group_index%n_groups], exc_pops[(group_index+1)%n_groups],FixedNumberPreConnector(60,weights=weight_exc,delays=10.),target='excitatory', rng = rng)
-    Projection( exc_pops[group_index%n_groups], inh_pops[(group_index+1)%n_groups],FixedNumberPreConnector(60,weights=weight_exc,delays=10.),target='excitatory', rng = rng)
+    Projection(exc_pops[group_index%n_groups],
+               exc_pops[(group_index+1)%n_groups],
+               FixedNumberPreConnector(60,weights=weight_exc,delays=10.),
+               target='excitatory', rng = rng)
+    Projection(exc_pops[group_index%n_groups],
+               inh_pops[(group_index+1)%n_groups],
+               FixedNumberPreConnector(60,weights=weight_exc,delays=10.),
+               target='excitatory', rng = rng)
 
-
+# Make another projection for testing that connects to itself
+#Projection(exc_pops[1], exc_pops[1],
+#           FixedNumberPreConnector(
+#               60,allow_self_connections=False,weights=weight_exc,delays=10.),
+#           target='excitatory', rng = rng)
 
 
 ##########################################
 ## Connect the Stimulus to the first group
 ##########################################
 print "Connecting Stimulus to first group"
-Projection( pop_stim, inh_pops[0], FixedNumberPreConnector(60, weights=weight_exc, delays=20.), target='excitatory' ,rng = rng)
-Projection( pop_stim, exc_pops[0], FixedNumberPreConnector(60, weights=weight_exc, delays=20.), target='excitatory' ,rng = rng)
+Projection(pop_stim, inh_pops[0],
+           FixedNumberPreConnector(15, weights=weight_exc, delays=20.),
+           target='excitatory' ,rng = rng)
+Projection(pop_stim, exc_pops[0],
+           FixedNumberPreConnector(60, allow_self_connections=False,
+                                   weights=weight_exc, delays=20.),
+           target='excitatory' ,rng = rng)
 
 
 
