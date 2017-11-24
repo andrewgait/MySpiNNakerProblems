@@ -9,7 +9,7 @@ according to:
 
 adapted by Bernhard Vogginger
 
-updated to PyNN 0.9 by Andrew Gait
+updated to PyNN 0.9 by Andrew Gait, this version uses PostConnectors
 """
 
 
@@ -27,7 +27,7 @@ rng = pyNN.random.NumpyRNG(seed=124578)
 ########################
 
 n_groups = 6 # Number of Synfire Groups
-n_exc = 100 # Number of excitatory neurons per group
+n_exc = 25 # Number of excitatory neurons per group
 n_inh = 25 # Number of inhibitory neurons per group
 
 sim_duration = 500.
@@ -126,18 +126,18 @@ for group_index in range(n_groups-1):
 #for group_index in range(n_groups):
     Projection(exc_pops[group_index%n_groups],
                exc_pops[(group_index+1)%n_groups],
-               FixedNumberPostConnector(60, rng=rng),
+               FixedNumberPostConnector(10, rng=rng),
                synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
                receptor_type='excitatory')  # , rng = rng)
     Projection(exc_pops[group_index%n_groups],
                inh_pops[(group_index+1)%n_groups],
-               FixedNumberPostConnector(15, rng=rng),
+               FixedNumberPostConnector(10, rng=rng),
                synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
                receptor_type='excitatory')  # , rng = rng)
 
 # Make another projection for testing that connects to itself
 Projection(exc_pops[1], exc_pops[1],
-           FixedNumberPostConnector(60, rng=rng, allow_self_connections=False),
+           FixedNumberPostConnector(10, rng=rng),
            synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
            receptor_type='excitatory')  # , rng = rng)
 
@@ -147,11 +147,11 @@ Projection(exc_pops[1], exc_pops[1],
 ##########################################
 print "Connecting Stimulus to first group"
 Projection(pop_stim, inh_pops[0],
-           FixedNumberPostConnector(15, rng=rng),
+           FixedNumberPostConnector(10, rng=rng),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 Projection(pop_stim, exc_pops[0],
-           FixedNumberPostConnector(60, rng=rng),
+           FixedNumberPostConnector(10, rng=rng),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 
