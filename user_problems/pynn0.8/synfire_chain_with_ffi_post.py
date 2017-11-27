@@ -27,7 +27,7 @@ rng = pyNN.random.NumpyRNG(seed=124578)
 ########################
 
 n_groups = 6 # Number of Synfire Groups
-n_exc = 25 # Number of excitatory neurons per group
+n_exc = 100 # Number of excitatory neurons per group
 n_inh = 25 # Number of inhibitory neurons per group
 
 sim_duration = 500.
@@ -126,20 +126,20 @@ for group_index in range(n_groups-1):
 #for group_index in range(n_groups):
     Projection(exc_pops[group_index%n_groups],
                exc_pops[(group_index+1)%n_groups],
-               FixedNumberPostConnector(10, rng=rng),
+               FixedNumberPostConnector(80, rng=rng),
                synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
                receptor_type='excitatory')  # , rng = rng)
     Projection(exc_pops[group_index%n_groups],
                inh_pops[(group_index+1)%n_groups],
-               FixedNumberPostConnector(10, rng=rng),
+               FixedNumberPostConnector(60, rng=rng, with_replacement=False),
                synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
                receptor_type='excitatory')  # , rng = rng)
 
 # Make another projection for testing that connects to itself
-Projection(exc_pops[1], exc_pops[1],
-           FixedNumberPostConnector(10, rng=rng),
-           synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
-           receptor_type='excitatory')  # , rng = rng)
+#Projection(exc_pops[1], exc_pops[1],
+#           FixedNumberPostConnector(20, rng=rng),
+#           synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
+#           receptor_type='excitatory')  # , rng = rng)
 
 
 ##########################################
@@ -147,11 +147,11 @@ Projection(exc_pops[1], exc_pops[1],
 ##########################################
 print "Connecting Stimulus to first group"
 Projection(pop_stim, inh_pops[0],
-           FixedNumberPostConnector(10, rng=rng),
+           FixedNumberPostConnector(15, rng=rng),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 Projection(pop_stim, exc_pops[0],
-           FixedNumberPostConnector(10, rng=rng),
+           FixedNumberPostConnector(60, rng=rng),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 
@@ -196,6 +196,8 @@ for group in range(n_groups):
     INH_spikes[:,0]+=group*(n_exc+n_inh) + n_exc
     spklist_exc+=EXC_spikes.tolist()
     spklist_inh+=INH_spikes.tolist()
+    print 'spiklist_exc, len: ', len(spklist_exc)
+    print 'spiklist_inh, len: ', len(spklist_inh)
 # Create a NeuroTools SpikeList from it
 
 #print EXC_spikes
