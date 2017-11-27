@@ -131,7 +131,7 @@ for group_index in range(n_groups-1):
                receptor_type='excitatory')  # , rng = rng)
     Projection(exc_pops[group_index%n_groups],
                inh_pops[(group_index+1)%n_groups],
-               FixedNumberPostConnector(60, rng=rng, with_replacement=False),
+               FixedNumberPostConnector(60, rng=rng, with_replacement=True),
                synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
                receptor_type='excitatory')  # , rng = rng)
 
