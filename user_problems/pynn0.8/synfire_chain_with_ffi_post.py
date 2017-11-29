@@ -27,8 +27,8 @@ rng = pyNN.random.NumpyRNG(seed=124578)
 ########################
 
 n_groups = 6 # Number of Synfire Groups
-n_exc = 10 # Number of excitatory neurons per group
-n_inh = 5 # Number of inhibitory neurons per group
+n_exc = 350 # Number of excitatory neurons per group
+n_inh = 300 # Number of inhibitory neurons per group
 
 sim_duration = 500.
 
@@ -126,12 +126,12 @@ for group_index in range(n_groups-1):
 #for group_index in range(n_groups):
     Projection(exc_pops[group_index%n_groups],
                exc_pops[(group_index+1)%n_groups],
-               FixedNumberPostConnector(60, rng=rng, with_replacement=True),
+               FixedNumberPostConnector(160, rng=rng, with_replacement=True),
                synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
                receptor_type='excitatory')  # , rng = rng)
     Projection(exc_pops[group_index%n_groups],
                inh_pops[(group_index+1)%n_groups],
-               FixedNumberPostConnector(60, rng=rng, with_replacement=True),
+               FixedNumberPostConnector(160, rng=rng, with_replacement=True),
                synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
                receptor_type='excitatory')  # , rng = rng)
 
@@ -147,11 +147,11 @@ for group_index in range(n_groups-1):
 ##########################################
 print "Connecting Stimulus to first group"
 Projection(pop_stim, inh_pops[0],
-           FixedNumberPostConnector(2, rng=rng),
+           FixedNumberPostConnector(20, rng=rng),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 Projection(pop_stim, exc_pops[0],
-           FixedNumberPostConnector(6, rng=rng),
+           FixedNumberPostConnector(60, rng=rng),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 
