@@ -147,7 +147,7 @@ for group_index in range(n_groups-1):
 ##########################################
 print "Connecting Stimulus to first group"
 Projection(pop_stim, inh_pops[0],
-           FixedNumberPreConnector(20, rng=rng),
+           FixedNumberPreConnector(20, rng=rng, verbose=True),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 Projection(pop_stim, exc_pops[0],
