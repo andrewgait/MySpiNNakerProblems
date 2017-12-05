@@ -151,7 +151,7 @@ Projection(pop_stim, inh_pops[0],
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 Projection(pop_stim, exc_pops[0],
-           FixedNumberPostConnector(60, rng=rng),
+           FixedNumberPostConnector(60, rng=rng, verbose=True),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 

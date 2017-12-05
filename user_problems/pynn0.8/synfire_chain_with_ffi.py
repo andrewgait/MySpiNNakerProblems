@@ -19,6 +19,7 @@ from spynnaker8 import *
 import pyNN.random
 import pylab
 import numpy
+import os
 
 rng = pyNN.random.NumpyRNG(seed=124578)
 
@@ -151,7 +152,7 @@ Projection(pop_stim, inh_pops[0],
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 Projection(pop_stim, exc_pops[0],
-           FixedNumberPreConnector(60, rng=rng),
+           FixedNumberPreConnector(60, rng=rng, verbose=True),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 
