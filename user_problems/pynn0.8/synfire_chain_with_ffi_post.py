@@ -27,8 +27,8 @@ rng = pyNN.random.NumpyRNG(seed=124578)
 ########################
 
 n_groups = 6 # Number of Synfire Groups
-n_exc = 350 # Number of excitatory neurons per group
-n_inh = 300 # Number of inhibitory neurons per group
+n_exc = 350  # Number of excitatory neurons per group
+n_inh = 300  # Number of inhibitory neurons per group
 
 sim_duration = 500.
 
