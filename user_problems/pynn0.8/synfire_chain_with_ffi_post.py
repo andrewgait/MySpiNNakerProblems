@@ -136,10 +136,12 @@ for group_index in range(n_groups-1):
                receptor_type='excitatory')  # , rng = rng)
 
 # Make another projection for testing that connects to itself
-#Projection(exc_pops[1], exc_pops[1],
-#           FixedNumberPostConnector(20, rng=rng),
-#           synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
-#           receptor_type='excitatory')  # , rng = rng)
+Projection(exc_pops[1], exc_pops[1],
+           FixedNumberPostConnector(349, rng=rng,
+                                    allow_self_connections=False,
+                                    verbose=True),
+           synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
+           receptor_type='excitatory')  # , rng = rng)
 
 
 ##########################################
@@ -147,11 +149,11 @@ for group_index in range(n_groups-1):
 ##########################################
 print "Connecting Stimulus to first group"
 Projection(pop_stim, inh_pops[0],
-           FixedNumberPostConnector(20, rng=rng, verbose=True),
+           FixedNumberPostConnector(120, rng=rng, verbose=True),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 Projection(pop_stim, exc_pops[0],
-           FixedNumberPostConnector(60, rng=rng, verbose=True),
+           FixedNumberPostConnector(160, rng=rng, verbose=True),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 

@@ -28,8 +28,8 @@ rng = pyNN.random.NumpyRNG(seed=124578)
 ########################
 
 n_groups = 6 # Number of Synfire Groups
-n_exc = 350 # Number of excitatory neurons per group
-n_inh = 300 # Number of inhibitory neurons per group
+n_exc = 250 # Number of excitatory neurons per group
+n_inh = 200 # Number of inhibitory neurons per group
 
 sim_duration = 500.
 
@@ -137,10 +137,12 @@ for group_index in range(n_groups-1):
                receptor_type='excitatory')  # , rng = rng)
 
 # Make another projection for testing that connects to itself
-#Projection(exc_pops[1], exc_pops[1],
-#           FixedNumberPreConnector(60, rng=rng, allow_self_connections=False),
-#           synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
-#           receptor_type='excitatory')  # , rng = rng)
+Projection(exc_pops[1], exc_pops[1],
+           FixedNumberPreConnector(249, rng=rng,
+                                   allow_self_connections=False,
+                                   verbose=True),
+           synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
+           receptor_type='excitatory')  # , rng = rng)
 
 
 ##########################################
