@@ -1,11 +1,12 @@
 import pylab
 import spynnaker8 as sim
 sim.setup()
-poisson = sim.Population(1, sim.SpikeSourcePoisson(duration=1.0e10, rate=0.0, start=0.0))
+poisson = sim.Population(1, sim.SpikeSourcePoisson(duration=1.0e10,
+                                                   rate=0.0, start=0.0))
 receiver = sim.Population(1, sim.IF_curr_exp())
 
 conn = sim.AllToAllConnector()
-syn = sim.StaticSynapse(weight=1.0, delay=1.0)
+syn = sim.StaticSynapse(weight=0.15, delay=1.0)
 sim.Projection(presynaptic_population=poisson,
                postsynaptic_population=receiver,
                connector=conn, synapse_type=syn, receptor_type="excitatory")
