@@ -9,7 +9,7 @@ according to:
 
 adapted by Bernhard Vogginger
 
-updated to PyNN 0.9 by Andrew Gait
+updated to PyNN 0.9 by Andrew Gait, this version uses FixedTotalNumberConnectors
 """
 
 
@@ -19,7 +19,6 @@ from spynnaker8 import *
 import pyNN.random
 import pylab
 import numpy
-import os
 
 rng = pyNN.random.NumpyRNG(seed=124578)
 
@@ -28,8 +27,8 @@ rng = pyNN.random.NumpyRNG(seed=124578)
 ########################
 
 n_groups = 6 # Number of Synfire Groups
-n_exc = 250 # Number of excitatory neurons per group
-n_inh = 200 # Number of inhibitory neurons per group
+n_exc = 250  # Number of excitatory neurons per group
+n_inh = 200  # Number of inhibitory neurons per group
 
 sim_duration = 500.
 
@@ -127,22 +126,20 @@ for group_index in range(n_groups-1):
 #for group_index in range(n_groups):
     Projection(exc_pops[group_index%n_groups],
                exc_pops[(group_index+1)%n_groups],
-               FixedNumberPreConnector(160, rng=rng, with_replacement=True),
+               FixedTotalNumberConnector(160),
                synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
                receptor_type='excitatory')  # , rng = rng)
     Projection(exc_pops[group_index%n_groups],
                inh_pops[(group_index+1)%n_groups],
-               FixedNumberPreConnector(200, rng=rng, with_replacement=True),
+               FixedTotalNumberConnector(160),
                synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
                receptor_type='excitatory')  # , rng = rng)
 
 # Make another projection for testing that connects to itself
 Projection(exc_pops[1], exc_pops[1],
-           FixedNumberPreConnector(249, rng=rng,
-                                   allow_self_connections=False,
-                                   verbose=True),
+           FixedTotalNumberConnector(249),
            synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
-           receptor_type='excitatory')  #  sss, rng = rng)
+           receptor_type='excitatory')  # , rng = rng)
 
 
 ##########################################
@@ -150,11 +147,11 @@ Projection(exc_pops[1], exc_pops[1],
 ##########################################
 print "Connecting Stimulus to first group"
 Projection(pop_stim, inh_pops[0],
-           FixedNumberPreConnector(20, rng=rng, verbose=True),
+           FixedTotalNumberConnector(120),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 Projection(pop_stim, exc_pops[0],
-           FixedNumberPreConnector(60, rng=rng, verbose=True),
+           FixedTotalNumberConnector(160),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 
