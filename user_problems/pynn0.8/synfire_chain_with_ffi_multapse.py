@@ -51,7 +51,7 @@ cell_params={
     'e_rev_I'    : -75.0,      # mV
 }
 
-weight_exc = 0.001 # uS weight for excitatory to excitatory connections
+weight_exc = 0.01 # uS weight for excitatory to excitatory connections (edited)
 weight_inh = 0.002 # uS weight for inhibitory to excitatory connections
 
 
@@ -126,18 +126,18 @@ for group_index in range(n_groups-1):
 #for group_index in range(n_groups):
     Projection(exc_pops[group_index%n_groups],
                exc_pops[(group_index+1)%n_groups],
-               FixedTotalNumberConnector(160),
+               FixedTotalNumberConnector(1600),
                synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
                receptor_type='excitatory')  # , rng = rng)
     Projection(exc_pops[group_index%n_groups],
                inh_pops[(group_index+1)%n_groups],
-               FixedTotalNumberConnector(160),
+               FixedTotalNumberConnector(1000),
                synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
                receptor_type='excitatory')  # , rng = rng)
 
 # Make another projection for testing that connects to itself
 Projection(exc_pops[1], exc_pops[1],
-           FixedTotalNumberConnector(249),
+           FixedTotalNumberConnector(2490),
            synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
            receptor_type='excitatory')  # , rng = rng)
 
@@ -147,11 +147,11 @@ Projection(exc_pops[1], exc_pops[1],
 ##########################################
 print "Connecting Stimulus to first group"
 Projection(pop_stim, inh_pops[0],
-           FixedTotalNumberConnector(120),
+           FixedTotalNumberConnector(1200),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 Projection(pop_stim, exc_pops[0],
-           FixedTotalNumberConnector(160),
+           FixedTotalNumberConnector(1600),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
            receptor_type='excitatory')  # ,rng = rng)
 

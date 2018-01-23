@@ -48,7 +48,7 @@ cell_params={
     'e_rev_I'    : -75.0,      # mV
 }
 
-weight_exc = 0.01 # uS weight for excitatory to excitatory connections
+weight_exc = 0.01 # uS weight for excitatory to excitatory connections (edited)
 weight_inh = 0.002 # uS weight for inhibitory to excitatory connections
 
 
