@@ -137,7 +137,8 @@ for group_index in range(n_groups-1):
 
 # Make another projection for testing that connects to itself
 Projection(exc_pops[1], exc_pops[1],
-           FixedTotalNumberConnector(2490),
+           FixedTotalNumberConnector(150, with_replacement=False,
+                                     allow_self_connections=False),
            synapse_type=StaticSynapse(weight=weight_exc,delay=10.),
            receptor_type='excitatory')  # , rng = rng)
 
