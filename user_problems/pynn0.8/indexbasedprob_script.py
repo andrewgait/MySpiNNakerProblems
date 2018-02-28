@@ -25,7 +25,7 @@ cell_params_lif = {'cm': 0.25,
 n = 10
 # tau_exc = 1.0
 # tau_inh = 1.0
-weight_to_spike = 5.0
+weight_to_spike = 3.0
 delay = 2
 runtime = 200
 
@@ -40,7 +40,7 @@ spikeArray = {'spike_times': [[0]]}
 inj_pop = p.Population(1, p.SpikeSourceArray(**spikeArray), label='inputSpikes_1')
 
 p.Projection(inj_pop, pop_1, p.FromListConnector(injectionConnection),
-             p.StaticSynapse(weight=weight_to_spike, delay=5))
+             p.StaticSynapse(weight=weight_to_spike, delay=delay))
 
 # Connectors
 index_based_exc = "(i+j)/200.0"
@@ -56,9 +56,9 @@ inh_connector = p.IndexBasedProbabilityConnector(
 
 # Wire grid
 p.Projection(pop_1, pop_1, exc_connector,
-             p.StaticSynapse(weight=2.0, delay=5))
+             p.StaticSynapse(weight=4.0, delay=5))
 p.Projection(pop_1, pop_1, inh_connector,
-             p.StaticSynapse(weight=1.5, delay=10))
+             p.StaticSynapse(weight=3.5, delay=10))
 
 pop_1.record(['v','spikes'])
 
@@ -70,7 +70,7 @@ spikes = pop_1.get_data('spikes')
 Figure(
     # raster plot of the presynaptic neurons' spike times
     Panel(spikes.segments[0].spiketrains,
-          yticks=True, markersize=0.2, xlim=(0, runtime), xticks=True),
+          yticks=True, markersize=2.0, xlim=(0, runtime), xticks=True),
     # membrane potential of the postsynaptic neurons
     Panel(v.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
