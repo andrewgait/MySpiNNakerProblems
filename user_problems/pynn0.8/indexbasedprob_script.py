@@ -43,8 +43,8 @@ p.Projection(inj_pop, pop_1, p.FromListConnector(injectionConnection),
              p.StaticSynapse(weight=weight_to_spike, delay=5))
 
 # Connectors
-index_based_exc = "(i+j)/200"
-index_based_inh = "(i+j)/400"
+index_based_exc = "(i+j)/200.0"
+index_based_inh = "(i+j)/400.0"
 #dist_dep_exc = "exp(-d)/{tau_exc}".format(tau_exc=tau_exc)
 #dist_dep_inh = 'exp(-0.5*d)/{tau_inh}'.format(tau_inh=tau_inh)
 
@@ -75,7 +75,7 @@ Figure(
     Panel(v.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
           data_labels=[pop_1.label], yticks=True, xlim=(0, runtime), xticks=True),
-    title="Simple grid distance-dependent prob connector",
+    title="Simple index-based prob connector",
     annotations="Simulated with {}".format(p.name())
 )
 plt.show()
