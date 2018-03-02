@@ -16,13 +16,9 @@ cell_params_lif = {'cm': 0.25,
                    }
 
 
-#def create_grid(n, label, dx=1.0, dy=1.0):
-#    grid_structure = p.Grid2D(dx=dx, dy=dy, x0=0.0, y0=0.0)
-#    return p.Population(n*n, p.IF_curr_exp(**cell_params_lif),
-#                        structure=grid_structure, label=label)
+#p.set_number_of_neurons_per_core(p.IF_curr_exp, 50)
 
-
-n = 10
+n = 500 # 10
 # tau_exc = 1.0
 # tau_inh = 1.0
 weight_to_spike = 3.0
@@ -30,12 +26,10 @@ delay = 2
 runtime = 200
 
 # Network
-# grid = create_grid(n, 'grid')
-
-pop_1 = p.Population(n*n, p.IF_curr_exp(**cell_params_lif), label='pop_1')
+pop_1 = p.Population(n, p.IF_curr_exp(**cell_params_lif), label='pop_1')
 
 # SpikeInjector
-injectionConnection = [(0, 0)]
+injectionConnection = [(0, n/2)]
 spikeArray = {'spike_times': [[0]]}
 inj_pop = p.Population(1, p.SpikeSourceArray(**spikeArray), label='inputSpikes_1')
 
@@ -43,22 +37,21 @@ p.Projection(inj_pop, pop_1, p.FromListConnector(injectionConnection),
              p.StaticSynapse(weight=weight_to_spike, delay=delay))
 
 # Connectors
-index_based_exc = "(i+j)/200.0"
-index_based_inh = "(i+j)/400.0"
-#dist_dep_exc = "exp(-d)/{tau_exc}".format(tau_exc=tau_exc)
-#dist_dep_inh = 'exp(-0.5*d)/{tau_inh}'.format(tau_inh=tau_inh)
+index_based_exc = "(i+j)/"+str(n*(n-n/2.0))
+index_based_inh = "(i+j)/"+str(n*(n+n/2.0))
+print 'index_based_exc: ', index_based_exc
+print 'index_based_inh: ', index_based_inh
 
 exc_connector = p.IndexBasedProbabilityConnector(
     index_based_exc, allow_self_connections=True)
-
 inh_connector = p.IndexBasedProbabilityConnector(
     index_based_inh, allow_self_connections=False)
 
 # Wire grid
 p.Projection(pop_1, pop_1, exc_connector,
-             p.StaticSynapse(weight=4.0, delay=5))
+             p.StaticSynapse(weight=2.0, delay=5))
 p.Projection(pop_1, pop_1, inh_connector,
-             p.StaticSynapse(weight=3.5, delay=10))
+             p.StaticSynapse(weight=0.5, delay=10))
 
 pop_1.record(['v','spikes'])
 
