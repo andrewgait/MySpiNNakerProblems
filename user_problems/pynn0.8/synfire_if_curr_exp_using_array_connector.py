@@ -29,13 +29,14 @@ weight_to_spike = 2.0
 delay = 17
 
 # create loopConnections array using numpy linspaces
-loopConnections = numpy.array([numpy.linspace(0,nNeurons-1,nNeurons),
-                               numpy.linspace(1,nNeurons,nNeurons)],
+loopConnections = numpy.array([numpy.linspace(0,nNeurons-2,nNeurons/2),
+                               numpy.linspace(2,nNeurons+1,nNeurons/2)],
                                numpy.uint32)
 # connect the final neuron to the first neuron
-loopConnections[1,nNeurons-1] = 0
-print loopConnections[0,nNeurons-1]
-print loopConnections[1,nNeurons-1]
+loopConnections[1,(nNeurons/2)-1] = 0
+#print loopConnections[0,nNeurons-1]
+#print loopConnections[1,nNeurons-1]
+print loopConnections
 #for i in range(0, nNeurons):
 #    singleConnection = ((i, (i + 1) % nNeurons, weight_to_spike, delay))
 #    loopConnections.append(singleConnection)
@@ -67,7 +68,7 @@ spikes = populations[0].get_data('spikes')
 Figure(
     # raster plot of the presynaptic neuron spike times
     Panel(spikes.segments[0].spiketrains,
-          yticks=True, markersize=0.2, xlim=(0, runtime)),
+          yticks=True, markersize=1.2, xlim=(0, runtime)),
     # membrane potential of the postsynaptic neuron
     Panel(v.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
