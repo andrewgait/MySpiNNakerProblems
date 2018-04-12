@@ -91,16 +91,25 @@ g = random2d(900)
 gplot2d(g, 900)
 
 g = grid2d(30)
+gplot2d(g, 900)
 d = euclidMetric2d(g)
-r = 0.1
-c = disc(1)*d
-# gplotsel2d(g,c,434)
+r = 0.2
+c = disc(r)*d
+gplotsel2d(g, c, [221, 484, 752], range(900))
+print "disc(0.2)*metric on grid2d(30): "
+for x in c * cross([221, 484, 752], range(900)):
+    print x
 
 g1 = grid2d(30)
 g2 = grid2d(30, x0=-7.0, xScale=8.0, yScale=8.0)
 
 gplot2d(GvspaceToCx * g1, 900)
 
-c = disc(0.1)*euclidMetric2d(g1, GcxToVspace * g2)
+c = disc(0.3)*euclidMetric2d(g1, GcxToVspace * g2)
 
-# gplotsel2d(g2, c, 282)
+gplotsel2d(g2, c, [282], range(900))
+gplotsel2d(GvspaceToCx * g1, c, [282], range(900))
+
+print "disc(0.3)*metric on curved projection from one grid to another: "
+for x in c * cross([282], range(900)):
+    print x
