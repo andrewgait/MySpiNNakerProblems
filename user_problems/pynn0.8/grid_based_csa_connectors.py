@@ -24,11 +24,11 @@ cell_params_lif = {'cm': 0.25,
 #                         structure=grid_structure, label=label)
 
 
-n = 5
+n = 13 # 10  # 5
 p.set_number_of_neurons_per_core(p.IF_curr_exp, n)
 # tau_exc = 1.0
 # tau_inh = 1.0
-weight_to_spike = 5.0
+weight_to_spike = 2.0
 delay = 2
 runtime = 200
 
@@ -69,9 +69,9 @@ inh_connector = p.CSAConnector(inh_connector_set)
 
 # Wire grid
 p.Projection(grid_pop, grid_pop, exc_connector,
-             p.StaticSynapse(weight=2.0, delay=5))
+             p.StaticSynapse(weight=2.0, delay=10))
 p.Projection(grid_pop, grid_pop, inh_connector,
-             p.StaticSynapse(weight=1.5, delay=10))
+             p.StaticSynapse(weight=0.5, delay=15))
 
 grid_pop.record(['v','spikes'])
 
@@ -88,7 +88,7 @@ spikes = grid_pop.get_data('spikes')
 Figure(
     # raster plot of the presynaptic neurons' spike times
     Panel(spikes.segments[0].spiketrains,
-          yticks=True, markersize=0.8, xlim=(0, runtime), xticks=True),
+          yticks=True, markersize=2.0, xlim=(0, runtime), xticks=True),
     # membrane potential of the postsynaptic neurons
     Panel(v.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
