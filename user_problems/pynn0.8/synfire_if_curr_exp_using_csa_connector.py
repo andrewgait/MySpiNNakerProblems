@@ -101,11 +101,11 @@ CSA_randomblock_connector.show_connection_set()
 v = populations[0].get_data('v')
 v2 = populations[1].get_data('v')
 v3 = populations[2].get_data('v')
-v4 = populations[2].get_data('v')
+v4 = populations[3].get_data('v')
 spikes = populations[0].get_data('spikes')
 spikes2 = populations[1].get_data('spikes')
 spikes3 = populations[2].get_data('spikes')
-spikes4 = populations[2].get_data('spikes')
+spikes4 = populations[3].get_data('spikes')
 
 Figure(
     # raster plot of the presynaptic neuron spike times
