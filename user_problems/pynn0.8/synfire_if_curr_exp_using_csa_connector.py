@@ -135,7 +135,8 @@ Figure(
     # membrane potential of the postsynaptic neuron
     Panel(v3.segments[0].filter(name='v')[0],
           ylabel="Membrane potential pop_4 (mV)",
-          data_labels=[populations[3].label], yticks=True, xlim=(0, runtime)),
+          data_labels=[populations[3].label],
+          yticks=True, xlim=(0, runtime), xticks=True, xlabel="Time"),
     title="Synfire chain example using CSA connectors",
     annotations="Simulated with {}".format(p.name())
 )
