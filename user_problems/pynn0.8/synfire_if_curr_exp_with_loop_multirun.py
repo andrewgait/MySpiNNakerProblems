@@ -5,10 +5,10 @@ import spynnaker8 as p
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-runtime = 5000
+runtime = 500000
 p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
-nNeurons = 200  # number of neurons in each population
-p.set_number_of_neurons_per_core(p.IF_curr_exp, nNeurons / 2)
+nNeurons = 20000  # number of neurons in each population
+p.set_number_of_neurons_per_core(p.IF_curr_exp, nNeurons / 200)
 
 cell_params_lif = {'cm': 0.25,
                    'i_offset': 0.0,
@@ -25,7 +25,7 @@ populations = list()
 projections = list()
 
 weight_to_spike = 2.0
-delay = 17
+delay = 68
 
 loopConnections = list()
 for i in range(0, nNeurons):
@@ -46,12 +46,12 @@ projections.append(p.Projection(
     populations[1], populations[0], p.FromListConnector(injectionConnection),
     p.StaticSynapse(weight=weight_to_spike, delay=1)))
 
-populations[0].record(['v', 'gsyn_exc', 'gsyn_inh', 'spikes'])
+populations[0].record(['v', 'gsyn_exc', 'gsyn_inh', 'spikes'], 10000)
 
 spikes_list = list()
 v_list = list()
 
-time_slice = 1000
+time_slice = 100000
 for nn in range(1, 6):
     populations[0].set(v_reset=-80.0+(nn*2.0))
     p.run(time_slice)
