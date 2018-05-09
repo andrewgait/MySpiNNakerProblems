@@ -100,7 +100,8 @@ def spinn_net():
             n_pop_list.append(p.Population(pop_size, p.IF_cond_exp(),
                                            label=n_pop_labels[i]))
             p.external_devices.activate_live_output_for(
-                n_pop_list[i], database_notify_port_num=(18000+offset))
+                n_pop_list[i], database_notify_port_num=(18000+offset),
+                port=(17000+offset))
             #n_pop_list[i].record(["spikes", "v"])
         #set up all other populations
         else:
@@ -112,15 +113,17 @@ def spinn_net():
 
 
     poisson_control = p.external_devices.SpynnakerPoissonControlConnection(
-        poisson_labels=[input_labels[0]], local_port=(16000+offset))
+        poisson_labels=input_labels, local_port=(16000+offset))
     poisson_control.add_start_callback(n_pop_list[0].label, poisson_setting)
+    poisson_control.add_start_callback(n_pop_list[1].label, poisson_setting)
     # poisson_control.add_start_callback(n_pop_list[0].label, poisson_threading)
 
 
 
     live_connection = p.external_devices.SpynnakerLiveSpikesConnection(
-        receive_labels=[n_pop_labels[2]], local_port=(18000+offset))
+        receive_labels=output_labels, local_port=(18000+offset))
     live_connection.add_receive_callback(n_pop_labels[2], receive_spikes)
+    live_connection.add_receive_callback(n_pop_labels[3], receive_spikes)
 
 
 
@@ -128,18 +131,22 @@ def spinn_net():
     weight_sdtev = 0.05
     delay_mu = 40
     delay_sdtev = 5
-    weights = RandomDistribution("normal_clipped", mu=weight_mu, sigma=weight_sdtev, low=0, high=np.inf)
-    delays = RandomDistribution("normal_clipped", mu=delay_mu, sigma=delay_sdtev, low=1, high=55)
+    weights = RandomDistribution("normal_clipped", mu=weight_mu,
+                                 sigma=weight_sdtev, low=0, high=np.inf)
+    delays = RandomDistribution("normal_clipped", mu=delay_mu,
+                                sigma=delay_sdtev, low=1, high=55)
     synapse = p.StaticSynapse(weight=weights, delay=delays)
     for i in range(no_neuron_pops):
         for j in range(2, no_neuron_pops):
             if i != j:
-                n_proj_list.append(p.Projection(n_pop_list[i], n_pop_list[j],
-                                                p.FixedProbabilityConnector(1e-3),#p.OneToOneConnector(),#
-                                                synapse, receptor_type="excitatory"))
-                n_proj_list.append(p.Projection(n_pop_list[i], n_pop_list[j],
-                                                p.FixedProbabilityConnector(1e-3),#p.OneToOneConnector(),#
-                                                synapse, receptor_type="inhibitory"))
+                n_proj_list.append(
+                    p.Projection(n_pop_list[i], n_pop_list[j],
+                                 p.FixedProbabilityConnector(1e-3),#p.OneToOneConnector(),#
+                                 synapse, receptor_type="excitatory"))
+                n_proj_list.append(
+                    p.Projection(n_pop_list[i], n_pop_list[j],
+                                 p.FixedProbabilityConnector(1e-3),#p.OneToOneConnector(),#
+                                 synapse, receptor_type="inhibitory"))
                 # n_proj_list.append(p.Projection(n_pop_list[i], n_pop_list[j],
                 #                                 p.FixedProbabilityConnector(1),
                 #                                 synapse, receptor_type="inhibitory"))
@@ -147,6 +154,8 @@ def spinn_net():
     p.run(duration)
 
     print "finished 1st"
+
+#    p.reset()
 
     p.run(duration)
     # total_v = list()
@@ -188,11 +197,17 @@ def spinn_net():
     # )
     # plt.show()
 
+#    p.reset()
+
     p.end()
 
+    poisson_control.close()
+    live_connection.close()
+
     print "finished run"
+
 offset = 0
-while 1 == 1:
+while offset < 10:
     print "starting agent ", offset
     spinn_net()
     offset += 1
