@@ -14,7 +14,7 @@ from pyNN.random import RandomDistribution# as rand
 input_labels = list()
 output_labels = list()
 no_neuron_pops = 9
-pop_size = 50
+pop_size = 250
 poisson_rate = 50
 time_segments = 200
 average_runtime = 0.1
@@ -73,7 +73,7 @@ def spinn_net():
     global output_labels
     global input_labels
     p.setup(timestep=1.0, min_delay=1, max_delay=60)
-    p.set_number_of_neurons_per_core(p.IF_cond_exp, 32)
+    p.set_number_of_neurons_per_core(p.IF_cond_exp, 64)
     n_pop_labels = []
     n_pop_list = []
     n_proj_list = []
@@ -207,7 +207,7 @@ def spinn_net():
     print "finished run"
 
 offset = 0
-while offset < 2:
+while offset < 20:
     print "starting agent ", offset
     spinn_net()
     offset += 1
