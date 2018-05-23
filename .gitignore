@@ -10,4 +10,4 @@
 *dist/
 *egg-info/
 MANIFEST
-/.cache/
+*.cache/
