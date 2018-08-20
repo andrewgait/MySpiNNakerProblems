@@ -44,7 +44,7 @@ tabulate (c)
 # In Python, finite connection sets provide an iterator interface:
 
 for x in cross (range (10), range (10)) * oneToOne:
-    print x
+    print(x)
 
 # Random connectivity and the block operator
 # Connectivity where the existence of each possible connection is determined by
@@ -96,9 +96,9 @@ d = euclidMetric2d(g)
 r = 0.2
 c = disc(r)*d
 gplotsel2d(g, c, [221, 484, 752], range(900))
-print "disc(0.2)*metric on grid2d(30): "
+print("disc(0.2)*metric on grid2d(30): ")
 for x in c * cross([221, 484, 752], range(900)):
-    print x
+    print(x)
 
 g1 = grid2d(30)
 g2 = grid2d(30, x0=-7.0, xScale=8.0, yScale=8.0)
@@ -110,6 +110,6 @@ c = disc(0.3)*euclidMetric2d(g1, GcxToVspace * g2)
 gplotsel2d(g2, c, [282], range(900))
 gplotsel2d(GvspaceToCx * g1, c, [282], range(900))
 
-print "disc(0.3)*metric on curved projection from one grid to another: "
+print("disc(0.3)*metric on curved projection from one grid to another: ")
 for x in c * cross([282], range(900)):
-    print x
+    print(x)
