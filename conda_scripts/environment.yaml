@@ -1,0 +1,23 @@
+channels:
+    - conda-forge
+    - neuroinf
+dependencies:
+    - lapack
+    - pip:
+        - enum34
+        - lazyarray==0.2.9
+        - appdirs>=1.4.2,<=2.0.0
+        - neo>=0.3.0,<=0.4.1
+        - rig>=2.0.0,<3.0.0
+    - six
+    - lxml
+    - scipy
+    - matplotlib
+    #- spalloc>=0.2.2,<1.0.0
+    - requests # >=2.4.1
+    - jsonschema
+    - quantities=0.11.1
+    - pynn=0.8
+    # For the IntroLab/sudoku example following extras are required
+    - pyopengl
+    - freeglut

@@ -1,0 +1,7 @@
+# sPyNNaker7
+# sPyNNaker7NewModelTemplate
+# PyNN7Examples
+
+for x in spinnaker_tools spinn_common SpiNNUtils SpiNNMachine SpiNNStorageHandlers PACMAN SpiNNMan DataSpecification SpiNNFrontEndCommon SpiNNakerGraphFrontEnd sPyNNaker sPyNNaker8 sPyNNaker8NewModelTemplate PyNN8Examples IntroLab SupportScripts sPyNNakerVisualisers spalloc spalloc_server; do
+	git clone https://github.com/SpiNNakerManchester/$x
+done
