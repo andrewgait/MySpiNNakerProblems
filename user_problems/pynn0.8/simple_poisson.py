@@ -28,9 +28,9 @@ spikes = poisson.spinnaker_get_data("spikes")
 spikes_rec = receiver.spinnaker_get_data("spikes")
 
 sim.end()
-print voltages
-print spikes
-print spikes_rec
+print(voltages)
+print(spikes)
+print(spikes_rec)
 
 pylab.figure()
 pylab.xlim((0, 40.0))
