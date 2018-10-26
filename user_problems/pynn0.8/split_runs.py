@@ -5,7 +5,7 @@ import numpy as np
 # from signal_prep import *
 p.setup(1.)
 runtime = 4000
-num_repeats = 2.#1.#
+num_repeats = 4.#1.#
 population_size = 20
 
 input_spikes = [i for i in range(10,runtime,1000)]

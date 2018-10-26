@@ -16,7 +16,7 @@ proj_2 = p.Projection(inp, out, connector,
 
 p.run(1)
 
-print proj_1.get(("weight", "delay"), "list")
-print proj_2.get(("weight", "delay"), "list")
+print(proj_1.get(("weight", "delay"), "list"))
+print(proj_2.get(("weight", "delay"), "list"))
 
 p.end()
