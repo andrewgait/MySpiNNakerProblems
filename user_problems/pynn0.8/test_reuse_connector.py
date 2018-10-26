@@ -1,5 +1,7 @@
 import spynnaker8 as p
 
+print(round(0.5))
+
 p.setup(timestep=1.0)
 #p.setup()
 #spikeArray = {'spike_times': [[0]]}
