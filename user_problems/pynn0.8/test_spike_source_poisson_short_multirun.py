@@ -11,4 +11,4 @@ for i in range(simtime//2):
 
 spikes = pop_src.get_data("spikes")
 p.end()
-print spikes.segments[0].spiketrains
+print(spikes.segments[0].spiketrains)
