@@ -4,7 +4,7 @@ def print_spikes(trains):
     nseg = len(trains.segments)
     for i in range(nseg):
         trains1 = trains.segments[i].spiketrains
-        print "segment ", i, " ", trains1[0]
+        print("segment ", i, " ", trains1[0])
 
 
 to_plot_wgts = False
@@ -37,4 +37,4 @@ print_spikes(pop_ex.get_data('spikes'))
 p.reset()
 
 p.end()
-print "\n job done"
+print("\n job done")
