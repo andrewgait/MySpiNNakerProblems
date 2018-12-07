@@ -44,23 +44,25 @@ final_string = ''
 work_array = []
 time_left = []
 currently_working = []
+current_task = []
 for n in range(n_workers):
     work_array.append([])
     time_left.append(0)
     currently_working.append(0)
+    current_task.append(0)
 
 previous_string = ''
 n_working = 0
 time = 0
+this_string = set()
 while entries:
     count_empty = 0
-    this_string = ''
     for n in range(len(array_sets)):
         if (len(array_sets[n]) == 0):
             count_empty += 1
             if (counted[n] == 0):
                 counted[n] = 1
-                this_string += alphabet[n]
+                this_string.add(alphabet[n])
 
     # find the time length for this task and add it
     print('this_string: ', this_string)
@@ -78,6 +80,7 @@ while entries:
                     index = alphabet.index(this_string[i])
                     time_left[n_working] = time_task[index]
                     currently_working[n_working] = 1
+                    current_task[n_working] = this_string[i]
                     n_working += 1
                     tasks -= 1
                     workers = True
@@ -88,10 +91,19 @@ while entries:
                     if (time_left[i] == 0):
                         n_working -= 1
                         currently_working[i] = 0
+                        for n in range(len(alphabet)):
+                            try:
+                                array_sets[n].remove(current_task[i])
+                                this_string.remove(current_task[i])
+                            except:
+                                blah = []
                         # workers = False
                         # task_completed[index] = True
 
         print(time_left)
+        print(current_task)
+        print(array_sets)
+        print('time: ', time)
 
         sum_working = 0
         for i in range(n_workers):
