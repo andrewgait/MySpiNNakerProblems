@@ -72,6 +72,9 @@ for i in range(size):
 print(labels_at_edge)
 print(label)
 
+maxsize = 0
+maxloc = 0
+
 for l in range(label):
     if (l in labels_at_edge):
         print('label ', l, ' is at the edge')
@@ -84,7 +87,11 @@ for l in range(label):
                     labelsize += 1
 
         print('label ', l, ' is interior and has size ', labelsize)
+        if (labelsize > maxsize):
+            maxsize = labelsize
+            maxloc = l
 
+print('label ', maxloc, ' is max size: ', maxsize)
 
 ## Failed attempt at doing this distance by distance below
 
