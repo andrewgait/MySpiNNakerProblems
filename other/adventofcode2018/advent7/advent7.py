@@ -1,16 +1,15 @@
 # Advent of code, day 7
 
 # open file
-input = open("advent7_test_input.txt", "r")
-alphabet = 'ABCDEF'
-n_workers = 2
-set_time = 1
+#input = open("advent7_test_input.txt", "r")
+#alphabet = 'ABCDEF'
+#n_workers = 2
+#set_time = 1
 
-# input = open("advent7_input.txt", "r")
-# alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-# n_workers = 5
-# set_time = 61
-
+input = open("advent7_input.txt", "r")
+alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+n_workers = 5
+set_time = 61
 
 array_sets = []
 original_array_sets = []
@@ -39,22 +38,25 @@ for line in input:
 print(array_sets)
 
 # part 2 (comment out to make part 1 work)
+# can't get this to work properly yet.
+# got the perl solution off the reddit to compare and get solution
 entries = True
 final_string = ''
 work_array = []
 time_left = []
 currently_working = []
-current_task = []
+current_tasks = []
 for n in range(n_workers):
     work_array.append([])
     time_left.append(0)
     currently_working.append(0)
-    current_task.append(0)
+    current_tasks.append(0)
 
 previous_string = ''
 n_working = 0
 time = 0
-this_string = set()
+this_string = []
+started_tasks = []
 while entries:
     count_empty = 0
     for n in range(len(array_sets)):
@@ -62,75 +64,72 @@ while entries:
             count_empty += 1
             if (counted[n] == 0):
                 counted[n] = 1
-                this_string.add(alphabet[n])
+                this_string.append(alphabet[n])
 
     # find the time length for this task and add it
     print('this_string: ', this_string)
 
     tasks = len(this_string)
 
-    # working on stuff?
-    workers = True
-    while workers:
-        # is there a task available?
-        if (tasks > 0):
-            for i in range(len(this_string)):
-                # is there a free worker?
-                if (n_working < n_workers):
-                    index = alphabet.index(this_string[i])
-                    time_left[n_working] = time_task[index]
-                    currently_working[n_working] = 1
-                    current_task[n_working] = this_string[i]
-                    n_working += 1
-                    tasks -= 1
-                    workers = True
+    for n in range(n_workers):
+        if (n < len(this_string)):
+            if (currently_working[n] == 0):
+                found = False
+                for m in range(len(started_tasks)):
+                    if (started_tasks[m] == this_string[n]):
+                        found = True
+
+                if (not found):
+                    started_tasks.append(this_string[n])
+                    work_array[n].append(this_string[n])
+                    time_left[n] = time_task[alphabet.index(this_string[n])]
+                    currently_working[n] = 1
+                else:
+                    if (n < len(this_string)-1):
+                        started_tasks.append(this_string[n+1])
+                        work_array[n].append(this_string[n+1])
+                        time_left[n] = time_task[alphabet.index(this_string[n+1])]
+                        currently_working[n] = 1
+            else:
+                time_left[n] -= 1
+                if (time_left[n] == 0):
+                    currently_working[n] = 0
+                    for m in range(len(array_sets)):
+                        try:
+                            array_sets[m].remove(work_array[n][len(work_array[n])-1])
+                            string_index = this_string.index(work_array[n][len(work_array[n])-1])
+                            del this_string[string_index]
+                        except:
+                            blah = []
+                    time -= 1
+                    break
+                else:
+                    work_array[n].append(work_array[n][len(work_array[n])-1])
         else:
-            for i in range(n_workers):
-                if (currently_working[i] == 1):
-                    time_left[i] -= 1
-                    if (time_left[i] == 0):
-                        n_working -= 1
-                        currently_working[i] = 0
-                        for n in range(len(alphabet)):
-                            try:
-                                array_sets[n].remove(current_task[i])
-                                this_string.remove(current_task[i])
-                            except:
-                                blah = []
-                        # workers = False
-                        # task_completed[index] = True
+            work_array[n].append(0)
 
-        print(time_left)
-        print(current_task)
-        print(array_sets)
-        print('time: ', time)
-
-        sum_working = 0
-        for i in range(n_workers):
-            sum_working += currently_working[i]
-
-        if (sum_working == 0):
-            workers = False
-
-        time += 1
-
+    print('started_tasks: ', started_tasks)
+    print('time_left: ', time_left)
+    print('work_array: ', work_array)
+    print('array_sets: ', array_sets)
     print('time: ', time)
-
-    # remove all instances from each set
-    for n in range(len(alphabet)):
-        for m in range(len(this_string)):
-            try:
-                array_sets[n].remove(this_string[m])
-            except:
-                blah = []
-
-
-    print(array_sets)
 
     time += 1
 
-    if (count_empty == len(array_sets)):
+    if (time > 10000):
         entries = False
+
+    sum_size = 0
+    time_left_total = 0
+    for n in range(len(array_sets)):
+        sum_size += len(array_sets[n])
+    for m in range(n_workers):
+        time_left_total += time_left[m]
+
+    print('sum_size: ', sum_size)
+    if ((sum_size == 0) and (len(started_tasks) == len(alphabet)) and (time_left_total == 0)):
+        entries = False
+
 
 print('time: ', time)
 
