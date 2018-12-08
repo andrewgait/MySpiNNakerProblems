@@ -1,8 +1,8 @@
 # Advent of code, day 8
 
 # open file
-#input = open("advent8_input.txt", "r")
-input = open("advent8_test_input.txt", "r")
+input = open("advent8_input.txt", "r")
+#input = open("advent8_test_input.txt", "r")
 
 data = []
 # read string into array
@@ -25,18 +25,33 @@ def read_header_and_sum():
     children = int(data[0])
     entries = int(data[1])
     data = data[2:]
-
+    child_node_val_array = []
     for i in range(children):
-        read_header_and_sum()
+        child_node_val_array.append(read_header_and_sum())
 
-    for j in range(entries):
-        sum += int(data[j])
+#    print('child_node_val_array: ', child_node_val_array)
+    node_val = 0
+    if (children == 0):
+        for j in range(entries):
+            sum += int(data[j])
+            node_val += int(data[j])
+    else:
+        # not sure exactly what to do here
+        # smells of recursion
+        for j in range(entries):
+            sum += int(data[j])
+            if ((int(data[j])-1) < len(child_node_val_array)):
+                node_val += child_node_val_array[(int(data[j])-1)]
 
-    print('sum: ', sum)
+#    print('sum: ', sum)
+#    print('node_val: ', node_val)
     data = data[entries:]
 
-sum = 0
-read_header_and_sum()
+    return node_val
 
+sum = 0
+node_value = read_header_and_sum()
+
+print('node_value is ', node_value)
 print('sum total is ', sum)
 print('len(data) is ', len(data))
