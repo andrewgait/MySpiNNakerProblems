@@ -108,6 +108,10 @@ for n in range(n_generations):
     # observing the data, what happens is that after an initial period,
     # the values process by 1 upwards each time, which increments the sum by 63
     # I imagine that this sum increment is different depending upon the initial input :-)
+
+    # this is an unnecessary bit of code for the actual problem, as I thought
+    # what might happen would be that it would repeat and stabilise in a location
+    # (as I was assuming there weren't a nassive number of plant pots...!)
     for m in range(len(generations_array)):
         # compare data with the generations_array
         sum = 0
@@ -134,4 +138,8 @@ for n in range(n_generations):
 
     #print('sum total after 20 generations is ', sum_pots)
 
+# so I know the incremental sum each generation (after 500 gens, at least) is 63,
+# so I'm going to guess that this is the answer (and it is :-)):
 print('value after 50 billion gens is ', sum_pots + ((50000000000-500)*63))
+
+# this problem is evil if the left hand side grows as well, surely... :-(
