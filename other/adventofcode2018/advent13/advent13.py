@@ -24,7 +24,7 @@ def print_grid(current_grid):
     for j in range(len(current_grid)):
         grid_string = ''
         for i in range(len(current_grid[j])):
-            grid_string += current_grid[j][i]
+            grid_string += get_string(current_grid[j][i])
 
         print(grid_string)
 
@@ -38,12 +38,13 @@ cart_coords = []
 max_line_length = 0
 # read string into array
 for line in input:
+    data = []
     #
     if (len(line) > max_line_length):
         max_line_length = len(line)
     # is there a cart on this line?
     # remember the last character of each line except the last is a newline
-    for i in range(len(line)-1):
+    for i in range(len(line)):
         if ((line[i] == ">") or (line[i] == "<")):
             # mark coordinate
             cart_coords.append([i,len(current_grid),line[i],"l"])
@@ -55,9 +56,10 @@ for line in input:
             # replace the value with a |
             #line[i] = "|"
 
-        data.append()
+        if (line[i] != "\n"):
+            data.append(get_val(line[i]))
 
-    current_grid.append(line)
+    current_grid.append(data)
 
 
 print_grid(current_grid)
