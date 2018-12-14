@@ -56,9 +56,11 @@ def show():
                 print G[r][c],
         print
 
-
+time = 0
 while True:
+    time += 1
     if len(carts) == 1:
+        print time
         print '{},{}'.format(carts[0].c, carts[0].r)
         sys.exit(0)
     #show()
@@ -82,5 +84,6 @@ while True:
         if (rr,cc) in [(other.r, other.c) for other in carts]:
             carts = [other for other in carts if (other.r, other.c) not in [(cart.r, cart.c),(rr,cc)]]
             print '{},{}'.format(cc,rr)
+            print time
         cart.r = rr
         cart.c = cc

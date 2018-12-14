@@ -29,6 +29,7 @@ def print_grid(current_grid):
     # add a blank line at the end
     print(' ')
 
+
 initial_grid = []
 current_grid = []
 cart_coords = []
@@ -181,7 +182,7 @@ while (not end):  # part 2
                 type = ">"
             elif (current_grid[y][x] == get_val("+")):
                 # turn depending on the value of next_turn
-                print('next_turn: ', next_turn)
+#                print('next_turn: ', next_turn)
                 if (next_turn == "l"):
                     type = ">"
                     next_turn = "s"
@@ -202,13 +203,14 @@ while (not end):  # part 2
 
         # loop over other coordinates to check for collision
         for l in range(len(cart_coords)):
-            if ((l != n) and (x == cart_coords[l][0]) and (y == cart_coords[l][1])):
-               collision = True
-               coll_x = x
-               coll_y = y
-               collision_list.append(l)
-               collision_list.append(n)
-               print('collision at ', coll_x, coll_y)
+            if ((l < n) and (x == cart_coords[l][0]) and (y == cart_coords[l][1])):
+                collision = True
+                coll_x = x
+                coll_y = y
+                collision_list.append(l)
+                collision_list.append(n)
+                print('collision at ', coll_x, coll_y)
+                print('types: ', cart_coords[n][2], cart_coords[l][2])
 
     # loop over intersections, then corners
     for m in range(len(intersections)):
@@ -240,12 +242,14 @@ while (not end):  # part 2
 
     if (collision):
         # remove the coordinates that collided
-        print(collision_list)
+        #print(collision_list)
         collision_set = sorted(set(collision_list))
-        print(collision_set)
+        #print(collision_set)
+        print('time: ', time)
         for k in range(len(collision_set)):
             x = cart_coords[collision_set[k]-k][0]
             y = cart_coords[collision_set[k]-k][1]
+            print(x,y)
             current_grid[y][x] = initial_grid[y][x]
             cart_coords.pop(collision_set[k]-k)
             # we need to replace the value here with
@@ -259,9 +263,9 @@ while (not end):  # part 2
 
 #        current_grid[coll_y][coll_x] = get_val("X") # part 1
 
-    print('time: ', time)
+#    print('time: ', time)
 #    print_grid(current_grid)
-    print(cart_coords)
+#    print(cart_coords)
 
     if (time > 10):
         no_collision = False
