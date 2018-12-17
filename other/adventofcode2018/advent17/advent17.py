@@ -88,17 +88,17 @@ print('min/max: ', min_x, min_y, max_x, max_y)
 
 # more work here
 # pad coordinates from max on each side
-pad = 2
+pad = 4
 initial_grid = []
 for j in range(max_y+1):
     initial_line = []
-    for i in range(max_x-min_x+pad+1):
+    for i in range(max_x-min_x+pad):
         initial_line.append(val_from_char("."))
 
     initial_grid.append(initial_line)
 
 # add the spring
-initial_grid[0][spring[0]-(min_x-1)] = val_from_char("+")
+initial_grid[0][spring[0]-(min_x-2)] = val_from_char("+")
 
 # loop and add clay veins
 for n in range(len(x_veins)):
@@ -129,8 +129,8 @@ while (water_added):
 
 
     # firstly, the spring sends out a "|"
-    if (grid[1][spring[0]-(min_x-1)] == val_from_char(".")):
-        grid[1][spring[0]-(min_x-1)] = val_from_char("|")
+    if (grid[1][spring[0]-(min_x-2)] == val_from_char(".")):
+        grid[1][spring[0]-(min_x-2)] = val_from_char("|")
         water_added = True
 
     # search for "|" and either (1) add "|" below it if there's a "."
