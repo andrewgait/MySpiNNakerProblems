@@ -92,7 +92,7 @@ pad = 2
 initial_grid = []
 for j in range(max_y+1):
     initial_line = []
-    for i in range(max_x-min_x+pad+1):
+    for i in range(max_x-min_x+pad+2):
         initial_line.append(val_from_char("."))
 
     initial_grid.append(initial_line)
@@ -119,9 +119,13 @@ for n in range(len(y_veins)):
 render_slice(initial_grid)
 
 grid = initial_grid
+gridx = len(grid[0])
+gridy = len(grid)
 # loop while water added
 water_added = True
 sumwater = None
+xminsearch = 0
+xmaxsearch = 0
 while (water_added):
     # now set it to false, only set to true if something is added
     water_added = False
@@ -131,13 +135,17 @@ while (water_added):
     # firstly, the spring sends out a "|"
     if (grid[1][spring[0]-(min_x-1)] == val_from_char(".")):
         grid[1][spring[0]-(min_x-1)] = val_from_char("|")
+        xminsearch = spring[0]-(min_x-1)
+        xmaxsearch = xminsearch
         water_added = True
 
+    new_xmax = xmaxsearch
+    new_xmin = xminsearch
     # search for "|" and either (1) add "|" below it if there's a "."
     # or (2) change it to a "~" if below there's a "#" or a "~"
     foundwater = 0
-    for j in range(1,len(grid)-1):  # ignore the lowest coordinate, this will get filled
-        for i in range(len(grid[j])):
+    for j in range(1,gridy-1):  # ignore the lowest coordinate, this will get filled
+        for i in range(xminsearch, xmaxsearch+1):
             if (foundwater == sumwater):
                 break
             if (grid[j][i] == val_from_char("|")):
@@ -151,9 +159,13 @@ while (water_added):
                         (grid[j-1][i] == val_from_char("|"))):
                         if (grid[j][i+1] == val_from_char(".")):
                             grid[j][i+1] = val_from_char("|")
+                            if ((i+1) > xmaxsearch):
+                                new_xmax = i+1
                             water_added = True
                         if (grid[j][i-1] == val_from_char(".")):
                             grid[j][i-1] = val_from_char("|")
+                            if ((i-1) < xminsearch):
+                                new_xmin = i-1
                             water_added = True
 #                    else:
 #                        grid[j][i] = val_from_char("~")
@@ -162,9 +174,13 @@ while (water_added):
                     # look left and right now and add "|" if "."
                     if (grid[j][i+1] == val_from_char(".")):
                         grid[j][i+1] = val_from_char("|")
+                        if ((i+1) > xmaxsearch):
+                            new_xmax = i+1
                         water_added = True
                     if (grid[j][i-1] == val_from_char(".")):
                         grid[j][i-1] = val_from_char("|")
+                        if ((i-1) < xmaxsearch):
+                            new_xmin = i-1
                         water_added = True
                     if (((grid[j][i-1] == val_from_char("~")) or
                          (grid[j][i-1] == val_from_char("#"))) and
@@ -176,11 +192,18 @@ while (water_added):
                 foundwater += 1
                 if (grid[j][i-1] == val_from_char(".")):
                     grid[j][i-1] = val_from_char("~")
+                    if ((i-1) < xminsearch):
+                        new_xmin = i-1
                     water_added = True
                 if (grid[j][i+1] == val_from_char(".")):
                     grid[j][i+1] = val_from_char("~")
+                    if ((i+1) > xmaxsearch):
+                        new_xmax = i+1
                     water_added = True
-            elif (grid[j][i] == val_from_char("#")):
+
+    for j in range(1,gridy-1):  # ignore the lowest coordinate, this will get filled
+        for i in range(gridx):
+            if (grid[j][i] == val_from_char("#")):
                 # if the region between two #s is completely filled
                 # with |s then change them all to ~s
                 sum = 0
@@ -198,9 +221,12 @@ while (water_added):
                     else:
                         finish = True
 
+    xmaxsearch = new_xmax
+    xminsearch = new_xmin
+
     sumwater = 0
-    for j in range(len(grid)):
-        for i in range(len(grid[j])):
+    for j in range(gridy):
+        for i in range(gridx):
             if ((grid[j][i] == val_from_char("|")) or
                 (grid[j][i] == val_from_char("~"))):
                 sumwater += 1
