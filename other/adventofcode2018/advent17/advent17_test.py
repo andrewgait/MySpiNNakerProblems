@@ -123,7 +123,7 @@ for n in range(len(y_veins)):
 # print initial grid to check
 render_slice(initial_grid)
 
-print('clay: ', clay)
+# print('clay: ', clay)
 
 # list different states of water
 settled_water = []
