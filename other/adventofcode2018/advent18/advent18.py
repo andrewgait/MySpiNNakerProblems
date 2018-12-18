@@ -30,19 +30,57 @@ def render_grid(grid):
 # the grid will be built so that the loop is over the interior
 def change_open(grid, x, y):
     sumtree = 0
-    # loop over the grid, count trees
+    # loop over the nearby grid, count trees
+    for j in range(y-1,y+2):
+        for i in range(x-1,x+2):
+            # don't count the middle
+            if ((i==x) and (j==y)):
+                dummy = 0
+            else:
+                if (grid[j][i] == val_from_char("|")):
+                    sumtree += 1
+
+    if (sumtree > 2):
+        return True
+    else:
+        return False
 
 
 def change_tree(grid, x, y):
     sumlumber = 0
-    # loop over the grid, count lumberyards
+    # loop over the nearby grid, count lumberyards
+    for j in range(y-1,y+2):
+        for i in range(x-1,x+2):
+            if ((i==x) and (j==y)):
+                dummy = 0
+            else:
+                if (grid[j][i] == val_from_char("#")):
+                    sumlumber += 1
+
+    if (sumlumber > 2):
+        return True
+    else:
+        return False
 
 
 def change_lumberyard(grid, x, y):
     sumtree = 0
     sumlumber = 0
-    # loop over the grid, count trees and lumberyards
+    # loop over the nearby grid, count trees and lumberyards
+    for j in range(y-1,y+2):
+        for i in range(x-1,x+2):
+            if ((i==x) and (j==y)):
+                dummy = 0
+            else:
+                if (grid[j][i] == val_from_char("#")):
+                    sumlumber += 1
+                elif (grid[j][i] == val_from_char("|")):
+                    sumtree += 1
 
+    if ((sumlumber > 0) or (sumtree > 0)):
+        return False
+    else:
+        return True
 
 
 grid = []
@@ -52,23 +90,87 @@ grid = []
 # and this will deal with issues re: corner/edge cases
 for line in input:
     gridline = []
-    for n in range(len(line)):
-        if (line[n] == "."):
+    if (len(grid)==0):
+        for n in range(len(line)+1):
             gridline.append(val_from_char("."))
-        elif (line[n] == "|"):
-            gridline.append(val_from_char("|"))
-        elif (line[n] == "#"):
-            gridline.append(val_from_char("#"))
+        grid.append(gridline)
+        gridline = []
+        gridline.append(val_from_char("."))
+        for n in range(len(line)):
+            if (line[n] == "."):
+                gridline.append(val_from_char("."))
+            elif (line[n] == "|"):
+                gridline.append(val_from_char("|"))
+            elif (line[n] == "#"):
+                gridline.append(val_from_char("#"))
 
-    grid.append(gridline)
+        gridline.append(val_from_char("."))
+        grid.append(gridline)
+    else:
+        gridline.append(val_from_char("."))
+        for n in range(len(line)):
+            if (line[n] == "."):
+                gridline.append(val_from_char("."))
+            elif (line[n] == "|"):
+                gridline.append(val_from_char("|"))
+            elif (line[n] == "#"):
+                gridline.append(val_from_char("#"))
 
+        gridline.append(val_from_char("."))
+        grid.append(gridline)
+
+gridline = []
+for n in range(len(line)+2):
+    gridline.append(val_from_char("."))
+
+grid.append(gridline)
 
 render_grid(grid)
+gridx = len(grid[0])
+gridy = len(grid)
 
-time = 10
+print(gridx, gridy)
+
+time = 0
 
 while (time <= 10):
     new_grid = []
+
+    new_line = []
+    for i in range(gridx):
+        new_line.append(val_from_char("."))
+
+    new_grid.append(new_line)
+
+    for j in range(1,gridy-1):
+        new_line = []
+        new_line.append(val_from_char("."))
+        for i in range(1,gridx-1):
+            if (grid[j][i] == val_from_char(".")):
+                if (change_open(grid, i, j)):
+                    new_line.append(val_from_char("|"))
+                else:
+                    new_line.append(val_from_char("."))
+            elif (grid[j][i] == val_from_char("|")):
+                if (change_open(grid, i, j)):
+                    new_line.append(val_from_char("#"))
+                else:
+                    new_line.append(val_from_char("|"))
+            elif (grid[j][i] == val_from_char("#")):
+                if (change_open(grid, i, j)):
+                    new_line.append(val_from_char("."))
+                else:
+                    new_line.append(val_from_char("#"))
+
+        new_line.append(val_from_char("."))
+        new_grid.append(new_line)
+
+    new_line = []
+    for i in range(gridx):
+        new_line.append(val_from_char("."))
+
+    new_grid.append(new_line)
+
 
     # not sure if this needs to be
     grid = new_grid
