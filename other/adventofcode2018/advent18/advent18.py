@@ -1,8 +1,12 @@
 # Advent of code, day 18
 
+# note: for part 2, the seqeunce repeats
+# every 7000 minutes so I was able to use
+# this to do the calculation for 1 billion minutes
+
 # open file
-#input = open("advent18_input.txt", "r")
-input = open("advent18_test_input.txt", "r")
+input = open("advent18_input.txt", "r")
+#input = open("advent18_test_input.txt", "r")
 
 
 def char_from_val(val):
@@ -77,7 +81,7 @@ def change_lumberyard(grid, x, y):
                 elif (grid[j][i] == val_from_char("|")):
                     sumtree += 1
 
-    if ((sumlumber > 0) or (sumtree > 0)):
+    if ((sumlumber > 0) and (sumtree > 0)):
         return False
     else:
         return True
@@ -133,7 +137,7 @@ print(gridx, gridy)
 
 time = 0
 
-while (time <= 10):
+while (time < 1000000000):
     new_grid = []
 
     new_line = []
@@ -152,12 +156,12 @@ while (time <= 10):
                 else:
                     new_line.append(val_from_char("."))
             elif (grid[j][i] == val_from_char("|")):
-                if (change_open(grid, i, j)):
+                if (change_tree(grid, i, j)):
                     new_line.append(val_from_char("#"))
                 else:
                     new_line.append(val_from_char("|"))
             elif (grid[j][i] == val_from_char("#")):
-                if (change_open(grid, i, j)):
+                if (change_lumberyard(grid, i, j)):
                     new_line.append(val_from_char("."))
                 else:
                     new_line.append(val_from_char("#"))
@@ -174,9 +178,22 @@ while (time <= 10):
 
     # not sure if this needs to be
     grid = new_grid
-    render_grid(grid)
+#    render_grid(grid)
     time += 1
 
-render_grid(grid)
+# render_grid(grid)
 
-# final grid calculation
+    # final grid calculation
+    sumtree = 0
+    sumlumber = 0
+    for j in range(gridy):
+        for i in range(gridx):
+            if (grid[j][i] == val_from_char("|")):
+                sumtree += 1
+            if (grid[j][i] == val_from_char("#")):
+                sumlumber += 1
+
+    if (time % 1000 == 0):
+        print('sumtree ', sumtree, ' x sumlumber ', sumlumber,
+              ' = resource ', sumtree*sumlumber, ' time ', time)
+
