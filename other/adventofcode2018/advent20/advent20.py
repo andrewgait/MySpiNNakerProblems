@@ -235,4 +235,5 @@ print('there are ', thousand_doors, ' rooms through at least 1000 doors')
 distances = np.asarray(distance_grid)
 
 plt.imshow(distances, cmap='hot', interpolation='nearest')
+plt.colorbar()
 plt.show()
