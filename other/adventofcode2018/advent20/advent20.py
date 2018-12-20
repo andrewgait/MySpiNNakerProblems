@@ -1,4 +1,7 @@
 # Advent of code, day 20
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 # open file
 input = open("advent20_input.txt", "r")
@@ -217,6 +220,7 @@ while work_done:
 
 thousand_doors = 0
 door_limit = 1000
+
 for j in range(new_grid_size):
     print(distance_grid[j])
     for i in range(new_grid_size):
@@ -227,3 +231,8 @@ for j in range(new_grid_size):
 # here I have had to start the distance from 1 at my current location, so the distance is -2
 print('the furthest room is ', distance-2, ' doors away')
 print('there are ', thousand_doors, ' rooms through at least 1000 doors')
+
+distances = np.asarray(distance_grid)
+
+plt.imshow(distances, cmap='hot', interpolation='nearest')
+plt.show()
