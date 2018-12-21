@@ -76,8 +76,8 @@ print('ip_value ', ip_value)
 print('instructions ', instructions)
 
 # initial register size 6
-# register = [0,0,0,0,0,0]  # part 1
-register = [0,0,0,0,0,0]  # part 2
+register = [0,0,0,0,0,0]  # part 1
+# register = [1,0,0,0,0,0]  # part 2
 
 current_ip_value = ip_value
 
