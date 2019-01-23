@@ -62,17 +62,17 @@ figure_filename = "results.png"
 Figure(
     # raster plot of the presynaptic neuron spike times
     Panel(spikes.segments[0].spiketrains,
-          yticks=True, markersize=1.0, xlim=(6, 7), xticks=True),
+          yticks=True, markersize=1.0, xlim=(0, runtime), xticks=True),
     # membrane potential of the postsynaptic neuron
     Panel(v.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
-          data_labels=[main_pop.label], yticks=True, xlim=(6, 7)),
+          data_labels=[main_pop.label], yticks=True, xlim=(0, runtime)),
     Panel(gsyn_exc.segments[0].filter(name='gsyn_exc')[0],
           ylabel="gsyn excitatory (mV)",
-          data_labels=[main_pop.label], yticks=True, xlim=(6, 7)),
+          data_labels=[main_pop.label], yticks=True, xlim=(0, runtime)),
     Panel(gsyn_inh.segments[0].filter(name='gsyn_inh')[0],
           ylabel="gsyn inhibitory (mV)",
-          data_labels=[main_pop.label], yticks=True, xlim=(6, 7)),
+          data_labels=[main_pop.label], yticks=True, xlim=(0, runtime)),
     title="Simple synfire chain example",
     annotations="Simulated with {}".format(p.name())
 )

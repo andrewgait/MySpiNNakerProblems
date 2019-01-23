@@ -13,3 +13,4 @@ MANIFEST
 *.cache/
 */drl_code/
 *.csv
+*.zip
