@@ -11,10 +11,10 @@ out = p.Population(1, p.IF_curr_exp())
 connector = p.OneToOneConnector()
 
 proj_1 = p.Projection(inp, out, connector,
-                      p.StaticSynapse(weight=2.0, delay=2.0))
+                      p.StaticSynapse(weight=2.0, delay=4.0))
 #proj_1.set_weights_and_delays(weight=2.0, delay=2.0)
 proj_2 = p.Projection(inp, out, connector,
-                      p.StaticSynapse(weight=1.0, delay=1.0))
+                      p.StaticSynapse(weight=1.0, delay=11.0))
 
 p.run(1)
 

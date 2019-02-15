@@ -34,12 +34,12 @@ for i in range(0, nNeurons):
     singleConnection = ((i, (i + 1) % nNeurons, weight_to_spike, delay))
     loopConnections.append(singleConnection)
 
-injectionConnection = [(0, 0)]
-spikeArray = {'spike_times': [[3]]}
+injectionConnection = [(0, 0), (1, 5), (2, 8)]
+spikeArray = {'spike_times': [[3],[2],[4]]}
 main_pop = p.Population(
     nNeurons, p.IF_cond_exp(**cell_params_lif), label='pop_1')
 input_pop = p.Population(
-    1, p.SpikeSourceArray(**spikeArray), label='inputSpikes_1')
+    3, p.SpikeSourceArray(**spikeArray), label='inputSpikes_1')
 
 p.Projection(
     main_pop, main_pop, p.FromListConnector(loopConnections),
@@ -49,6 +49,7 @@ p.Projection(
     p.StaticSynapse(weight=weight_to_spike, delay=1))
 
 main_pop.record(['v', 'gsyn_exc', 'gsyn_inh', 'spikes'])
+input_pop.record(['spikes'])
 
 p.run(runtime)
 
@@ -57,9 +58,13 @@ v = main_pop.get_data('v')
 gsyn_exc = main_pop.get_data('gsyn_exc')
 gsyn_inh = main_pop.get_data('gsyn_inh')
 spikes = main_pop.get_data('spikes')
+spikes_in = input_pop.get_data('spikes')
 
 figure_filename = "results.png"
 Figure(
+    # raster plot of the input_pop spike times
+    Panel(spikes_in.segments[0].spiketrains,
+          yticks=True, markersize=1.5, xlim=(0, runtime), xticks=True),
     # raster plot of the presynaptic neuron spike times
     Panel(spikes.segments[0].spiketrains,
           yticks=True, markersize=1.0, xlim=(0, runtime), xticks=True),

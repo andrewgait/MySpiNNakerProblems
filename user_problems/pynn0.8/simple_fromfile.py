@@ -10,7 +10,7 @@ receiver = sim.Population(2, sim.IF_curr_exp(), label='receiver')
 columns = ["i", "j", "delay", "weight"]
 connection_list = [
     (0, 0, 1.0, 10.0),
-    (0, 1, 1.0, 2.0)
+    (0, 1, 1.0, -1.0)
     ]
 
 path1 = "test.connections"
@@ -25,7 +25,8 @@ numpy.savetxt(file1, connection_list,
 conn = sim.FromFileConnector(file1)
 # conn = sim.FromListConnector(connection_list)  # , column_names=columns)
 
-syn = sim.StaticSynapse()  # weight=1.5, delay=5)
+# Here I am testing that these don't overwrite the supplied list values
+syn = sim.StaticSynapse(weight=1.5, delay=5)
 proj = sim.Projection(input, receiver, conn, syn, receptor_type="excitatory")
 
 input.record(["spikes"])

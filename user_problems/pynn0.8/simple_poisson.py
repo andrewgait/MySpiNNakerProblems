@@ -1,12 +1,20 @@
 import pylab
 import spynnaker8 as sim
-sim.setup()
-poisson = sim.Population(1, sim.SpikeSourcePoisson(duration=1.0e10,
-                                                   rate=0.0, start=0.0))
-receiver = sim.Population(1, sim.IF_curr_exp())
+sim.setup(timestep=1.0)
+poisson = sim.Population(2, sim.SpikeSourcePoisson(
+    duration=1.0e10, rate=11.0, start=0.0))
+receiver = sim.Population(2, sim.IF_curr_exp())
 
-conn = sim.AllToAllConnector()
-syn = sim.StaticSynapse(weight=0.15, delay=1.0)
+#conn = sim.AllToAllConnector()
+connections = [
+(0, 0, 1.0, 7.0),
+(1, 0, 2.0, 7.0),
+(0, 1, 3.0, 7.0),
+(1, 1, 4.0, 8.0)
+]
+
+conn = sim.FromListConnector(connections)
+syn = sim.StaticSynapse(weight=0.5, delay=1)
 sim.Projection(presynaptic_population=poisson,
                postsynaptic_population=receiver,
                connector=conn, synapse_type=syn, receptor_type="excitatory")
@@ -17,11 +25,11 @@ poisson.record("spikes")
 
 # poisson.set(rate=1000.0)
 
-sim.run(20.0)
+sim.run(200.0)
 
-poisson.set(rate=1000.0)
+poisson.set(rate=[1000.0,2000.0])
 
-sim.run(20.0)
+sim.run(200.0)
 
 voltages = receiver.spinnaker_get_data("v")
 spikes = poisson.spinnaker_get_data("spikes")
@@ -33,14 +41,14 @@ print(spikes)
 print(spikes_rec)
 
 pylab.figure()
-pylab.xlim((0, 40.0))
+pylab.xlim((0, 400.0))
 pylab.plot([i[1] for i in spikes], [i[0] for i in spikes], ".")
 pylab.xlabel('Time/ms')
 pylab.ylabel('spikes')
 pylab.title('Spike source poisson')
 
 pylab.figure()
-pylab.xlim((0, 40.0))
+pylab.xlim((0, 400.0))
 pylab.plot([i[1] for i in spikes_rec], [i[0] for i in spikes_rec], ".")
 pylab.xlabel('Time/ms')
 pylab.ylabel('spikes')
