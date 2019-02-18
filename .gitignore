@@ -11,6 +11,8 @@
 *egg-info/
 MANIFEST
 *.cache/
-*/drl_code/
 *.csv
 *.zip
+._*
+*.tgz
+*.DS_Store

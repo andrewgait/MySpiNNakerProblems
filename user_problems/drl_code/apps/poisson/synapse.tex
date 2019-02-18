@@ -1,0 +1,216 @@
+\chapter[Snappy Synapses (2)]{Snappy Synapses (1)\\
+Fast Fixed Synapse Processing\\
+{\it Streamlining SpiNNaker, Part III}}
+
+
+People are often surprised that much of the effort in neural
+simulations is expended modelling synapses rather than neurons. This
+should not be {\em so} surprising, as each neuron is connected -- on
+average -- to 10,000 other neurons. Recent research has shown that
+even in models with synaptic plasticity, {\it i.e} where the
+connection efficacy changes as the system learns, there are still five
+or six times as many fixed synapses as there are plastic synapses
+(cite Maass).
+
+It therefore makes sense to make this operation as efficient as possible.
+
+\section{Ring Buffers}
+
+The approach taken by SpiNNaker -- following Morrison's advice, and
+which she'd previously used in NEST -- is to provide a circular buffer
+for the inputs to a neuron. The assumption being made is that synaptic
+events act in a purely additive, or linear, manner; and that we can
+therefore treat the action of two similtaneous synaptic events as the
+addition of their effects.
+
+Conceptually, we use this circular buffer to delay the actions
+associated for the events by a suitable delay. When the effects reach
+the front of the queue, we can then pass them on to the neuron ODE
+solver to manipulate the inputs according to the defining
+equations. Usually, this amounts to the decay of the value.
+
+{\em More stuff here.}
+
+\section{A Simple Non-Saturating Unsigned Synapse/Ring-Buffer Implementation}
+
+We will assume that the synaptic word is laid out with three bit
+fields. These are a {\em weight}, a {\em delay}, and an {\em address},
+and we will lay these fields out in that order from the
+most-significant to the least-significant end of the word.
+
+A simple C program would be:
+\begin{verbatim}
+typedef int* synapse_ptr;
+int ring[RING_SIZE];
+int time;
+
+...
+
+void process_synapses (synapse_ptr sp, int n)
+{
+    int w, addr, i;
+
+    for (i = 0; i < n; i++) {
+        w = (*sp++);
+              // loads synaptic word w
+
+        addr = (w + (time << 8)) & 0xffff;
+              // adjusts the address in the bottom 16 bits
+              // for the correct delay
+
+        ring[addr] += (w >> 16);
+              // adds weight in the top 16 bits of w to
+              // ring buffer
+    }
+}
+\end{verbatim}
+
+\section{Boring, Boring, Boring!!}
+
+{\em Describe problems above. Measure speed!}
+
+\section{A Five Cycle Synaptic Row (or Rowlet) Processing Loop Body}
+
+This approach is permitted whenever we can afford to have 32-bit
+ring-buffer elements. In this case, we can be sure that adding weights
+to the ring-buffer will be extremely unlikely to overflow the integer.
+
+With signed weights in the synaptic word (assumed to be 16-bit, but
+could be larger) and signed 32-bit ring-buffers the basic {\em
+  five} instruction sequence is:
+\begin{verbatim}
+    ldr   lr, [r0], #4            ; Load a synaptic word
+    add   r10, r2, lr, lsl #23    ; add timer value (top bit masked off)
+    ldr   r8, [r1, r10, lsr #22]  ; use load to add base to shifted index
+    add   r8, r8, lr, asr #16     ; _arithmetic_ shifted weight _added_.
+    str   r8, [r1, r10, lsr #22]  ; store back result.
+\end{verbatim}
+The synaptic word pointer is register {\tt r0}, the base address of
+the ring buffer is {\tt r1} and the shifted timer (with its top bits
+set to the current time) is in {\tt r2}.
+This shifted timer value is added to the shifted synaptic word, so that any
+overflow is ignored. Then note use of array indexing to shift the
+register {\tt r10} back down to the correct position as part of the
+{\tt ldr} and {\tt str} instructions. This is how we've eliminated
+masking.
+
+However, there is an obvious problem: the use of {\tt r8} in the {\tt
+  add} instruction, and it's subsequent use in the {\tt str} all cause
+{\em interlock} problems. {\em I think there are other problems too!}
+Simple re-ordering will no longer suffice in this case, since the
+order of the instructions is pretty pre-ordained by the program logic!
+Instead, we use another common trick: interleaving {\em two} copies of
+the code, operating with different registers, to mask the interlocks.
+\begin{verbatim}
+    ldr   r4, [r0], #4            ; Load a synaptic word_0
+    ldr   r5, [r0], #4            ; Load a synaptic word_1
+    add   r6, r2, r4, lsl #23     ; add timer value (top bit masked off)
+    add   r7, r2, r5, lsl #23     ; add timer value (top bit masked off) 
+    ldr   r8, [r1, r6, lsr #22]   ; use load to add base to shifted index 
+    ldr   r9, [r1, r7, lsr #22]   ; use load to add base to shifted index
+    add   r8, r8, r4, asr #16     ; _arithmetic_ shifted weight _added_. 
+    add   r9, r9, r5, asr #16     ; _arithmetic_ shifted weight _added_. 
+    str   r8, [r1, r6, lsr #22]   ; store back result. 
+    str   r9, [r1, r7, lsr #22]   ; store back result.
+\end{verbatim}
+Now all instructions operate with no interlocking. Admittedly we have
+to do two synaptic events as a pair, but hopefully that's not too
+onerous a constraint to achieve.
+
+\section{A Six-and-a-Half (or fewer) Cycle Synaptic Row (or Rowlet) Processing
+  Loop body}
+
+In this version we will restrict the ring buffer elements to unsigned
+half-words. In this case we {\em have} to take the possibility of
+saturation seriously. In this case the basic loop body is:
+\begin{verbatim}
+    ldr     lr, [r0], #4            ; Load a synaptic word
+    add     r10, r2, lr,  lsl #23   ; Add the timer (with the extra bit
+                                    ;   dropping off the top)
+    add     r10, r1, r10, lsl #22   ; Add the ring-buffer base register,
+                                    ;   and shift right
+    ldrh    r8, [r10]               ; load the ring buffer element
+    subs    r8, r8, lr, lsr #16     ; _subtract_ weight from ring element
+    blmi    <saturation>            ; if the result is negative: saturate
+    strh    r8, [r10]               ; store the ring buffer element
+\end{verbatim}
+In the case of half-word load and store operations we no longer have
+the convenience of a shifted array-indexing operation: we have to do
+this manually with another add.
+
+The other difference is that we have replaced the {\tt add} operation
+of the previous example, with a {\tt subs}; why is this? Well, we've
+inverted the meaning of the weights. Now a weight of zero $0$ is
+represented by the hex value {\tt 0xffff}, and the maximum weight of
+$65535$ is reprresented by {\tt 0x0000}. Why?
+
+The answer is that it is exteremely convenient to detect saturation by
+the result of the arithmetic operation turning negative. As we shall
+see, this permits some level of reconstruction, should saturation
+arise.
+
+The code above is also subject to memory interlock, but now the
+problem is even worse: each load and store instruction, may require
+{\em two} interlock cycles, because there is extra pipeline delay
+caused by the required shifting of the half-word result.
+
+We try our previous trick, and combine {\em two} saturation detections
+into one sub-routine call --- in the hopes that saturation is the rare
+case.
+\begin{verbatim}
+    ldr     lr, [r0], #4         ; load w0
+    ldr     ip, [r0], #4         ; load w1
+    add     r10, r2, lr, lsl #23 ; calculate address: a0
+    add     r10, r1, r10, lsr #22
+    add     r11, r2, ip, lsl #23 ; calculate address: a1
+    ldrh    r8, [r10]            ; load ring element 1
+    add     r11, r1, r11, lsr #22
+    ldrh    r9, [r11]            ; load ring element 2
+    subs    r8, r8, lr, lsr #16  ; add to ring element 1
+    strh    r8, [r10]            ; store ring element 1
+    subpls  r9, r9, ip, lsr #16  ; add to ring element 2
+    strh    r9, [r11]            ; store ring element 2
+    blmi    <saturate>           ; fix-up if either sum saturated
+\end{verbatim}
+Notice that if the first subtraction causes a saturation we {\em do
+  not} perform the second subtraction; it is left to the saturation
+routine to fix-up. Notice also, that if we had used the carry flag to
+spot saturation it is nowhere near as easy to fix-up the result in the
+event that some of the registers are re-used.
+
+The code for the saturation routine is:
+\begin{verbatim}
+    pop    {r3}                ; pop the saturation counter
+    cmp    r8, #0              ; is r8 < 0?
+    movmi  r8, #0              ; if so: set the value to the maximum (=0)
+    addmi  r3, r3, #1          ; increment the saturation counter
+    strmih r8, [r10]           ; store back the result, over-writing -ve
+    submi  r9, r9, ip, lsr #16 ; the subtraction will not have
+                               ;  happened if the first subtraction
+                               ;  was negative, so re-do it ...
+    cmp    r9, #0              ; is r9 < 0?
+    movmi  r9, #0              ; if so: set the value to the maximum (=0)
+    addmi  r3, r3, #1          ; increment the saturation counter
+    strmih r9, [r11]           ; store back the result, over-writing -ve
+    push   {r3}                ; save the saturation counter.
+    bx     lr                  ; return.
+\end{verbatim}
+I strongly suspect this may be the very first time anyone has ever
+used the instruction:  {\tt strmih} in anger!
+
+As we can see, this interleaved verrsion of our synapse processing
+code ought to run in 13 cycles -- which it does -- meaning that each
+non-saturating synaptic event will run in just $6.5$ cycles, once
+more, providede we do the processing of these in pairs.
+
+I believe that there is a $25$ cycle code sequence which will handle
+{\em four} synaptic events at a time -- once more commoning up the
+effects of saturation into just one call to a fix-up routine. The
+major issue is the need to preserve the intermediate registers {\em
+  and} provide enough regsiters to control the computation (counters
+and such like). If this should prove practical, then we can drive the
+execution cost of the common case where we are using unsigned 16-bit
+ring buffers down to an amortized $6.25$ cycles per synaptic event.
+For comparison the current code takes (whatever it is), but the code I
+gave Jamie took 8 or 9 cycles, and I {\em think}  changes to {\tt gcc} 
+have added a bit of subsequent padding here.

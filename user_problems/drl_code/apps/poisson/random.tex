@@ -1,0 +1,422 @@
+\chapter[Racy Randoms]{Racy Randoms:\\
+Pseudo Random Numbers
+  and Discrete Distributions for Monte-Carlo Simulations\\
+{\it Streamlining SpiNNaker, Part I}}
+
+There are now very good Pseudo-Random Number Generators (PRNGs) for
+Monte-Carlo Simulations, some of which we will describe in this
+paper. Nevertheless, {\it efficiently using} these uniformly
+distributed PRNGs is equally important. Originally this work arose
+from a desire to improve the performance of our Neuromorphic
+Simulation Engine: SpiNNaker, and in particular pseudo-random numbers
+drawn from a Poisson Process with rate parameter $\lambda$, used to
+simulate `shot noise'. We will start with this problem, show the
+techniques used to arrive at a better solution to the problem, and
+finally discuss how the technique we present can be generalised to
+generate pseudo-random numbers for other discrete distributions.
+
+\section{Shot Noise}
+
+{\it Shot Noise} occurs in nature due to the quantisation of  energy
+in an electrical or other system. The statistical assumption made is that
+the events being measured, occur independently with a fixed rate. Thus
+the number of emitted particles from a large quantity of a long
+half-life radioactive isotope could be modelled in this way.
+
+In neuromophics we would be modelling the electrical noise in a
+brain-like network as shot noise, representing the background spiking
+events of other neurons. The number of spikes delivered in a
+particular time interval is then a rate parameter: $\lambda$. If these
+events are independent then they will can be modelled as a Poisson
+Process with rate parameter $\lambda$. In many of our examples, we'll
+take $\lambda = 1.6$.  Now the Poisson distribution can be defined by
+the {\em probability mass function} or {\em pmf}, where the
+probability of $k$ events occurring is given by the equation:
+
+\[ P(k)=\frac{e^{-\lambda} {\lambda}^k}{k!}\]
+
+Michael Hopkins has produced a simple implementation of this based on
+that of Knuth.
+\begin{verbatim}
+uint32_t poisson_dist_variate_exp_minus_lambda(
+        uniform_rng uni_rng,
+        uint32_t* seed_arg,
+        ulf_t exp_minus_lambda)
+{
+    ulf_t p = 1.0ulr;
+    uint32_t k = 0;
+
+    do {
+        k++;
+        p = p * ulrbits(uni_rng(seed_arg));
+    } while (p > exp_minus_lambda);
+    return k - 1;
+}
+\end{verbatim}
+The calculation of $e^{-\lambda}$ takes place seperately as it takes
+about 50 cycles.
+
+\section{Instrumentation}
+
+The first place to begin is by measuring the existing system; {\it
+  i.e.} both the PRNG and the Poisson distribution part.
+
+Compiled with {\tt -Ofast} we find that the JKISS-64 of Marsaglia
+takes just 21 clock cycles on SpiNNaker-1. The C code for this PRNG
+is:
+\begin{verbatim}
+uint32_t mars_kiss64_simp(void)
+{
+    static uint32_t
+        x = 123456789,
+        y = 987654321,
+        z = 43219876,
+        c = 6543217; /* Seed variables */
+    uint64_t t;
+
+    x = 314527869 * x + 1234567;
+    y ^= y << 5;
+    y ^= y >> 7;
+    y ^= y << 22;
+    t = 4294584393ULL * z + c;
+    c = t >> 32;
+    z = t;
+
+    return (uint32_t) x + y + z;
+}
+\end{verbatim}
+A decompilation with
+{\tt arm-none-eabi-objdump -Dax} gives the following ARM code:
+\begin{verbatim}
+0000036c <mars_kiss64_simp>:
+     36c:       ldr     r2, [pc, #80]   ; 3c4 <mars_kiss64_simp+0x58>
+     370:       push    {r4, r5, lr}
+     374:       ldr     r3, [pc, #76]   ; 3c8 <mars_kiss64_simp+0x5c>
+     378:       ldr     r4, [r2, #12]
+     37c:       ldr     lr, [r2, #8]
+     380:       ldr     ip, [r2]
+     384:       ldr     r0, [pc, #64]   ; 3cc <mars_kiss64_simp+0x60>
+     388:       mov     r5, #0
+     38c:       ldr     r1, [pc, #60]   ; 3d0 <mars_kiss64_simp+0x64>
+     390:       umlal   r4, r5, r3, lr
+     394:       ldr     r3, [r2, #4]
+     398:       mla     r1, r0, ip, r1
+     39c:       eor     r3, r3, r3, lsl #5
+     3a0:       eor     r3, r3, r3, lsr #7
+     3a4:       eor     r3, r3, r3, lsl #22
+     3a8:       add     r0, r1, r4
+     3ac:       str     r5, [r2, #12]
+     3b0:       str     r4, [r2, #8]
+     3b4:       str     r1, [r2]
+     3b8:       add     r0, r0, r3
+     3bc:       str     r3, [r2, #4]
+     3c0:       pop     {r4, r5, pc}
+     3c4:       .word   0x00400000
+     3c8:       .word   0xfffa2849
+     3cc:       .word   0x12bf507d
+     3d0:       .word   0x0012d687
+\end{verbatim}
+
+How can this possibly execute in just 21 cycles when there are 22
+instructions, quite a few of which take two or more cycles to
+complete? The key is to ensure that all the calls to the function are
+inlined, and are localised. Then the compiler will exploit the fact
+that the constants and state are not repeatedly re-loaded to
+registers, but instead re-use them, as is. If we ignore this advice,
+then Michael Hopkins has previously reported that this code takes 44
+cycles.
+
+In conjunction with the implementation of Poisson given above this
+takes -- on average -- $211.09$ cycles to execute. The minimum time was
+$89$ cycles, and the maximum was $689$ cycles.
+
+\section{A New Implementation}
+Rather than just keep the expression $e^{-\lambda}$ pre-calculated, we
+can instead pre-calculate a table of cumulative probabilities as
+follows:
+\begin{verbatim}
+//! \brief This array holds a value n at position i, such that
+//! whenever a uniformly distributed 32-bit unsigned input x
+//! satisfies:
+//!
+//!        table[i] <= x < table[i-1]
+//!                   {with table[-1] notionally being MAXUINT}
+//!
+//! With the given table entries, then the varible i will be a
+//! Poisson PRNG, with lambda = 1.6.
+
+uint32_t fast_poisson_table[]
+    = { 3427828354,  // p = 0; 3427828354.0287867
+        2040406047,  // p = 1; 2040406046.8874736
+        930468201,   // p = 2; 930468201.1744232
+        338501350,   // p = 3; 338501350.1274629
+        101714610,   // p = 4; 101714609.7086788
+        25942853,    // p = 5; 25942852.77466787
+        5737051,     // p = 6; 5737050.925598297
+        1118582,     // p = 7; 1118581.931525252
+        194888,      // p = 8; 194888.1327106422
+        30676,       // p = 9; 30675.90181026706
+        4402,        // p = 10; 4401.944866207042
+        580,         // p = 11; 580.2784016164973
+        71,          // p = 12; 70.72287300442295
+        8,           // p = 13; 8.008346406013947
+        1,           // p = 14; 0.8409719376243779
+        0            // p = 15, 0.0
+       };
+\end{verbatim}
+This table can be easily constructed at compile-time if $\lambda$ is also
+known at compile-time. It is even more useful if a number of different
+poisson noise sources are all using the same parameter $\lambda$: then
+they can share the table. A sketch of a suitable python script is:
+\begin{verbatim}
+import numpy as np
+from scipy.stats import poisson
+
+# To generate a table for 8-bit PRNG
+lambda_ = 1.6
+
+i = 0
+n = (1 - poisson.cdf (0, lambda_)) * (256)
+while n > 0.1:
+  print n
+  i = i+1
+  n = (1 - poisson.cdf (i, lambda_)) * (256)
+
+# To generate a table for 32-bit PRNG
+i = 0
+n = (1 - poisson.cdf (0, lambda_)) * (1024*1024*1024*4)
+while n > 0.1:
+  print n
+  i = i+1
+  n = (1 - poisson.cdf (i, lambda_)) * (1024*1024*1024*4)
+\end{verbatim}
+
+Given a uniformly distributed number {\tt n}, we have merely to
+search the table for an index {\tt i} such that:
+\[ \mbox{\tt table}[\mbox{\tt i}] \leq \mbox{\tt n} \mathrel{\wedge}
+\mbox{\tt n} < \mbox{\tt table}[\mbox{\tt i}-1] \]
+This can be accomplished by the following simple linear search:
+\begin{verbatim}
+static inline uint32_t fast_poisson (uint32_t* base, uint32_t key)
+{
+    uint32_t offset = - ((((uint32_t)base) >> 2) + 1);
+
+    while (*base++ > key);
+
+    return (((uint32_t)base >> 2) + offset);
+}
+\end{verbatim}
+This generates the following ARM assembler:
+\begin{verbatim}
+00000488 <fast_poisson>:
+     488:       e1a03120        lsr     r3, r0, #2
+     48c:       e3e02001        mvn     r2, #1
+     490:       e0632002        rsb     r2, r3, r2
+     494:       e4903004        ldr     r3, [r0], #4
+     498:       e1530001        cmp     r3, r1
+     49c:       8afffffc        bhi     494 <fast_poisson+0xc>
+     4a0:       e0820120        add     r0, r2, r0, lsr #2
+     4a4:       e12fff1e        bx      lr
+\end{verbatim}
+
+Although this is a linear search the length of each loop is just three
+cycles -- less the conditional branch instruction which is itself also
+three cycles, when the branch is taken. Unrolling the loop 16 times,
+gives a total code length of $14+ 16\times 3 = 62$ instructions.  It
+may appear poor coding to have a linear search, where a binary search
+would take only four iterations, but those iterations are more
+complicated and the execution time rises. Furthermore with
+$\lambda=1.6$ over half the results are either $0$ or $1$, and thus
+occur early in the search. There is in fact a switch-over point where
+a combination binary-linear seach will be fastest.
+
+When combined with the JKISS-64 PRNG we now have a Poisson PRNG which
+takes $37.87$ cycles on average, with an observed minimum of $33$
+cycles, and an observed maximum of $57$.
+
+So far, so good.
+
+\section{Not So Rare Events}
+
+\begin{quotation}
+Rather than simply blaming the victims for carelessness, the horses for
+viciousness, or the generals for incompetent leadership, the
+mathematician Ladislaus Bortkiewicz, a German of Polish descent,
+studied the death rates over a 20 year period (1875‐1894). In a
+groundbreaking book entitled the ‘Law of Small Numbers’ (a phrase that
+still resonates in statistical circles) 3, he showed that the data
+followed the ‘Poisson distribution’ 
+\end{quotation}
+\begin{verbatim}
+https://onlinelibrary.wiley.com/doi/full/10.1111/anae.13261
+\end{verbatim}
+
+It is worth asking how rare the `rare events' we are considering
+actually are. In the complete SpiNNaker system we have 1,000,000 cores
+each simulating up to 256 neurons, and each neuron will be sampling
+the random number stream 10,000 times every second (for real-time
+performance). If the random number stream is a 32-bit stream, and we
+use the above technique to find a suitable Poisson number, then we
+will get $640$ occurences of $0$ from the random number stream, all of
+which in the above example translate into the Poisson output of
+$15$. Obviously we'd expect at least some of these to be $16$, $17$
+and so on, with decreasing probability.
+
+The solution is to generate a further look-up if a $0$ is returned by
+the uniform PRNG. The key advantage of this is that we only need the
+extra 32-bits in the extremely rare case of $0$ which occurs with
+probability $2^{-32}$. In all other cases the first 32-bits
+suffices. Note that it is possible to get greater distributional
+accuracy by using a further lookup in the edge-cases of the first
+look-up, {\it i.e.} when the table entry precisely matches the key
+being searched.
+
+This suggests an alternative way to calculate Poisson PRNGs {\ldots}
+
+\section{Using smaller chunks of the 32-bit Uniform PRNG}
+
+What happens if we use the 32-bit number to generate {\em four}
+Poisson values, using a look-up table based on 8-bit values? Is it
+quicker? Yes it is. Using this technique, it is possible to drive the
+average time taken down to $27$ cycles, though the worst-case is now
+over $100$ cycles.
+
+However, another possibility now arises since the total number of
+values being considered using a random byte is only $256$: use a look-up table to record
+the poisson value for $255$ of them, and drop into our original code
+if the random byte is precisely $0$\footnote{Note that we have a
+  slightly less accurate Poisson Distribution because of the granularity
+  of using  $255$ entries; this too, could be corrected by
+  special-casing -- though at the cost of increased execution time.}.
+The code needed is now:
+\begin{verbatim}
+//! \brief Generate a poisson random value for the random byte "key"
+//! using the random number stream "prng", returning the result in
+//! "result", and using two tables. The returned value is the new
+//! random number stream, less any values consumed by this routine.
+
+uint32_t* __fast_poisson_byte (uint32_t* prng,
+			      uint32_t key, uint32_t* result,
+			      uint32_t* table_8, uint32_t* table_32)
+{
+    if (key == 0) {
+        *result = fast_poisson (table_32, *prng++ >> 8);
+	return (prng);
+    }
+
+    *result = table_8[key];
+
+    return (prng);
+}
+\end{verbatim}
+Generating a full four values is then:
+\begin{verbatim}
+uint32_t* fast_poisson_bytes (uint32_t* prng, uint32_t keys, uint32_t* result,
+			      uint32_t* table_8, uint32_t* table_32)
+{
+    prng = __fast_poisson_byte (prng,  keys        & 0xff,
+                                result++, table_8, table_32);
+    prng = __fast_poisson_byte (prng, (keys >>  8) & 0xff,
+                                result++, table_8, table_32);
+    prng = __fast_poisson_byte (prng, (keys >> 16) & 0xff,
+                                result++, table_8, table_32);
+    prng = __fast_poisson_byte (prng, (keys >> 24),
+                                result,   table_8, table_32);
+
+    return (prng);
+}
+\end{verbatim}
+The {\tt table\_8} looks as follows:
+\begin{verbatim}
+uint32_t __fast_poisson_byte_table[]
+   = {6, 5, 5, 5, 5, 5, 4, 4,
+      4, 4, 4, 4, 4, 4, 4, 4,
+      4, 4, 4, 4, 3, 3, 3, 3,
+      3, 3, 3, 3, 3, 3, 3, 3,
+      3, 3, 3, 3, 3, 3, 3, 3,
+      3, 3, 3, 3, 3, 3, 3, 3,
+      3, 3, 3, 3, 3, 3, 3, 2,
+      2, 2, 2, 2, 2, 2, 2, 2,
+
+      ...
+      0, 0, 0, 0, 0, 0, 0, 0};
+\end{verbatim}
+
+Now the execution time -- including the time taken to generate
+JKISS-64 random numbers used -- is $13.89$ per Poisson Value generated
+and stored. The best case for generating four values is $55$; the
+worst case is $92$.
+
+This result -- of just under $14$ cycles -- is comparable to the
+execution time of our neuron model, and is thus acceptable for now.
+
+{\it To be Continued .... Maybe!!}
+
+I suspect that careful assembler code could squeeze a few extra cycles
+out of the table lookup, especially if we make the small table be
+byte-sized instead of word sized. (Reason: GCC is not so good with
+array-indexing for non-word data.)
+
+\section{Improving JKISS-64 with hand-assembled ARM}
+
+As suspected, hand-crafting the assembler for the pseudo-random number
+generator does indeed improve things. We exploit {\em two}
+ideas. Firstly, we can exploit loop-unrolling, and making sure that
+the state is kept in registers instead of being written back and read
+from memory on each iteration.
+
+The next idea is to look carefully at the previous use of {\tt umlal}
+in this algorithm. The issue is that the 64-bit result returned would
+require us to move the variable associated with the variable {\tt c},
+which needs to begin in the lower word, and which ends up being read
+from the higher 32-bit word. Experiments showed it was better to use a
+{\tt umull} instruction. The resultant 10 instruction loop body code is then:
+\begin{verbatim}
+     420:     mla     r4, r8, r4, r9
+     424:     eor     r5, r5, r5, lsl #5
+     428:     eor     r5, r5, r5, lsr #7
+     42c:     eor     r5, r5, r5, lsl #22
+     430:     umull   r6, ip, sl, r6
+     434:     adds    r6, r6, r7
+     438:     adc     r7, ip, #0
+     43c:     add     ip, r4, r5
+     440:     add     ip, ip, r6
+     444:     str     ip, [r0], #4
+\end{verbatim}
+Compare this, with the previous code. Gratifyingly, both versions
+produce the same answer!
+
+\section{Other Distributions}
+
+It should be obvious, but we high-light here that this table-driven
+approach can be used to generate random numbers for other discrete
+distributions, simply by changing the tables used, {\it e.g.} the
+Binomial distribution for small values of $N$, hypergeometric, {\it
+  etc, etc}.
+
+\section{Conclusions}
+
+\begin{itemize}
+\item Because the ARM is a register-register machine, it is extremely
+  important to ensure that once registers are loaded, we make the
+  maximum use of them.
+
+In particular, it makes sense to generate a lot of JKISS-64 random
+numbers in one go; then use those numbers to generate Poisson
+Events (again in one go); and then model a lot of neurons in one go.
+
+This is more efficent that modelling a neuron, generating the shot
+noise, which in turn calls the random number generator.
+
+\item Fast execution of SpiNNaker involves pre-generating at
+  compile-time, tables of results in preference to execution-time
+  calculation.
+
+\item The obvious algorithm selection for hardware is to search the
+  user-supplied 16-entry {\tt fast\_poisson\_table} (with 32-bit
+  values) in parallel. If the table is insufficiently large -- as it
+  will be with $\lambda=3.0$ -- then we drop into software to do the
+  rare tail cases, corresponding to more than $15$ events per time
+  interval.
+\end{itemize}
+

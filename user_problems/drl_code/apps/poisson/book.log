@@ -1,0 +1,514 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/MacPorts 2017_4) (preloaded format=pdflatex 2018.1.22)  30 JUL 2018 15:17
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**book
+(./book.tex
+LaTeX2e <2017-04-15>
+Babel <3.10> and hyphenation patterns for 68 language(s) loaded.
+(/opt/local/share/texmf-texlive/tex/latex/base/book.cls
+Document Class: book 2014/09/29 v1.4h Standard LaTeX document class
+(/opt/local/share/texmf-texlive/tex/latex/base/bk10.clo
+File: bk10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+) (./book.aux
+(./random.aux) (./lif.aux) (./synapse.aux) (./rowlets.aux) (./scheduler.aux)
+(./print.aux))
+\openout1 = `book.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 9.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 9.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 9.
+
+Overfull \hbox (33.79485pt too wide) in paragraph at lines 9--9
+ [][] 
+ []
+
+[1
+
+
+{/opt/local/var/db/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+\openout2 = `random.aux'.
+
+ (./random.tex
+[2
+
+
+]
+Chapter 1.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 12.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 12.
+[3] [4]
+Overfull \hbox (17.24684pt too wide) in paragraph at lines 118--118
+[]     \OT1/cmtt/m/n/10 36c:       ldr     r2, [pc, #80]   ; 3c4 <mars_kiss64_s
+imp+0x58>[] 
+ []
+
+
+Overfull \hbox (17.24684pt too wide) in paragraph at lines 118--118
+[]     \OT1/cmtt/m/n/10 374:       ldr     r3, [pc, #76]   ; 3c8 <mars_kiss64_s
+imp+0x5c>[] 
+ []
+
+
+Overfull \hbox (17.24684pt too wide) in paragraph at lines 118--118
+[]     \OT1/cmtt/m/n/10 384:       ldr     r0, [pc, #64]   ; 3cc <mars_kiss64_s
+imp+0x60>[] 
+ []
+
+
+Overfull \hbox (17.24684pt too wide) in paragraph at lines 118--118
+[]     \OT1/cmtt/m/n/10 38c:       ldr     r1, [pc, #60]   ; 3d0 <mars_kiss64_s
+imp+0x64>[] 
+ []
+
+[5] [6]
+Overfull \hbox (1.49698pt too wide) in paragraph at lines 208--208
+[]\OT1/cmtt/m/n/10 static inline uint32_t fast_poisson (uint32_t* base, uint32_
+t key)[] 
+ []
+
+[7]
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ê in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ò in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ô in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ò in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ô in font cmr10!
+
+Underfull \vbox (badness 2626) has occurred while \output is active []
+
+ [8]
+Overfull \hbox (11.99689pt too wide) in paragraph at lines 311--311
+[]\OT1/cmtt/m/n/10 //! \brief Generate a poisson random value for the random by
+te "key"[] 
+ []
+
+
+Overfull \hbox (1.49698pt too wide) in paragraph at lines 311--311
+[]\OT1/cmtt/m/n/10 //! using the random number stream "prng", returning the res
+ult in[] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 311--311
+[]\OT1/cmtt/m/n/10 //! random number stream, less any values consumed by this r
+outine.[] 
+ []
+
+
+Overfull \hbox (64.49643pt too wide) in paragraph at lines 328--328
+[]\OT1/cmtt/m/n/10 uint32_t* fast_poisson_bytes (uint32_t* prng, uint32_t keys,
+ uint32_t* result,[] 
+ []
+
+[9]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 371.
+
+ (/opt/local/share/texmf-texlive/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 371.
+ [10]) [11]
+\openout2 = `lif.aux'.
+
+
+(./lif.tex [12
+
+
+
+]
+Chapter 2.
+[13] [14]
+Overfull \hbox (27.74675pt too wide) in paragraph at lines 102--102
+[]\OT1/cmtt/m/n/10 v (t+h) = v(t) - 0.00995016625*v(t) - 0.000388204092*p(t) - 
+0.646760806[] 
+ []
+
+[15] [16]
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 281--281
+[]    \OT1/cmtt/m/n/10 ldr     r3, [r1], #4            ; load input to temporar
+y register r3[] 
+ []
+
+[17]
+Overfull \hbox (1.49698pt too wide) in paragraph at lines 281--281
+[]    \OT1/cmtt/m/n/10 smlawb  r8, r8, sl, r8          ; decay combined psp and
+ input[] 
+ []
+
+
+Overfull \hbox (17.24684pt too wide) in paragraph at lines 281--281
+[]                                    \OT1/cmtt/m/n/10 ;  which is refractory i
+f r7 >= 0[] 
+ []
+
+
+Overfull \hbox (43.49661pt too wide) in paragraph at lines 281--281
+[]    \OT1/cmtt/m/n/10 smlawb  r3, r7, r9, r7          ; decay voltage (due to 
+voltage value)[] 
+ []
+
+
+Overfull \hbox (22.4968pt too wide) in paragraph at lines 281--281
+[]    \OT1/cmtt/m/n/10 smlawt  r3, r8, r9, r3          ; decay voltage (due to 
+psp value)[] 
+ []
+
+
+Overfull \hbox (22.4968pt too wide) in paragraph at lines 281--281
+[]    \OT1/cmtt/m/n/10 subs    r3, r3, #16777216       ; subtract drift term fr
+om voltage[] 
+ []
+
+
+Overfull \hbox (48.74657pt too wide) in paragraph at lines 281--281
+[]    \OT1/cmtt/m/n/10 str     r8, [r2], #4            ; store psp back now, po
+st-incrementing[] 
+ []
+
+
+Overfull \hbox (59.24648pt too wide) in paragraph at lines 281--281
+[]    \OT1/cmtt/m/n/10 str     r3, [r2], #4            ; store back the newly c
+alculated voltage[] 
+ []
+
+
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 281--281
+[]                                    \OT1/cmtt/m/n/10 ;  into the neuron; post
+-incrementing[] 
+ []
+
+
+Overfull \hbox (11.99689pt too wide) in paragraph at lines 281--281
+[]    \OT1/cmtt/m/n/10 moveq   r3, fp                  ; if precisely zero, the
+n assign[] 
+ []
+
+
+Overfull \hbox (59.24648pt too wide) in paragraph at lines 281--281
+[]    \OT1/cmtt/m/n/10 subgt   r3, r7, #1              ; if original voltage > 
+0, then decrement[] 
+ []
+
+
+Overfull \hbox (1.49698pt too wide) in paragraph at lines 281--281
+[]    \OT1/cmtt/m/n/10 mov     r3, #20                 ; Set refractory counter
+ to 20[] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 281--281
+[]    \OT1/cmtt/m/n/10 str     r2, [r0], #4            ; Store neuron pointer v
+alue in[] 
+ []
+
+
+Overfull \hbox (59.24648pt too wide) in paragraph at lines 281--281
+[]                                    \OT1/cmtt/m/n/10 ;  spike buffer for late
+r post-processing[] 
+ []
+
+[18]
+Overfull \hbox (11.99689pt too wide) in paragraph at lines 349--349
+[]    \OT1/cmtt/m/n/10 ldr     r3, [r1], #4       ; load input to temporary reg
+ister r3[] 
+ []
+
+
+Overfull \hbox (11.99689pt too wide) in paragraph at lines 349--349
+[]    \OT1/cmtt/m/n/10 ldr     r8, [r2], #4       ; load psp current, post-incr
+ementing[] 
+ []
+
+
+Overfull \hbox (1.49698pt too wide) in paragraph at lines 349--349
+[]                               \OT1/cmtt/m/n/10 ;    which is refractory if r
+7 >= 0[] 
+ []
+
+
+Overfull \hbox (17.24684pt too wide) in paragraph at lines 349--349
+[]    \OT1/cmtt/m/n/10 smlawb  r3, r7, r9, r7     ; decay voltage (due to volta
+ge value)[] 
+ []
+
+
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 349--349
+[]    \OT1/cmtt/m/n/10 str     r8, [r2, #-8]      ; store psp back now; allow f
+or r2 change[] 
+ []
+
+
+Overfull \hbox (22.4968pt too wide) in paragraph at lines 349--349
+[]    \OT1/cmtt/m/n/10 subslt  r3, r3, #16777216  ; if non-refractory subtract 
+drift term[] 
+ []
+
+
+Overfull \hbox (11.99689pt too wide) in paragraph at lines 349--349
+[]    \OT1/cmtt/m/n/10 blge    <L_special>        ; branch-and-link to special 
+handling[] 
+ []
+
+
+Overfull \hbox (22.4968pt too wide) in paragraph at lines 349--349
+[]                               \OT1/cmtt/m/n/10 ;  if either the original vol
+tage >= 0;[] 
+ []
+
+
+Overfull \hbox (27.74675pt too wide) in paragraph at lines 349--349
+[]                               \OT1/cmtt/m/n/10 ;  voltage into the neuron; n
+b r2 change[] 
+ []
+
+[19] [20]) [21]
+\openout2 = `synapse.aux'.
+
+ (./synapse.tex [22
+
+
+
+]
+Chapter 3.
+[23]
+Overfull \hbox (46.37779pt too wide) in paragraph at lines 34--34
+[]\OT1/cmr/bx/n/14.4 A Sim-ple Non-Saturating Un-signed Synapse/Ring-
+ []
+
+[24]
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 87--87
+[]    \OT1/cmtt/m/n/10 add   r10, r2, lr, lsl #23    ; add timer value (top bit
+ masked off)[] 
+ []
+
+
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 87--87
+[]    \OT1/cmtt/m/n/10 ldr   r8, [r1, r10, lsr #22]  ; use load to add base to 
+shifted index[] 
+ []
+
+
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 87--87
+[]    \OT1/cmtt/m/n/10 add   r8, r8, lr, asr #16     ; _arithmetic_ shifted wei
+ght _added_.[] 
+ []
+
+
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 115--115
+[]    \OT1/cmtt/m/n/10 add   r6, r2, r4, lsl #23     ; add timer value (top bit
+ masked off)[] 
+ []
+
+
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 115--115
+[]    \OT1/cmtt/m/n/10 add   r7, r2, r5, lsl #23     ; add timer value (top bit
+ masked off)[] 
+ []
+
+
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 115--115
+[]    \OT1/cmtt/m/n/10 ldr   r8, [r1, r6, lsr #22]   ; use load to add base to 
+shifted index[] 
+ []
+
+
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 115--115
+[]    \OT1/cmtt/m/n/10 ldr   r9, [r1, r7, lsr #22]   ; use load to add base to 
+shifted index[] 
+ []
+
+
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 115--115
+[]    \OT1/cmtt/m/n/10 add   r8, r8, r4, asr #16     ; _arithmetic_ shifted wei
+ght _added_.[] 
+ []
+
+
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 115--115
+[]    \OT1/cmtt/m/n/10 add   r9, r9, r5, asr #16     ; _arithmetic_ shifted wei
+ght _added_.[] 
+ []
+
+
+Overfull \hbox (27.74675pt too wide) in paragraph at lines 135--135
+[]    \OT1/cmtt/m/n/10 add     r10, r2, lr,  lsl #23   ; Add the timer (with th
+e extra bit[] 
+ []
+
+
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 135--135
+[]    \OT1/cmtt/m/n/10 add     r10, r1, r10, lsl #22   ; Add the ring-buffer ba
+se register,[] 
+ []
+
+
+Overfull \hbox (71.9132pt too wide) has occurred while \output is active
+\OT1/cmr/m/sl/10 3.5.  A SIX-AND-A-HALF CYCLE SYNAPTIC ROW (OR ROWLET) PROCESSI
+NG LOOP \OT1/cmr/m/n/10 25
+ []
+
+[25]
+Overfull \hbox (1.49698pt too wide) in paragraph at lines 135--135
+[]    \OT1/cmtt/m/n/10 ldrh    r8, [r10]               ; load the ring buffer e
+lement[] 
+ []
+
+
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 135--135
+[]    \OT1/cmtt/m/n/10 subs    r8, r8, lr, lsr #16     ; _subtract_ weight from
+ ring element[] 
+ []
+
+
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 135--135
+[]    \OT1/cmtt/m/n/10 blmi    <saturation>            ; if the result is negat
+ive: saturate[] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 135--135
+[]    \OT1/cmtt/m/n/10 strh    r8, [r10]               ; store the ring buffer 
+element[] 
+ []
+
+
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 196--196
+[]    \OT1/cmtt/m/n/10 movmi  r8, #0              ; if so: set the value to the
+ maximum (=0)[] 
+ []
+
+[26]
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 196--196
+[]    \OT1/cmtt/m/n/10 strmih r8, [r10]           ; store back the result, over
+-writing -ve[] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 196--196
+[]                               \OT1/cmtt/m/n/10 ;  happened if the first subt
+raction[] 
+ []
+
+
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 196--196
+[]    \OT1/cmtt/m/n/10 movmi  r9, #0              ; if so: set the value to the
+ maximum (=0)[] 
+ []
+
+
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 196--196
+[]    \OT1/cmtt/m/n/10 strmih r9, [r11]           ; store back the result, over
+-writing -ve[] 
+ []
+
+)
+Overfull \hbox (71.9132pt too wide) has occurred while \output is active
+\OT1/cmr/m/sl/10 3.5.  A SIX-AND-A-HALF CYCLE SYNAPTIC ROW (OR ROWLET) PROCESSI
+NG LOOP \OT1/cmr/m/n/10 27
+ []
+
+[27]
+\openout2 = `rowlets.aux'.
+
+ (./rowlets.tex [28
+
+
+
+]
+Chapter 4.
+) [29]
+\openout2 = `scheduler.aux'.
+
+ (./scheduler.tex [30
+
+
+
+]
+Chapter 5.
+[31] [32] [33]) [34]
+\openout2 = `print.aux'.
+
+ (./print.tex
+Chapter 6.
+) [35
+
+
+
+] (./book.aux (./random.aux) (./lif.aux) (./synapse.aux) (./rowlets.aux)
+(./scheduler.aux) (./print.aux))
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 335 strings out of 493606
+ 3697 string characters out of 6145300
+ 62947 words of memory out of 5000000
+ 3891 multiletter control sequences out of 15000+600000
+ 10014 words of font info for 35 fonts, out of 8000000 for 9000
+ 680 hyphenation exceptions out of 8191
+ 25i,12n,21p,181b,276s stack positions out of 5000i,500n,10000p,200000b,80000s
+</opt/local/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></o
+pt/local/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></opt/lo
+cal/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmex10.pfb></opt/local/s
+hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></opt/local/share/
+texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pfb></opt/local/share/texmf-
+texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></opt/local/share/texmf-texliv
+e/fonts/type1/public/amsfonts/cm/cmr12.pfb></opt/local/share/texmf-texlive/font
+s/type1/public/amsfonts/cm/cmr17.pfb></opt/local/share/texmf-texlive/fonts/type
+1/public/amsfonts/cm/cmr6.pfb></opt/local/share/texmf-texlive/fonts/type1/publi
+c/amsfonts/cm/cmr7.pfb></opt/local/share/texmf-texlive/fonts/type1/public/amsfo
+nts/cm/cmr8.pfb></opt/local/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
+cmsl10.pfb></opt/local/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy1
+0.pfb></opt/local/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
+</opt/local/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb></opt
+/local/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti12.pfb></opt/loca
+l/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on book.pdf (35 pages, 264910 bytes).
+PDF statistics:
+ 185 PDF objects out of 1000 (max. 8388607)
+ 129 compressed objects within 2 object streams
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+

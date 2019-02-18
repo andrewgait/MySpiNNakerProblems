@@ -1,0 +1,133 @@
+\chapter[Reduced RTE]{Reducing the Run Time Executive:\\
+Speeding up Context-Switching, Scheduling, and Interrupt Handling \\
+{\it Streamlining SpiNNaker, Part V}}
+
+A major problem with ARM processors is that it takes time to load and
+store the data needed between registers and memory whenever there is a
+context switch. This context switch need not necessarily occur when
+there is an interrupt, it also occurs when there are function calls
+requiring an extensive change to the ``working set'' stored in the
+registers.
+
+The contention put forward here is that it is advantageous if the
+scheduler controls which actions are performed when, since at each
+decision point it can chose to make use of pre-loaded registers,
+thereby continuing with its current actions, or alternatively chose to
+undertake a higher priority task requiring a change of registers.
+
+Keeping the DMA engine well-stoked is key to high performance, since
+it can be thought of as a ``dumb'' parallel processor, operating
+independently of the CPU, and capable of only block copying memory.
+
+Event-based programming requires us to undertake an action in response
+to each ``event''. In SpiNNaker terms an event is usually thought of
+as receipt of an interrupt.
+
+When an interrupt occurs, enough registers to service the interrupt
+are pushed onto the stack, new registers are set up (if needed), and
+at completion of the task associated with the event, this activity
+occurs in reverse, where registers that need to be preserved between
+events are saved to memory, and the original registers restored for
+the original -- interrupted -- task to continue.
+
+As we have seen, many tasks can be performed in under $32$ cycles, which
+is the worst-case push/pop time for all $16$ registers to be saved and
+restored. If you are able to accept Lester's Aphorism:
+\begin{quote}
+  `Every basic task you'll ever want to do on SpiNNaker can be
+  accomplished -- or at least approximated -- in fewer than $32$
+  well-chosen ARM Instructions \ldots \\ \hspace*{1.5in} \ldots
+  provided the registers are pre-loaded!'
+\end{quote}
+then this suggests that responding to events should instead merely
+{\em note} that the event has occurred, and save up the processing of
+events until such time as it makes time-economic sense to switch
+context.
+
+Indeed, if we accept that doing a two-hundred-plus-cycle chunk of
+computation in one go without interruptions makes sense -- equivalent
+to a granularity of one per cent of the available time budget at
+$0.1$ms -- then we might make more use of polling and less use of
+interrupts proper. (Reference transputer, with its straight line
+uninterruptable execution, and with only jumps caused context
+switches).
+
+
+
+
+
+\section{Priorities}\label{sc:priorities}
+
+The following tasks need to be undertaken in most-important-first order.
+\begin{enumerate}
+\item Move incoming spikes into a buffer to free up the SpiNNaker
+  network fabric.
+\item Ensure that the DMA engine has been given all available DMA
+  requests.
+\item Process Synaptic Rows, so as to free up DTCM for more DMAs.
+\item (Optionally, if there are plastic synapses) Ensure Write-backs
+  are prioritised if there is insufficient space to receive more DMAs.
+\item Process Neurons.
+\item (Optionally) Pre-order the DMA of the rowlets required in the
+  {\em next} time slot.
+\item If all else fails, calculate some more random numbers!
+\item If even the PRNG storage is full: go into {\it Wait For
+    Interrupt} mode.
+\end{enumerate}
+
+\section{Incoming Spike Handling}
+
+Responding quickly to incoming spikes is vital. We therefore continue
+to use the FIQ interrupt for this purpose. Hand-crafted assembler may
+improve the performance by avoiding the eight registers shared with
+the non-FIQ code. (Inspection of code required).
+
+\section{The Care and Feeding of the DMA Engine}
+
+Having the control of the DMA in just one place ensures that we can
+more easily keep tabs on requests and their completion. One of the
+other tasks listed in Section~\ref{sc:priorities}, can intermittently
+poll to see if there has been a DMA completion. If not, it can
+continue; if there has, it can decide whether it is worth flushing the
+registers to process the transfered data, or instead whether it has
+enough spare registers to organise the refilling of the DMA pipeline
+itself, before continuing.
+
+\section{Pre-emptive DMAs of rowlets for the next phase}
+
+One task mentioned under the priorities heading is to pre-order the
+rowlets required for the next time-step. Under certain  circumstances
+we can even start processing these!
+
+The requirements are
+\begin{itemize}
+\item That all neurons have been processed. (This ensures that the row
+  of the ring buffer used as inputs in the current time-step are no
+  longer subject to update. We must ensure that they've been zero-ed,
+  by the way!)
+\item That there is sufficient time left in the current time-step to
+  make this activity worthwhile.
+\item That no newly received spike will interract with the
+  ring-buffer. We'll come back to this, as this condition can be
+  relaxed slightly.
+\end{itemize}
+
+The issue with newly received spikes is accounting accurately for the
+delay. New spikes need to have the current time-step's time added;
+rowlets intended for the next time-step need an additional $1$ added
+to the timer, since they are notionally being added one time-step later.
+
+\section{Instrumentation}
+
+It will be extremely useful to record the utilisation of the time
+budget of $20,000$ clock cycles per $0.1$ms time-step to see where
+this budget is actually expended in particular instances of user-code. If more time
+is spent handling synapses, then it would make sense to expand the
+loop-unrolling of synapses at the expense of un-rolled loops of
+neurons. And {\it vice versa}, of course, if neuron code should be
+used more extensively than na\"{\i}vely predicted.
+
+An obvious and reasonably sensible approach might be to use recordings
+of previous runs to inform the compiler about which trade-offs to
+take. A particularly keen or brave (in the ``Yes Minister!'' sense)
+implementor might even think about changing the code on-the-fly (shudder).

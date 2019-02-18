@@ -1,0 +1,22 @@
+\chapter[Snappy Synapses (2)]{Snappy Synapses (2):\\
+Fast Synaptic Rows and Rowlets\\
+{\it Streamlining SpiNNaker, Part IV}}
+
+This is the much discussed division of an entire synaptic row into
+chunks whose length corresponds to the available ring-buffer space.
+
+We will also discuss fast methods for indexing into the SDRAM space where
+the rows are stored.
+
+\section{Decoupling Spike Handling}
+
+There are now {\em two} processes in play: getting the address of the
+relevant first synaptic rowlet, and then organising that the rowlets
+are pre-fetched (and maybe, even copied into the ring buffer) prior to
+the time-step in which they are actually needed.
+
+This then results in significantly less time pressdure on the DMA
+engine. The assumption I'm making is that we postpone processing the
+pre-fetched rowlets until we have reset the ring buffer elements used
+as inputs in the current time-step -- thereby freeing what will become
+the {\em last} delay slot of the ring buffers in the next time-step.

@@ -1,0 +1,91 @@
+
+micro cortical model; numbers
+
+Assume 80,000 neurons, each with 5,000 synapses, firing at 10Hz. This
+gives 400,000,000 synapses.  If each synapse requires order 4 bytes to
+store, then this corresponds to 1.6 Gbytes, and is suggestive of the
+need for at least 12.8 chips (each SpiNNaker-1 chip has a 1Gbit SDRAM,
+so we need eight chips per Gbyte.) The MCM therefore comfortably fits onto a
+single board.
+
+Then each second we expect 800,000 spikes, and 800,000 x 5,000 =
+4,000,000,000 synaptic events.
+
+With a "clock tick" of 0.1ms, we therefore expect 80 spikes, and
+400,000 synaptic events over the entire MCM.
+
+Assuming each spike goes everywhere, then each core has to handle 80
+spikes.
+
+If we are using a 48 node board then each CPU has to cope with an
+average of 521 synaptic events per clock tick.  The memory for the
+synapses is 520,833 synapses per core, or 2 Mbytes (at 4 bytes per
+synapse). Also we need 104 neurons per board. This is all eminently
+achievable.
+
+\section{A 12 chip MCM?}
+
+How about if we try to do this with just 12 chips?
+
+Then, we get 416 neurons per core; 2,084 synaptic events per clock
+tick, and memory for the synapses runs to 2.0833 Mbytes -- which is
+fractionally above the 2Mbyte per core limit.
+
+
+DMA limits: 640 Mbyte/s for SDRAM, this means that each core can
+access on average 40Mbyte/s or 4k byte per clock tick. This is just
+1000 synapses per clock tick -- unless we introduce a fancy new
+synaptic row representation.
+
+
+Each Excitatory delay is in the range: 0.8 - 2.2 ms (delays 8,9,10.. 22)
+Each Inhibitory delay is in the range: 0.4 - 1.2 ms (delays 4,5, .. 12)
+
+If a spike rowlet covers just four delays, then associated with each Ex spike we have 6 rowlets;
+and each Inh spike has 3 (but almost 2) rowlets.
+
+Total rowlets in play at any one time is: 3x2x8 = 48 Inh, and 6x4x8 =
+192 Ex; total = 240.
+
+
+Generating some rowlets in python
+
+>>> def syn_ex (p):
+...     ns = [n for x, n in sorted (zip (np.random.uniform (0,1,512), range (512))) if x < p]
+...     ws = [int(round(w*10)) for w in np.random.normal (768, 7.68, len(ns))]
+...     ds = sorted ([int(round(d*10)) for d in np.random.normal (1.5, 0.75, len(ns))])
+...     return (ns, ws, ds)     
+
+
+                L2/3e	L2/3i	L4e		L4i    	L5e   	L5i            L6e	        L6i	       Th
+                20683 	5834 	21915 	5479 	4850 	1065 	14395      2948 	902 = 77169+902
+                80.79       22.78      85.6          21.4         18.9         4.16          56.23       11.51
+
+                                                                  from				
+                L2/3e	L2/3i	L4e		L4i    	L5e   	L5i            L6e	        L6i	       Th
+to  L2/3e	0.101	0.169	0.044	0.082	0.032	0.0	        0.008	0.0   	0.0
+     L2/3i	0.135	0.137	0.032	0.052	0.075	0.0	        0.004	0.0    	0.0
+     L4e	0.008	0.006	0.050	0.135	0.007	0.0003	0.045	0.0   	0.0983
+     L4i	0.069	0.003	0.079	0.160	0.003	0.0	        0.106	0.0   	0.0619
+     L5e	0.100	0.062	0.051	0.006	0.083	0.373	0.020	0.0	        0.0
+     L5i	0.055	0.027	0.026	0.002	0.060	0.316	0.009	0.0    	0.0
+     L6e	0.016	0.007	0.021	0.017	0.057	0.020	0.040	0.225	0.0512
+     L6i	0.036	0.001	0.003	0.001	0.028	0.008	0.066	0.144	0.0196
+
+Name	Value	Description
+w ± δw	87.8 ± 8.8 pA	Excitatory synaptic strengths sd = 0.1 apart
+                                        from  L4e and L2/3e which is 0.05
+
+g	–4	Relative inhibitory synaptic strength
+de ± δde	1.5 ± 0.75 ms	Excitatory synaptic transmission delays
+di ± δdi	0.8 ± 0.4 ms	Inhibitory synaptic transmission delays
+
+Neuron model
+Name	Value	Description
+τm	10 ms	Membrane time constant
+τref	2 ms	Absolute refractory period
+τsyn	0.5 ms	Postsynaptic current time constant
+Cm	250 pF	Membrane capacity
+V_reset	−65 mV	Reset potential
+θ	−50 mV	Fixed firing threshold
+νth	15 Hz	Thalamic firing rate during input period

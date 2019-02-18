@@ -1,0 +1,414 @@
+\chapter[Nippy Neurons]{Nippy Neurons:\\
+Fast Integrate-and-Fire Neurons\\
+{\it Streamlining SpiNNaker, Part II}}
+
+The provision of different Neuron Models -- and especially
+user-defined or modified models -- is a critical factor for the
+acceptance of a neural simulator. Nevertheless, in a neuromorphic
+setting, where there is less scope for highly-detailed models, we need
+to ensure that we do the simple things well. In particular, it is one
+of the key goals to ensure that the very simple
+leaky-integrate-and-fire (LIF) neural models execute as fast as
+possible.
+
+In addition, a detailed consideration of the mechanisms needed to
+improve the performance of LIF neurons will feed into better code
+for other, more complicated, neuron models.
+
+\section{LIF ODE}
+
+A simple ODE system for the neuron membrane voltage ($v$) and
+exponentially-shaped current post-synaptic potential ($p$) is:
+\[\begin{array}{ccrcrcr}
+v' & = & a_{00} v  &+& a_{10} p &+& b_0\\
+p' & = & & & a_{11} p\\
+\end{array}\]
+As the matrix-like subscripts suggest, this ODE can also be expressed
+in matrix form:
+\[\begin{array}[c]{c}
+\frac{d}{dt}~\mbox{\bf x} = \left(\begin{array}[c]{c} v' \\ p' \end{array}\right)
+=\left(\begin{array}[c]{cc} 
+a_{00} & a_{10}\\
+ 0 &  a_{11}\end{array}\right) . \left(\begin{array}[c]{c} v \\ p \end{array}\right) + \left(\begin{array}[c]{c}b_0\\0\end{array}\right)
+= A \mbox{\bf x} +
+    \mbox{\bf b}
+\end{array}\]
+
+And therefore this is a {\em linear} ODE system. And {\em they} have an
+exact solution, given a starting value for the vector
+$\mbox{\bf x} =\mbox{\bf x}_0$. The solution to the {\em Initial Value
+  Problem} (IVP):
+\[\frac{d}{dt}~\mbox{\bf x} = A \mbox{\bf x} + \mbox{\bf
+    b},~\mbox{with}~\mbox{\bf x}(t_0) = \mbox{\bf x}_0\]
+at time $h+t_0$ is:
+\[\mbox{\bf x}(h+t_0) = e^{h A} \mbox{\bf x}(t_0) +h\phi_1(h A)
+  \mbox{\bf b}\] Fortunately the matrix exponential and the vector
+$\phi_1(h A) \mbox{\bf b}$ can now be easily and accurately determined
+by Nick Higham's Algorithm and Saad's Trick. Higham's Algorithm is
+available in the python {\tt scipy.linalg} library. Saad's Trick is
+worth mentioning; if we have a matrix exponential function, then we
+can construct both $e^{h A}$ and $\phi_1(h A) \mbox{\bf b}$
+simultaneously. The observation is that:
+\[\exp \left(\begin{array}[c]{c|c} hA & \mbox{\bf b}\\ \hline 0 & 0\end{array}\right) = 
+  \left(\begin{array}[c]{c|c} e^{hA} & \phi_1(h A) \mbox{\bf b}\\
+      \hline 0 & 1\end{array}\right) \] In short, just attach the
+vector \mbox{\bf b} to the right hand side of the matrix $h A$, attach a
+row of zeros below, and $\phi_1(h A) \mbox{\bf b}$ will be produced
+using the standard matrix exponential routine.
+
+It is worth pointing out that this routine can go wrong when the
+original matrix $A$ is ill-conditioned. $A$ is ill-conditioned if
+either it or its inverse are ``nearly singular'', {\it i.e} have
+determinant near zero. So, first check for a non-zero determinant, and
+then check the condition number. This has been observed in a neural
+setting by Markram and Tsodyks, who advise against giving the neuron
+and the psp the same time-constant. In our terms this amounts to
+making $a_{00}=a_{11}$, and thus giving a singular matrix.
+
+A python sketch for this calculation is:
+\begin{verbatim}
+import numpy as np
+from scipy.linalg import expm
+
+h          =    0.1 # Timestep
+v_rest     =  -65.0 # Resting voltage
+tau_m      =   10.0 # Membrane time-constant
+tau_syn    =    2.0 # PSP time-constant
+c_m        =  250.0 # Membrane capacitance
+
+mtx = array ([[-1.0/tau_m,   1.0/c_m,     v_rest],
+              [         0,  -1.0/tau_syn,      0],
+              [         0,         0,          0]])
+\end{verbatim}
+Then the expression $\mbox{\tt expm} (0.1 \ast \mbox{\tt mtx}) - \mbox{\tt np.identity}(3)$
+gives the result:
+\begin{verbatim}
+   array([[-9.95016625e-03,  3.88204092e-04, -6.46760806e+00],
+          [ 0.00000000e+00, -4.87705755e-02,  0.00000000e+00],
+          [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00]])
+\end{verbatim}
+For reasons which will become apparent later, notice that all of these
+constants are quite small, except the term
+$\phi_1(0.1 A) \mbox{\bf b}$ which is about $-6.4676$. The reason is
+that we are calculating the {\em change} from the current vector
+$\mbox{x}(t)$, and provided that the time step is small enough, the
+change should be similarly limited. Indeed as $h\to 0$, $e^{hA}\to
+I$. A more rigourous result comes from theory and states that the
+solution to a linear ODE system will necessarily be
+continuous. Expanding out the matrix above we get:
+\begin{verbatim}
+v (t+h) = v(t) - 0.00995016625*v(t) - 0.000388204092*p(t) - 0.646760806
+p (t+h) = p(t)                        - 0.0487705755*p(t)
+\end{verbatim}
+
+A na\"{\i}ve C program for the ODE evolution defined above, assuming a
+struct-like type for the neuron, is then:
+\begin{verbatim}
+typedef struct {double p; double v;} neuron_t, *neuron_ptr;
+
+...
+
+void process_neuron (neuron_ptr np)
+{
+    double p, v;
+
+    p = *np->p;
+    v = *np->v;
+
+    v -= v * 0.00995016625;
+    v += p * 0.000388204092;
+    v -=     0.646760806;
+
+    p -= p * 0.0487705755;
+
+    *np->p = p;
+    *np->v = v;
+}
+\end{verbatim}
+There are a significant number of problems with this code, which we
+will subsequently circumvent, but the standout initial problem is that
+it uses {\tt double}s, and SpiNNaker does not have hardware support
+for this type!
+
+As an alternative the SpiNNaker team encourages users to use the ISO
+fixed point arithmetic standard for C, which is supported by {\tt
+  gcc}, and also by the extensions the SpiNNaker team have added to
+the ARM ACLE ``ARM Common Language Extensions'' by way of C intrinsics
+for the special DSP instructions. The drawback with using the ISO
+fixed point package is that it is not yet well-enough integrated into GCC,
+and thus can be quite expensive to use. One of the reasons for this
+expense is that the three {\tt accum} multiplications operate by
+subroutine call (which adds six cycles), and internally multiply the
+two 32-bit numbers -- as integers -- to produce a 64-bit result, which
+is then arithmetically right-shifted by 15-bits. Done correctly, it is
+possible to butt these instructions together without interlocks; nevertheless, the
+multiplication will take at least three cycles (or four if the Most
+Significant Word is used first). In addition, this code cannot take
+advantage of the multiply-accumulate for two reasons: firstly the
+compilation is not smart enough to spot the optimization, but secondly
+two of the three usages involve {\em multiply-subtract} which is not
+available in ARM-9. Changing the multipliers back to negative numbers
+at least solves the second problem, as we shall see, later in Section~\ref{sc:dsp}.
+
+\section{Boring Stuff about our Current Implementation}
+
+{\it Blah, blah, blah!}
+
+\section{Exploiting the DSP Instructions}\label{sc:dsp}
+
+The DSP Instructions available in the {\tt v5te} instruction set
+include a useful set of fixed point signed multiply, and signed
+multiply-accumulate instructions. We'll look at the {\tt smlawx} case
+({\tt x} is set to one of {\tt t} or {\tt b}).
+\begin{verbatim}
+        smlawb r0, r1, r2, r3
+\end{verbatim}
+In the above assembler the effect of this instruction is to multiply
+the 32-bit signed value in register {\tt r1} by the {\em lower}
+16-bits in register {\tt r2} treated as a signed 16-bit fraction, and
+then arithmetic shift this resulting product right one bit. This is
+then added to the accumulator in register {\tt r3} and the result is
+placed in register {\tt r0}. This instruction takes just one cycle,
+provided that the result in register {\tt r0} is either used as an
+input accumulator to another DSP multiply-accumulate in the next
+instruction, or it is not required for at least one instruction. If
+the result {\em is} required by the next non-DSP multiply-accumulate
+instruction, then this instruction takes two cycles.
+
+The odd behaviour with the extra right-shift by one bit has the
+apparent effect of making a multiplication by the 16-bit ISO signed
+fraction ({\tt fract}) $-1$ (represented by having the bit-pattern
+{\tt 0x8000} in {\tt r2}) give the effect of multiplication by
+$-1/2$. In other words the available multipliers run from $-1/2$ to
+$+1/2 - 1/32768$.
+
+\begin{verbatim}
+typedef struct {int p; int v;} neuron_t, *neuron_ptr;
+
+...
+
+void process_neuron (neuron_ptr np)
+{
+    int p, v;
+    int c[4] = {0x0000fd74, // representing -0.00995016625
+                0x00000019, // representing  0.000388204092
+                0x0000F384, // representing -0.0487705755
+                0x000052c9};// representing  0.646760806
+
+    p = *np->p;
+    v = *np->v;
+
+    v  = __smlawb (v, c[0], v);
+    v  = __smlawb (p, c[1], v);
+    v -= c[3];
+
+    p  = __smlawb (p, c[2], p);
+
+    (*np++)->p = p;
+    (*np++)->v = v;
+}
+\end{verbatim}
+
+{\em Blah, blah, blah! Performance of this and other approaches.}
+
+\section{Identical Leaky-Integrate-and-Fire Neurons}
+
+A number of ``tricks'' have been rolled into this clever code.
+
+The first important point to note is that setting the neurons'
+threshold to $0$, by treating all voltages relative to $v_{\Theta}$
+means that we can combine a standard ARM data-processing instruction
+with the threshold detection, by -- for example -- substituting the {\tt
+  subs} instruction for {\tt sub}. This works because the {\tt Z} and
+{\tt N} flags are set in relation to $0$, whereas comparing with
+$v_{\Theta}\not= 0$ would require an explicit {\tt cmp} instruction.
+
+With this decision, we have now freed up half the available voltage --
+that greater than or equal to $0$ -- for other purposes. The neurons
+we are looking at in this paper have a refractory period, where the
+neuron counts out $n$ time-steps before the voltage is reset (to
+$v_{\mbox{reset}}$). Once more, having the refractory counter count
+down towards $0$ and detecting the need for a reset of the voltage
+when $0$ is reached saves unnecessary {\tt cmp} instructions.
+
+\begin{equation}
+v = \left\{\begin{array}[c]{ll}
+\mbox{refractory timer with $v$ time-steps remaining} &\mbox{if $v > 0$}\\
+\mbox{refractory period over, reset required} &\mbox{if $v = 0$}\\
+\mbox{normal ODE processing}&\mbox{if $v < 0$}\\
+\end{array}\right.
+\end{equation}
+
+We'll now show a first attempt at the ARM assembler for the neuron. We
+assume that the 16-bit constants for the decays are in registers {\tt
+  r9} and {\tt sl} (also known as {\tt r10}). The reset voltage is in
+register {\tt fp} (also known as {\tt r11}). The PSP is held in {\tt
+  r8} and the original voltage in {\tt r7}. Calculation of the new
+voltage occurs in temporary register {\tt r3}.
+\begin{verbatim}
+    ldr     r8, [r2]                ; load psp current
+    ldr     r7, [r2, #4]            ; load voltage
+    ldr     r3, [r1], #4            ; load input to temporary register r3
+    add     r8, r3, r8              ; combine psp and input
+    smlawb  r8, r8, sl, r8          ; decay combined psp and input
+    cmp     r7, #0                  ; test original voltage,
+                                    ;  which is refractory if r7 >= 0
+    bge     <L_refract>
+
+    smlawb  r3, r7, r9, r7          ; decay voltage (due to voltage value)
+    smlawt  r3, r8, r9, r3          ; decay voltage (due to psp value)
+    subs    r3, r3, #16777216       ; subtract drift term from voltage
+                                    ;  and also setting flags
+    bge     <L_spike>               ; spike generated if r3 >= 0
+L1:
+    str     r8, [r2], #4            ; store psp back now, post-incrementing
+    str     r3, [r2], #4            ; store back the newly calculated voltage 
+                                    ;  into the neuron; post-incrementing
+    bx      lr                      ; return
+
+L_refract:
+    moveq   r3, fp                  ; if precisely zero, then assign
+                                    ;   reset voltage from fp
+    subgt   r3, r7, #1              ; if original voltage > 0, then decrement
+                                    ;     refractory counter
+    b       <L1>
+
+L_spike:
+    mov     r3, #20                 ; Set refractory counter to 20
+    str     r2, [r0], #4            ; Store neuron pointer value in
+                                    ;  spike buffer for later post-processing
+    b       <L1>
+\end{verbatim}
+In the most frequent case -- without any refactory or spiking
+operations -- this code ought to execute in just 13 cycles; but it
+doesn't. The problem is that the load and multiply-accumulate
+instructions both have an {\em interlock} if their inputs or outputs
+are still in one of the ARM processor's pipeline stages.
+
+For example the {\tt subs} instruction following the {\tt smlawt}
+instruction introduces a one cycle delay because register {\tt r3} is
+not immediately available. Similarly the {\tt add} instruction also cannot
+access register {\tt r3} since the result of the {\tt ldr} instruction
+is not immediately available.
+
+A good compiler should be able to rearrange the instructions so that
+something useful occurs between the generation and usage of a
+register; but -- as Mae West might almost have observed -- good
+compilers are hard to find. This goes {\it a fortiori} for compilers
+that know about the DSP instructions!
+
+So, we must revert to the good old Mk 1 ``Human'' Compiler, to
+re-order these particular instructions.
+
+Before we do so, there is one other useful trick, and that is to try
+to combine the effects of the special cases for spiking and refractory
+periods into a single sub-routine. A quick calculation shows that if
+the neurons spike at a frequency of $10$Hz, have a refractory period
+of $2$ms, and the time-step is set at $0.1$ms, then these special
+cases are: spiking ($10$), refractory period ($200$) and ordinary
+ODE-solving ($10,000-210=9,790$). In short the common case is
+ODE-solving and it occurs $97.9${\%} of the time. Thus some small
+amount of re-calculation within the sub-routine -- if needed -- will
+often be worthwhile.
+
+\section{A Twelve-Cycle LIF Neuron Loop-body}
+
+The LIF dynamics for a single neuron update are coded here. This
+includes the shaping of the PSP or synapse current as well. It is
+coded in assembler for performance, both execution speed and code
+density. The resultant assembler has three parts: a header, a body
+with unrolled loops, and a tail. The header is as follows, and stacks the used registers,
+as per the EABI protocol. It also loads the constants
+from the {\tt kp} argument.
+\begin{verbatim}
+    push    {r7, r8, r9, sl, fp, lr} ; stack used registers
+    ldr     r9, [r3]                 ; load k0
+    ldr     sl, [r3, #4]             ; load k1
+    ldr     fp, [r3, #8]             ; load k2
+\end{verbatim}
+The body consists of as many copies of the following twelve instructions
+as it is deemed sensible to have. $8$, $16$ or perhaps even $32$ seem sensible.
+\begin{verbatim}
+    ldr     r3, [r1], #4       ; load input to temporary register r3
+    ldr     r8, [r2], #4       ; load psp current, post-incrementing
+    ldr     r7, [r2], #4       ; load voltage, post-incrementing
+    add     r8, r3, r8         ; combine psp and input
+    cmp     r7, #0             ; test original voltage,
+                               ;    which is refractory if r7 >= 0
+    smlawb  r8, r8, sl, r8     ; decay combined psp and input
+    smlawb  r3, r7, r9, r7     ; decay voltage (due to voltage value)
+    smlawt  r3, r8, r9, r3     ; decay voltage (due to psp value)
+    str     r8, [r2, #-8]      ; store psp back now; allow for r2 change
+    subslt  r3, r3, #16777216  ; if non-refractory subtract drift term
+                               ;  from voltage and also set flags
+    blge    <L_special>        ; branch-and-link to special handling
+                               ;  if either the original voltage >= 0;
+                               ;  or the new voltage is >= 0.
+    str     r3, [r2, #-4]      ; store back the newly calculated
+                               ;  voltage into the neuron; nb r2 change
+\end{verbatim}
+Finally we have the tail part, which consists of the return (including
+unstacking all the clobbered registers), and the special handling
+sub-routine.
+\begin{verbatim}
+    pop     {r7, r8, r9, sl, fp, pc}; unstack and return.
+
+L_special:
+    cmp     r7, #0           ; re-test for refractory period
+                             ;  i.e. (original voltage >= 0)
+    moveq   r3, fp           ; if precisely zero, then assign
+                             ;  reset voltage from k2
+    subgt   r3, r7, #1       ; if original voltage > 0, then
+                             ;  decrement refractory counter
+    bxge    lr               ; if original voltage >= 0, then
+                             ;  return
+
+; if we get to here the newly calculated voltage must be >= 0,
+; and thus we generate a spike
+
+    mov     r3, #20          ; Set refractory counter to 20
+    str     r2, [r0], #4     ; Store neuron pointer value in
+                             ;  spike buffer for later post-
+                             ;  processing
+    bx      lr               ; return to main neuron processing.
+\end{verbatim}
+Sure enough, this routine executes in $12$ cycles for ODE processing,
+$20$ cycles for refractory processing, and $23$ cycles when a spike
+occurs. Note that in the last case we have not accounted for
+calculating the 32-bit spike packet from the neuron address, nor for
+its transfer onto the network fabric.
+
+Given the previous assumptions above about neuron firing frequency, refractory
+period, and a $0.1$ms time-step, the expected execution time (with the
+loop unrolled 32 times) is $12.9835$ cycles per neuron, on average,
+including the call/return sequence and the loading of the three
+constant registers.
+
+{\em Further details of measurements and trade-offs needed here!}
+
+\section{Generalising the LIF Model}
+
+Of course not all PyNN scripts have identical LIF neuron
+parameters. If each neuron has a different parameter set -- perhaps
+even with different ODE parameters -- then we will need to provide an
+extra pointer in the {\tt struct} representing each neuron, to access
+these different parameters. This will behave in the same way as
+register  {\tt r3} in the previous section, but we will need to load
+in the constants within the loop for each register.
+
+By calculation ({\em not measurement}), I estimate this adds an
+additional $4$ cycles to the average case. Note that access to the
+refractory counter reset value and the reset voltage is only required
+when a spike occurs, and thus we only need to load the constants
+corresponding to the matrix multipliers, and the
+$h\phi_1(h A)\mbox{\bf b}$, or drift, term.
+
+\section{Other Neuron Models}
+
+As the complexity of the mathematics needed to solve the ODE
+increases, the squeezing out of a few cycles here and there has a
+lesser proportional effect. Nevertheless, it is worth looking at the
+Izhikevich Neuron, which is possibly the next most simple to the LIF
+model.
+
+{\em More stuff here..}

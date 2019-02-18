@@ -1,0 +1,34 @@
+
+
+Yesterday Steve asked me about porting my assembler code to SpiNNaker-2. A cursory inspection shows this ought to be possible, but my knowledge of Thumb-2 and its cycle counts is fairly rudimentary.
+
+Here's the current six-cycle ARM code for a single synapse
+
+   ldr syn, [[syn_ptr]], #4   ; load the next synaptic word
+                                        ; syn = wwww wwww wwww .... .... dddd nnnn nnnn
+					; where w is a weight bit; d is a delay bit; n is an index bit,
+					;  and . is don't care
+
+; The time_base register holds the rotated base address, and lowest 4-bits of the
+; current time. Suppose the current ring_buffer base address is 0x00406000, and the current time is .... 0111
+;
+; Then the time_base register will hold:
+;    0x70000203
+; Thus:
+   add    ring_addr, time_base], syn, lsl #20  ; add delay/index to timer_base
+
+; results in ring_addr  = (7+D) NN0 0203
+;
+; with the carry in the addition of 7 and D having been ignored.
+
+   ror ring_addr, ring_addr, #19
+
+; we now have ring_addr = 0x0040 6000 | ((7+d)NN) << 1
+
+  ldrh  r0, [ring_addr]
+  subs r0, r0, syn, lsr #20
+  strplh r0, [ring_addr]
+
+The tricksy bit here is that we subtract the weight from 0xffff, and thus saturation occurs when we transition from non-negative (which is OK) to negative (saturation has occurred). This is important since r0 itself records that a saturation has occurred.
+
+We also omit the ring-buffer write-back if a saturation has occurred. This allows us to reconstruct the subtraction from r0 and the original data if needed.
