@@ -378,11 +378,11 @@ void c_main (void)
 	sp[i]     = 0;
 	n[i].psp = 0;
 	n[i].v   = (uint32_t)(-1);//20; // start of refractory period
-	kp = neuron_parameter;
     }
+	kp = neuron_parameter;
 
-
-    for (i = 0; i < 30; i++) {
+    uint32_t runtime = 1000; // 30;
+    for (i = 0; i < runtime; i++) {
       if (i > 0)
 	  for (j = 0; j < 32; j++)
 	      ip[j] = 0;
@@ -406,7 +406,7 @@ void c_main (void)
 	((uint32_t)(s[0]) - (uint32_t)(n))/8, i/10, i%10);*/
     }
 
-    io_printf (IO_BUF, "  t = %3d.%d: v = ", i/10, i%10);
+    io_printf (IO_BUF, " end t = %3d.%d: v = ", i/10, i%10);
     print_voltage (n[0].v);
     io_printf (IO_BUF, " [%x], psp = %u\n", n[0].v, n[0].psp);
 

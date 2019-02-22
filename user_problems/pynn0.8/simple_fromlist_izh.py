@@ -5,27 +5,15 @@ import spynnaker8 as sim
 
 sim.setup(timestep=1.0)
 
-cell_params_lif = {'cm': 0.25,
-                   'i_offset': 0.0,
-                   'tau_m': 20.0,
-                   'tau_refrac': 2.0,
-                   'tau_syn_E': 0.1,
-                   'tau_syn_I': 0.1,
-                   'v_reset': -70.0,
-                   'v_rest': -65.0,
-                   'v_thresh': -50.0
-                   }
-
 input = sim.Population(1, sim.SpikeSourceArray([[1]]), label='input')
-receiver = sim.Population(2, sim.IF_curr_exp(**cell_params_lif), label='receiver')
-
-receiver.initialize(v=[-65.0,-62.0])
+receiver = sim.Population(1, sim.Izhikevich(), label='receiver')
 
 columns = ["i", "j", "delay", "weight"]
 connection_list = [
-    (0, 0, 1.0, 5.0),
-    (0, 1, 2.0, 8.0)
+    (0, 0, 1.0, 1.0),
     ]
+#    (0, 1, 2.0)#, 3.0)
+#    ]
 
 conn = sim.FromListConnector(connection_list, column_names=columns)
 # conn = sim.FromListConnector(connection_list)
