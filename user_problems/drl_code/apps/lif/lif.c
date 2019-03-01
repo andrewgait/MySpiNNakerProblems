@@ -381,7 +381,7 @@ void c_main (void)
     }
 	kp = neuron_parameter;
 
-    uint32_t runtime = 1000; // 30;
+    uint32_t runtime = 100; // 30;
     for (i = 0; i < runtime; i++) {
       if (i > 0)
 	  for (j = 0; j < 32; j++)

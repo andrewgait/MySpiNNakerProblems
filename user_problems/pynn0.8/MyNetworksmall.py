@@ -1,10 +1,15 @@
-import spynnaker8 as pynn
-import numpy as np
+import matplotlib
+matplotlib.use('SVG')
 import matplotlib.pyplot as plt
+import numpy as np
+
+import spynnaker8 as pynn
+
 import Parameters_small as p
+
 from pyNN.random import NumpyRNG,RandomDistribution
 from pyNN.utility import get_script_args,Timer
-from pyNN.utility.plotting import Figure,Panel
+
 
 
 simulator_Name='spiNNaker'
@@ -13,7 +18,7 @@ extra={}
 
 rank=pynn.setup(timestep=p.dt,max_delay=p.delay_ex,**extra)
 
-pynn.set_number_of_neurons_per_core(pynn.IF_curr_exp,100)
+pynn.set_number_of_neurons_per_core(pynn.extra_models.IFCurDelta,100)
 pynn.set_number_of_neurons_per_core(pynn.SpikeSourcePoisson,100)
 
 import socket
@@ -32,25 +37,25 @@ def nprint(s):
     if (rank==0):
        print s
 
-print "%d Settign up random number generator"%(rank)
+print "%d Setting up random number generator"%(rank)
 rng=NumpyRNG(seed=1,parallel_safe=True)
 
 
 print "%d Creating excitatory population with %d neurons."%(rank,p.N_pyr)
 
-E_net=pynn.Population(p.N_pyr,pynn.IF_curr_exp(**p.neuron_params),label="E_pop")
+E_net=pynn.Population(p.N_pyr,pynn.extra_models.IFCurDelta(**p.neuron_params),label="E_pop")
 
 print "%d Creating PV population with %d neurons."%(rank,p.N_PV)
 
-PV_net=pynn.Population(p.N_PV,pynn.IF_curr_exp(**p.neuron_params),label="PV_pop")
+PV_net=pynn.Population(p.N_PV,pynn.extra_models.IFCurDelta(**p.neuron_params),label="PV_pop")
 
 print "%d Creating VIP population with %d neurons."%(rank,p.N_VIP)
 
-VIP_net=pynn.Population(p.N_VIP,pynn.IF_curr_exp(**p.neuron_params),label="VIP_pop")
+VIP_net=pynn.Population(p.N_VIP,pynn.extra_models.IFCurDelta(**p.neuron_params),label="VIP_pop")
 
 print "%d Creating SST population with %d neurons."%(rank,p.N_SST)
 
-SST_net=pynn.Population(p.N_SST,pynn.IF_curr_exp(**p.neuron_params),label="SST_pop")
+SST_net=pynn.Population(p.N_SST,pynn.extra_models.IFCurDelta(**p.neuron_params),label="SST_pop")
 
 print "%d Initialising membrane potentials to random values between %g mV and %g mV."%(rank,p.V_reset,p.V_th)
 
@@ -92,34 +97,38 @@ L4exinSST=pynn.Population(p.N_SST,pynn.SpikeSourcePoisson(rate=p.ex_rateL4exin),
 L4inex=pynn.Population(p.N_pyr,pynn.SpikeSourcePoisson(rate=p.ex_rateL4inex),label="L4inex")
 L4ininPV=pynn.Population(p.N_PV,pynn.SpikeSourcePoisson(rate=p.ex_rateL4inin),label="L4ininPV")
 L4ininVIP=pynn.Population(p.N_VIP,pynn.SpikeSourcePoisson(rate=p.ex_rateL4inin),label="L4ininVIP")
-L4ininSST=pynn.Population(p.N_SST,pynn.SpikeSourcePoisson(rate=p.ex_rateL4inin),label="L4ininVIP")
+L4ininSST=pynn.Population(p.N_SST,pynn.SpikeSourcePoisson(rate=p.ex_rateL4inin),label="L4ininSST")
 
 
 
 print "%d Setting up recording in excitatory population."%(rank)
 
-E_net.record("spikes")
+E_net_view = pynn.PopulationView(E_net,xrange(2069))
+E_net_view.sample(100).record("spikes")
 
 print "%d Setting up recording in PV neurons."%(rank)
 
-PV_net.record("spikes")
+PV_net_view=pynn.PopulationView(PV_net,xrange(146))
+PV_net_view.sample(100).record("spikes")
 
 print "%d Setting up recording in VIP neurons."%(rank)
 
-VIP_net.record("spikes")
+VIP_net_view=pynn.PopulationView(VIP_net,xrange(291))
+VIP_net_view.sample(100).record("spikes")
 
 print "%d Setting up recording in SST neurons."%(rank)
 
-SST_net.record("spikes")
+SST_net_view=pynn.PopulationView(SST_net,xrange(146))
+SST_net_view.sample(100).record("spikes")
 
 
 # Connectors for Layer 2/3 Neurons
-PVPVconnector=pynn.FixedProbabilityConnector(p.ep_PVPV*p.ep_pr)
-PVPyrconnector=pynn.FixedProbabilityConnector(p.ep_PVPyr*p.ep_pr)
-VIPSSTconnector=pynn.FixedProbabilityConnector(p.ep_VIPSST*p.ep_pr)
-SSTPVconnector=pynn.FixedProbabilityConnector(p.ep_SSTPV*p.ep_pr)
-SSTVIPconnector=pynn.FixedProbabilityConnector(p.ep_SSTVIP*p.ep_pr)
-SSTPyrconnector=pynn.FixedProbabilityConnector(p.ep_SSTPyr*p.ep_pr)
+PVPVconnector=pynn.FixedProbabilityConnector(p.ep_PVPV)
+PVPyrconnector=pynn.FixedProbabilityConnector(p.ep_PVPyr)
+VIPSSTconnector=pynn.FixedProbabilityConnector(p.ep_VIPSST)
+SSTPVconnector=pynn.FixedProbabilityConnector(p.ep_SSTPV)
+SSTVIPconnector=pynn.FixedProbabilityConnector(p.ep_SSTVIP)
+SSTPyrconnector=pynn.FixedProbabilityConnector(p.ep_SSTPyr)
 PyrInconnector=pynn.FixedProbabilityConnector(p.ep_PyrIn)
 PyrPyrconnector=pynn.FixedProbabilityConnector(p.ep_PyrPyr)
 
@@ -175,21 +184,29 @@ L4in_to_SST=pynn.Projection(L4ininSST,SST_net,L4_connector,receptor_type="inhibi
 
 pynn.run(p.simtime)
 
-esp=E_net.get_data("spikes")
+esp=E_net_view.get_data("spikes")
 
-isp1=PV_net.get_data("spikes")
+isp1=PV_net_view.get_data("spikes")
 
-isp2=VIP_net.get_data("spikes")
+isp2=VIP_net_view.get_data("spikes")
 
-isp3=SST_net.get_data("spikes")
-
-
+isp3=SST_net_view.get_data("spikes")
 
 
-Figure(Panel(esp.segments[0].spiketrains,yticks=True,xticks=True,markersize=01,xlim=(0,p.simtime)),Panel(isp1.segments[0].spiketrains,yticks=True,xticks=True,markersize=01,xlim=(0,p.simtime)),Panel(isp2.segments[0].spiketrains,yticks=True,xticks=True,markersize=01,xlim=(0,p.simtime)),Panel(isp3.segments[0].spiketrains,yticks=True,xticks=True,markersize=01,xlim=(0,p.simtime)),title="Spike trains",annotations="Simulated with {}".format(pynn.name()))
+def plot_spiketrains(segment):
+    for spiketrain in segment.spiketrains:
+        y = np.ones_like(spiketrain) * spiketrain.annotations['source_id']
+        plt.plot(spiketrain, y, '.', ms=0.1, c='k')
+
+plt.figure()
+plot_spiketrains(isp3.segments)
+plt.xlabel('Time (ms)')
+plt.savefig('SST_spikes_deltamodel_pyr10000pv10000vip7000sst7000(1).png')
 
 
-plt.show()
+#Figure(Panel(esp.segments[0].spiketrains,yticks=True,xticks=True,markersize=01,xlim=(0,p.simtime))).save("Excitatory Spikes.png")
+
+
 
 
 pynn.end()

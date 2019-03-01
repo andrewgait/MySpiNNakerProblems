@@ -13,17 +13,17 @@ N_SST=146
 
 # Scaling factor for inhibitory connection probabilities
 
-ep_pr=0.2
+ep_pr=0.2 
 
 
 # Connection Probabilities
 
-ep_PVPV=1.0
-ep_PVPyr=1.0
-ep_VIPSST=0.625
-ep_SSTPV=0.857
-ep_SSTVIP=1.0
-ep_SSTPyr=1.0
+ep_PVPV=1.0*ep_pr
+ep_PVPyr=1.0*ep_pr
+ep_VIPSST=0.625*ep_pr
+ep_SSTPV=0.857*ep_pr
+ep_SSTVIP=1.0*ep_pr
+ep_SSTPyr=1.0*ep_pr
 ep_PyrIn=0.135
 ep_PyrPyr=0.101
 
@@ -54,10 +54,10 @@ J_SSTPyr=-6.048
 
 # Background input rates
 
-p_bgexrate=15000.0
-p_bgpvrate=15000.0
-p_bgviprate=5000.0
-p_bgsstrate=5000.0
+p_bgexrate=10000.0
+p_bgpvrate=10000.0
+p_bgviprate=7000.0
+p_bgsstrate=7000.0
 
 
 
@@ -78,7 +78,6 @@ ex_rateL4exex=N_L4exex*p_rate
 ex_rateL4exin=N_L4exin*p_rate
 ex_rateL4inex=N_L4inex*p_rate
 ex_rateL4inin=N_L4inin*p_rate
-
 
 
 
