@@ -1,5 +1,5 @@
-import matplotlib
-matplotlib.use('SVG')
+#import matplotlib
+#matplotlib.use('SVG')
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -120,6 +120,7 @@ print "%d Setting up recording in SST neurons."%(rank)
 
 SST_net_view=pynn.PopulationView(SST_net,xrange(146))
 SST_net_view.sample(100).record("spikes")
+SST_net_view.sample(100).record("v")
 
 
 # Connectors for Layer 2/3 Neurons
@@ -192,16 +193,21 @@ isp2=VIP_net_view.get_data("spikes")
 
 isp3=SST_net_view.get_data("spikes")
 
+v_isp3full=SST_net.spinnaker_get_data("v")
+
+print(v_isp3full)
 
 def plot_spiketrains(segment):
-    for spiketrain in segment.spiketrains:
+    for spiketrain in segment[0].spiketrains:
         y = np.ones_like(spiketrain) * spiketrain.annotations['source_id']
         plt.plot(spiketrain, y, '.', ms=0.1, c='k')
+#        plt.show()
 
 plt.figure()
 plot_spiketrains(isp3.segments)
 plt.xlabel('Time (ms)')
-plt.savefig('SST_spikes_deltamodel_pyr10000pv10000vip7000sst7000(1).png')
+plt.show()
+# plt.savefig('SST_spikes_deltamodel_pyr10000pv10000vip7000sst7000(1).png')
 
 
 #Figure(Panel(esp.segments[0].spiketrains,yticks=True,xticks=True,markersize=01,xlim=(0,p.simtime))).save("Excitatory Spikes.png")

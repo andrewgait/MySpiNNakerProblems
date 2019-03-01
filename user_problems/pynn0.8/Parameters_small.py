@@ -13,7 +13,7 @@ N_SST=146
 
 # Scaling factor for inhibitory connection probabilities
 
-ep_pr=0.2 
+ep_pr=0.2
 
 
 # Connection Probabilities
@@ -30,7 +30,7 @@ ep_PyrPyr=0.101
 
 # Relative Inhibitory strength
 
-g=3.0
+g=0.3 # 3.0
 
 # Indegrees for L4-L2/3 connection
 N_L4exex=98
