@@ -13,21 +13,24 @@ cell_params_lif = {'cm': 0.25,
                    'tau_syn_I': 0.1,
                    'v_reset': -70.0,
                    'v_rest': -65.0,
-                   'v_thresh': -50.0
+                   'v_thresh': -50.0,
+                   'v': -61.0,
                    }
 
 input = sim.Population(1, sim.SpikeSourceArray([[1]]), label='input')
-receiver = sim.Population(2, sim.IF_curr_exp(**cell_params_lif), label='receiver')
+receiver = sim.Population(2, sim.IF_curr_exp(**cell_params_lif),
+                          initial_values={'v': -63.5}, label='receiver')
 
-receiver.initialize(v=[-65.0,-62.0])
+# receiver.initialize(v=[-65.0,-62.0])
 
-columns = ["i", "j", "delay", "weight"]
+columns = ["delay", "weight"]
 connection_list = [
     (0, 0, 1.0, 5.0),
     (0, 1, 2.0, 8.0)
     ]
 
 conn = sim.FromListConnector(connection_list, column_names=columns)
+#conn = sim.FixedTotalNumberConnector(1)
 # conn = sim.FromListConnector(connection_list)
 # conn = sim.FromListConnector(connections_test)
 

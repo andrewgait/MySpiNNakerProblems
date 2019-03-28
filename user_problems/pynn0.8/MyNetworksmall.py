@@ -1,5 +1,6 @@
 #import matplotlib
 #matplotlib.use('SVG')
+from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -119,8 +120,8 @@ VIP_net_view.sample(100).record("spikes")
 print "%d Setting up recording in SST neurons."%(rank)
 
 SST_net_view=pynn.PopulationView(SST_net,xrange(146))
-SST_net_view.sample(100).record("spikes")
-SST_net_view.sample(100).record("v")
+#SST_net_view.sample(100).record("spikes")
+#SST_net_view.sample(100).record("v")
 
 
 # Connectors for Layer 2/3 Neurons
@@ -182,6 +183,10 @@ L4in_to_VIP=pynn.Projection(L4ininVIP,VIP_net,L4_connector,receptor_type="inhibi
 L4in_to_SST=pynn.Projection(L4ininSST,SST_net,L4_connector,receptor_type="inhibitory",synapse_type=pynn.StaticSynapse(weight=p.J_in,delay=p.delay_in))
 
 
+SST_net.record(['v', 'spikes'])
+VIP_net.record(['v', 'spikes'])
+PV_net.record(['v', 'spikes'])
+E_net.record(['v', 'spikes'])
 
 pynn.run(p.simtime)
 
@@ -193,25 +198,86 @@ isp2=VIP_net_view.get_data("spikes")
 
 isp3=SST_net_view.get_data("spikes")
 
-v_isp3full=SST_net.spinnaker_get_data("v")
+#v_isp3full=SST_net.spinnaker_get_data("v")
+# SST_net.record(['v', 'spikes'])
+# VIP_net.record(['v', 'spikes'])
+# PV_net.record(['v', 'spikes'])
+# E_net.record(['v', 'spikes'])
 
-print(v_isp3full)
+# isp3=SST_net.get_data("spikes")
 
-def plot_spiketrains(segment):
-    for spiketrain in segment[0].spiketrains:
-        y = np.ones_like(spiketrain) * spiketrain.annotations['source_id']
-        plt.plot(spiketrain, y, '.', ms=0.1, c='k')
-#        plt.show()
+v_isp3=SST_net.get_data("v")
+s_isp3=SST_net.get_data("spikes")
+v_isp2=VIP_net.get_data("v")
+s_isp2=VIP_net.get_data("spikes")
+v_isp1=PV_net.get_data("v")
+s_isp1=PV_net.get_data("spikes")
+v_esp=E_net.get_data("v")
+s_esp=E_net.get_data("spikes")
 
-plt.figure()
-plot_spiketrains(isp3.segments)
-plt.xlabel('Time (ms)')
-plt.show()
-# plt.savefig('SST_spikes_deltamodel_pyr10000pv10000vip7000sst7000(1).png')
+#print(v_isp3full)
 
+# def plot_spiketrains(segment):
+#     for spiketrain in segment[0].spiketrains:
+#         y = np.ones_like(spiketrain) * spiketrain.annotations['source_id']
+#         plt.plot(spiketrain, y, '.', ms=1.0, c='k')
+# #        plt.show()
+#
+# plt.figure()
+# plot_spiketrains(isp3.segments)
+# plt.xlabel('Time (ms)')
+# plt.show()
+# # plt.savefig('SST_spikes_deltamodel_pyr10000pv10000vip7000sst7000(1).png')
+#
+# plt.figure()
+# plot_spiketrains(isp2.segments)
+# plt.xlabel('Time (ms)')
+# plt.show()
+#
+# plt.figure()
+# plot_spiketrains(isp1.segments)
+# plt.xlabel('Time (ms)')
+# plt.show()
+#
+# plt.figure()
+# plot_spiketrains(esp.segments)
+# plt.xlabel('Time (ms)')
+# plt.show()
 
 #Figure(Panel(esp.segments[0].spiketrains,yticks=True,xticks=True,markersize=01,xlim=(0,p.simtime))).save("Excitatory Spikes.png")
 
+Figure(
+    # raster plot of the presynaptic neuron spike times
+    Panel(s_esp.segments[0].spiketrains,
+          yticks=True, markersize=1.0, xlim=(0, p.simtime), xticks=True),
+    # membrane potential of the postsynaptic neuron
+    Panel(v_esp.segments[0].filter(name='v')[0],
+          ylabel="Membrane potential (mV)",
+          data_labels=[E_net.label], yticks=True, xlim=(0, p.simtime)),
+    Panel(s_isp1.segments[0].spiketrains,
+          yticks=True, markersize=1.0, xlim=(0, p.simtime), xticks=True),
+    # membrane potential of the postsynaptic neuron
+    Panel(v_isp1.segments[0].filter(name='v')[0],
+          ylabel="Membrane potential (mV)",
+          data_labels=[PV_net.label], yticks=True, xlim=(0, p.simtime)),
+    Panel(s_isp2.segments[0].spiketrains,
+          yticks=True, markersize=1.0, xlim=(0, p.simtime), xticks=True),
+    # membrane potential of the postsynaptic neuron
+    Panel(v_isp2.segments[0].filter(name='v')[0],
+          ylabel="Membrane potential (mV)",
+          data_labels=[VIP_net.label], yticks=True, xlim=(0, p.simtime)),
+    Panel(s_isp3.segments[0].spiketrains,
+          yticks=True, markersize=1.0, xlim=(0, p.simtime), xticks=True),
+    # membrane potential of the postsynaptic neuron
+    Panel(v_isp3.segments[0].filter(name='v')[0],
+          xlabel="Time (ms)", xticks=True,
+          ylabel="Membrane potential (mV)",
+          data_labels=[SST_net.label], yticks=True, xlim=(0, p.simtime)),
+    title="L2/3/4 model example",
+    annotations="Simulated with {}".format(pynn.name())
+)
+plt.show()
+#plt.savefig('SST_spikes_deltamodel_pyr10000pv10000vip7000sst7000.png')
 
 
 

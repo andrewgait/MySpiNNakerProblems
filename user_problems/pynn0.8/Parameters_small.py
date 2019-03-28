@@ -30,7 +30,7 @@ ep_PyrPyr=0.101
 
 # Relative Inhibitory strength
 
-g=0.3 # 3.0
+g=3.0
 
 # Indegrees for L4-L2/3 connection
 N_L4exex=98
