@@ -16,9 +16,9 @@ weights.append(0.3)
 delays.append(1)
 for n in range(n_pop-2):
     weights.append(1.0)
-    delays.append(17)
+    delays.append(7)
 weights.append(2.0)
-delays.append(34)
+delays.append(3)
 
 c2 = sim.Projection(input_pop2, pop, sim.OneToOneConnector(),
                     sim.StaticSynapse(weight=weights, delay=delays))

@@ -20,9 +20,9 @@ trains = pop_ex.get_data('spikes').segments[0].spiketrains
 trains2 = pop_src2.get_data('spikes')
 p.reset()
 p.run(simtime)
-print 2
+print(2)
 trains = pop_ex.get_data('spikes').segments[0].spiketrains
 trains2 = pop_src2.get_data('spikes')
 p.end();
 
-print "\n job done"
+print("\n job done")
