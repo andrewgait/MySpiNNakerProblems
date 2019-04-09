@@ -208,6 +208,7 @@ def get_scores(game_pop, simulator):
 
 def pop_test(connections, test_data, split=4, runtime=2000, exposure_time=200, noise_rate=100, noise_weight=0.01,
                 spike_f=False, make_action=True, exec_thing='bout', seed=0):
+    print('connections: ', connections)
     np.random.seed(seed)
     sleep = 10 * np.random.random()
     # time.sleep(sleep)
@@ -264,6 +265,7 @@ def pop_test(connections, test_data, split=4, runtime=2000, exposure_time=200, n
         for i in range(len(connections)):
             [in2e, in2i, in2in, in2out, e2in, i2in, e_size, e2e, e2i, i_size, # turned off connections to inputs except output
              i2e, i2i, e2out, i2out, out2e, out2i, out2in, out2out, excite_params, inhib_params] = connections[i]
+            print('in2e: ', in2e)
             if len(in2e) == 0 and len(in2i) == 0 and len(in2out) == 0:
                 failures.append(i)
                 print("agent {} was not properly connected to the game".format(i))
