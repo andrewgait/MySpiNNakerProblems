@@ -209,6 +209,9 @@ def get_scores(game_pop, simulator):
 def pop_test(connections, test_data, split=4, runtime=2000, exposure_time=200, noise_rate=100, noise_weight=0.01,
                 spike_f=False, make_action=True, exec_thing='bout', seed=0):
     print('connections: ', connections)
+    print('len(connections): ', len(connections))
+    print('len(test_data) ', len(test_data))
+    print('running ', exec_thing)
     np.random.seed(seed)
     sleep = 10 * np.random.random()
     # time.sleep(sleep)
