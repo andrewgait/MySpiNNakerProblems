@@ -17,8 +17,8 @@ weights = 3.0
 delays = 5
 
 shape_pre = [3, 3]
-shape_post = [1, 1]
-shape_kernel = [2, 1]
+shape_post = [3, 3]
+shape_kernel = [3, 3]
 kernel_connector = sim.KernelConnector(shape_pre, shape_post, shape_kernel)
 c2 = sim.Projection(input_pop, pop, kernel_connector,
                     sim.StaticSynapse(weight=weights, delay=delays))
