@@ -13,7 +13,7 @@ cell_params_lif = {'cm': 0.25,
                    'v_thresh': -50.0
                    }
 
-pop = p.Population(50, p.IF_cond_exp(**cell_params_lif), label="pop")
+pop = p.Population(200, p.IF_cond_exp(**cell_params_lif), label="pop")
 spike_times=[]
 for i in range(1000):
     spike_times.append(i*100)
