@@ -36,5 +36,7 @@ p.run(simtime)
 print_spikes(pop_ex.get_data('spikes'))
 p.reset()
 
+print_spikes(pop_src2.get_data('spikes'))
+
 p.end()
 print("\n job done")
