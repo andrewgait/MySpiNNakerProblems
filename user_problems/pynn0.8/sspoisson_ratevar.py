@@ -3,10 +3,10 @@ import statistics
 import spynnaker8 as sim
 
 rates = [0, 0.0001, 0.0005, 0.001, 0.002, 0.005, 0.007, 0.01, 0.02,
-         0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11,
+         0.03, 0.04, 0.05, 0.07, 0.09, 0.1, 0.11,
          0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.32, 0.64,
          1.28, 2.56, 5.12, 10.24, 20.48, 40.96, 81.92, 163.84, 327.68, 655.36,
-         1310.72, 2621.44]
+         1310.72, 1966.08, 2621.44]
 
 # rates = [2000, 3000]
 n_neurons = 20 # number of neurons in each population
@@ -52,11 +52,15 @@ for rate in rates:
     vars_plot.append(vars[rate])
 
 
-
 # plot means against variances
-figure, axis = pylab.subplots()
-axis.set_xlabel("Means")
-axis.set_ylabel("Variances")
-axis.plot(means_plot, vars_plot, 'ro')
+pylab.subplot(2, 1, 1)
+pylab.xlabel("Means")
+pylab.ylabel("Variances")
+pylab.plot(means_plot, vars_plot, 'ro-')
+
+pylab.subplot(2, 1, 2)
+pylab.xlabel("Means")
+pylab.ylabel("Variances")
+pylab.plot(means_plot[0:15], vars_plot[0:15], 'ro-')
 
 pylab.show()
