@@ -11,6 +11,7 @@ rates = [0, 0.0001, 0.0005, 0.001, 0.002, 0.005, 0.007, 0.01, 0.02,
 
 # rates = [2000, 3000]
 n_neurons = 20 # number of neurons in each population
+# tstep = 0.1
 tstep = 1.0
 simtime = 100 * 1000 * tstep
 
