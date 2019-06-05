@@ -3,11 +3,10 @@ import statistics
 import math
 import spynnaker8 as sim
 
-rates = [0, 0.0001, 0.0005, 0.001, 0.002, 0.005, 0.007, 0.01, 0.02,
-         0.03, 0.04, 0.05, 0.07, 0.09, 0.1, 0.11,
-         0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.32, 0.64,
-         1.28, 2.56, 5.12, 10.24, 20.48, 40.96, 81.92, 163.84, 327.68, 655.36,
-         1310.72, 1966.08, 2621.44, 5242.88, 10485.76, 20971.52, 41943.04]
+rates = [0, 0.00015625, 0.0003125, 0.000625, 0.00125, 0.0025, 0.005, 0.01,
+         0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12, 10.24, 20.48,
+         40.96, 81.92, 163.84, 327.68, 655.36, 1310.72, 2621.44, 5242.88,
+         10485.76, 20971.52, 41943.04, 83886.08]
 
 # rates = [2000, 3000]
 n_neurons = 20 # number of neurons in each population
@@ -22,7 +21,7 @@ inputs = {}
 for rate in rates:
     params = {"rate": rate}
     input = sim.Population(
-        n_neurons, sim.SpikeSourcePoisson, params, label='inputSpikes_1')
+        n_neurons, sim.SpikeSourcePoisson, params, label='inputSpikes_'+str(rate))
     input.record("spikes")
     inputs[rate] = input
 
@@ -59,6 +58,7 @@ for rate in rates:
     vars_log_plot.append(math.log(vars[rate]) if vars[rate]!=0 else 0)
 
 # plot means against variances
+low = 14
 pylab.subplot(2, 2, 1)
 pylab.xlabel("Means")
 pylab.ylabel("Variances")
@@ -69,7 +69,7 @@ pylab.subplot(2, 2, 2)
 pylab.xlabel("Means")
 pylab.ylabel("Variances")
 pylab.title("low end values")
-pylab.plot(means_plot[0:15], vars_plot[0:15], 'ro-')
+pylab.plot(means_plot[0:low], vars_plot[0:low], 'ro-')
 
 pylab.subplot(2, 2, 3)
 pylab.xlabel("Means")
@@ -81,7 +81,7 @@ pylab.subplot(2, 2, 4)
 pylab.xlabel("Means")
 pylab.ylabel("Variances")
 pylab.title("log, low end values")
-pylab.plot(means_log_plot[0:15], vars_log_plot[0:15], 'bo')
+pylab.plot(means_log_plot[0:low], vars_log_plot[0:low], 'bo')
 
 pylab.subplots_adjust(wspace=0.5, hspace=0.5)
 
