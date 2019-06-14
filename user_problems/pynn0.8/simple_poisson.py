@@ -2,7 +2,7 @@ import pylab
 import spynnaker8 as sim
 sim.setup(timestep=1.0)
 poisson = sim.Population(2, sim.SpikeSourcePoisson(
-    duration=1.0e10, rate=11.0, start=0.0))
+    duration=1.0e10, rate=100.0, start=0.0))
 receiver = sim.Population(2, sim.IF_curr_exp())
 
 #conn = sim.AllToAllConnector()
@@ -25,11 +25,11 @@ poisson.record("spikes")
 
 # poisson.set(rate=1000.0)
 
-sim.run(200.0)
+sim.run(2000.0)
 
-poisson.set(rate=[1000.0,2000.0])
-
-sim.run(200.0)
+# poisson.set(rate=[100.0,100.0])
+#
+# sim.run(200.0)
 
 voltages = receiver.spinnaker_get_data("v")
 spikes = poisson.spinnaker_get_data("spikes")
