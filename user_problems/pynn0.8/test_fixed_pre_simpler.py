@@ -4,13 +4,14 @@ import matplotlib.pyplot as plt
 
 sim.setup(timestep=1.0)
 
-n_pop = 5
-n_pre = 2
+n_pre_neurons = 5
+n_post_neurons = 5
 runtime = 100
 
-input_pop = sim.Population(n_pop, sim.SpikeSourceArray([0]), label="input")
-pop = sim.Population(n_pop, sim.IF_curr_exp(), label="pop")
+input_pop = sim.Population(n_pre_neurons, sim.SpikeSourceArray([0]), label="input")
+pop = sim.Population(n_post_neurons, sim.IF_curr_exp(), label="pop")
 
+n_pre = 2
 weights = 3.0
 delays = 5
 
@@ -21,7 +22,12 @@ pop.record(['v', 'spikes'])
 
 sim.run(runtime)
 
-print(sorted(c2.get(['weight', 'delay'], 'list'), key = lambda x: x[1]))
+weights_delays = sorted(c2.get(['weight', 'delay'], 'list'),
+                        key = lambda x: x[1])
+
+print(weights_delays)
+print(len(weights_delays))
+
 
 # get data (could be done as one, but can be done bit by bit as well)
 spikes = pop.get_data('spikes')
