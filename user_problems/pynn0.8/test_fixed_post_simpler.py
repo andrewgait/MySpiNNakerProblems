@@ -6,7 +6,7 @@ sim.setup(timestep=1.0)
 
 n_pre_neurons = 40
 n_post_neurons = 60
-n_pop2 = 60
+n_pop2 = 150
 sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 40)  # n_post_neurons // 2)
 
 n_post = 10
@@ -90,7 +90,7 @@ Figure(
     Panel(spikes.segments[0].spiketrains,
           xlabel="Time (ms)", xticks=True,
           yticks=True, markersize=0.5, xlim=(0, runtime)),
-    title="one-to-one connector, varying delays",
+    title="fixed-number-post connector test",
     annotations="Simulated with {}".format(sim.name())
 )
 
