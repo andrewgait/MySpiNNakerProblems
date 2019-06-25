@@ -7,7 +7,7 @@ sim.setup(timestep=1.0)
 n_pre_neurons = 60
 n_post_neurons = 80
 n_pop2 = 150
-# sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 4)  # n_post_neurons // 2)
+sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 40)  # n_post_neurons // 2)
 
 n_post = 10
 runtime = 100
@@ -66,15 +66,16 @@ weights_delays4 = sorted(c4.get(['weight', 'delay'], 'list'),
 weights_delays5 = sorted(c5.get(['weight', 'delay'], 'list'),
                          key = lambda x: x[0])
 
-# print(weights_delays)
+print(weights_delays)
+print(weights_delays2)
+print(weights_delays3)
+print(weights_delays4)
+print(weights_delays5)
+
 print(len(weights_delays))
-# print(weights_delays2)
 print(len(weights_delays2))
-# print(weights_delays3)
 print(len(weights_delays3))
-# print(weights_delays4)
 print(len(weights_delays4))
-# print(weights_delays5)
 print(len(weights_delays5))
 
 # get data (could be done as one, but can be done bit by bit as well)

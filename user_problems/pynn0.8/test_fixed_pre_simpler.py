@@ -7,7 +7,7 @@ sim.setup(timestep=1.0)
 n_pre_neurons = 60
 n_post_neurons = 80
 n_pop2 = 100
-# sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 4)  # n_post_neurons // 2)
+sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 40)  # n_post_neurons // 2)
 
 runtime = 100
 
@@ -66,15 +66,16 @@ weights_delays4 = sorted(c4.get(['weight', 'delay'], 'list'),
 weights_delays5 = sorted(c5.get(['weight', 'delay'], 'list'),
                          key = lambda x: x[1])
 
-# print(weights_delays)
+print(weights_delays)
+print(weights_delays2)
+print(weights_delays3)
+print(weights_delays4)
+print(weights_delays5)
+
 print(len(weights_delays))
-# print(weights_delays2)
 print(len(weights_delays2))
-# print(weights_delays3)
 print(len(weights_delays3))
-# print(weights_delays4)
 print(len(weights_delays4))
-# print(weights_delays5)
 print(len(weights_delays5))
 
 # get data (could be done as one, but can be done bit by bit as well)
@@ -100,8 +101,8 @@ plt.show()
 plt.subplot(2, 3, 1)
 plt.xlabel("pre")
 plt.ylabel("post")
-plt.title("pre-post connections, n_pre={}, n_post={}".format(n_pre_neurons,
-                                                             n_post_neurons))
+plt.title("n_pre={}, n_post={}, without replacement".format(
+    n_pre_neurons, n_post_neurons))
 plt.plot(list(weights_delays[n][0] for n in range(len(weights_delays))),
          list(weights_delays[n][1] for n in range(len(weights_delays))),
          'ro', markersize=0.5)
@@ -109,8 +110,8 @@ plt.plot(list(weights_delays[n][0] for n in range(len(weights_delays))),
 plt.subplot(2, 3, 2)
 plt.xlabel("pre")
 plt.ylabel("post")
-plt.title("pre-post connections, n_pre={}, n_post={}".format(n_pre_neurons,
-                                                             n_pop2))
+plt.title("n_pre={}, n_post={}, with replacement".format(
+    n_pre_neurons, n_pop2))
 plt.plot(list(weights_delays2[n][0] for n in range(len(weights_delays2))),
          list(weights_delays2[n][1] for n in range(len(weights_delays2))),
          'ro', markersize=0.5)
@@ -118,8 +119,8 @@ plt.plot(list(weights_delays2[n][0] for n in range(len(weights_delays2))),
 plt.subplot(2, 3, 3)
 plt.xlabel("pre")
 plt.ylabel("post")
-plt.title("pre-post connections, n_pre={}, n_post={}".format(n_pop2,
-                                                             n_pop2))
+plt.title("n_pre={}, n_post={}, with replacement, no self-conn".format(
+    n_pop2, n_pop2))
 plt.plot(list(weights_delays3[n][0] for n in range(len(weights_delays3))),
          list(weights_delays3[n][1] for n in range(len(weights_delays3))),
          'ro', markersize=0.5)
@@ -127,6 +128,8 @@ plt.plot(list(weights_delays3[n][0] for n in range(len(weights_delays3))),
 plt.subplot(2, 3, 4)
 plt.xlabel("pre")
 plt.ylabel("post")
+plt.title("n_pre={}, n_post={}, without replacement".format(
+    n_pre_neurons, n_post_neurons))
 plt.title("pre-post connections, n_pre={}, n_post={}".format(n_pre_neurons,
                                                              n_post_neurons))
 plt.plot(list(weights_delays4[n][0] for n in range(len(weights_delays4))),
@@ -136,8 +139,8 @@ plt.plot(list(weights_delays4[n][0] for n in range(len(weights_delays4))),
 plt.subplot(2, 3, 5)
 plt.xlabel("pre")
 plt.ylabel("post")
-plt.title("pre-post connections, n_pre={}, n_post={}".format(n_post_neurons,
-                                                             n_post_neurons))
+plt.title("n_pre={}, n_post={}, without replacement, no self-conn".format(
+    n_post_neurons, n_post_neurons))
 plt.plot(list(weights_delays5[n][0] for n in range(len(weights_delays5))),
          list(weights_delays5[n][1] for n in range(len(weights_delays5))),
          'ro', markersize=0.5)
