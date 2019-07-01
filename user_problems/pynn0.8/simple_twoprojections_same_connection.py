@@ -13,7 +13,7 @@ receiver = sim.Population(n_neurons, sim.IF_curr_exp(), label='receiver')
 onetoone = sim.OneToOneConnector()
 alltoall = sim.AllToAllConnector()
 fixedprob = sim.FixedProbabilityConnector(0.25)
-fixedtotal = sim.FixedTotalNumberConnector(3)
+fixedtotal = sim.FixedTotalNumberConnector(3, with_replacement=False)
 fromlist = sim.FromListConnector(([0, 0, 1.2, 2],[1, 0, 1.1, 1]))
 
 # different StaticSynapses for testing
