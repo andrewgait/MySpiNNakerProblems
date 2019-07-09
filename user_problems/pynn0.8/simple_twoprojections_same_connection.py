@@ -26,12 +26,12 @@ syn5 = sim.StaticSynapse(weight=3.5, delay=7)
 # Two projections between the same populations
 alltoall_proj = sim.Projection(input, receiver, alltoall, syn,
                                receptor_type="excitatory", label="alltoall")
+fromlist_proj = sim.Projection(input, receiver, fromlist, syn5,
+                               receptor_type="excitatory", label="fromlist")
 onetoone_proj = sim.Projection(input, receiver, onetoone, syn3,
                                receptor_type="inhibitory")  #, label="onetoone")
 fixedprob_proj = sim.Projection(input, receiver, fixedprob, syn2,
                                 receptor_type="excitatory", label="fixedprob")
-fromlist_proj = sim.Projection(input, receiver, fromlist, syn5,
-                               receptor_type="excitatory", label="fromlist")
 fixedtotal_proj = sim.Projection(input, receiver, fixedtotal, syn4,
                                  receptor_type="excitatory", label="fixedtotal")
 
