@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 
 sim.setup(timestep=1.0)
 
-# Note: this is working for square images and square odd-sided kernels
-
 # pre and post shape
 psh = 36
 psw = 36
