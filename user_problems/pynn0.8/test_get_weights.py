@@ -10,17 +10,22 @@ pop2 = sim.Population(destinations, sim.IF_curr_exp(),
                       label="pop2")
 synapse_type = sim.StaticSynapse(weight=5, delay=2)
 
-projection = sim.Projection(pop1, pop2, sim.OneToOneConnector(),
+# connector = sim.OneToOneConnector()
+connector = sim.AllToAllConnector()
+# connector = sim.FromListConnector([(1, 2), (0, 1)])
+projection = sim.Projection(pop1, pop2, connector,
                             synapse_type=synapse_type)
 #projection = sim.Projection(pop1, pop2, sim.FromListConnector([[0,0]]),
 #                            synapse_type=synapse_type)
-sim.run(0)
+# sim.run(0)
 from_pro = projection.get(["weight", "delay"], "list")
-
+print('projection.get was called before run')
 sim.run(1)
-after_pro = projection.get(["weight", "delay"], "list")
+# after_pro = projection.get(["weight", "delay"], "list")
 
+print(from_pro)
 print(len(from_pro))
-print(len(after_pro))
+# print(after_pro)
+# print(len(after_pro))
 
 sim.end()

@@ -2,18 +2,20 @@ import spynnaker8 as sim
 import numpy as np
 
 sim.setup(timestep=1.0)
-runtime = 1050
+runtime = 5000
 populations = []
 
-n_pop = 500
-sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 200)
+n_pop = 2000
+n_input = 100
+sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 50)
+sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, 50)
 
 spikeat = []
 for n in range(runtime):
-    if n % 100:
+    if n % 500:
         spikeat.append(n)
 
-pop_src1 = sim.Population(n_pop, sim.SpikeSourceArray,
+pop_src1 = sim.Population(n_input, sim.SpikeSourceArray,
                         {'spike_times': spikeat}, label="src1")
 
 populations.append(sim.Population(n_pop, sim.IF_curr_exp(),  label="test"))
@@ -24,21 +26,29 @@ start_w = 0.5
 
 stdp_model = sim.STDPMechanism(
     timing_dependence=sim.SpikePairRule(
-        tau_plus=10.0, tau_minus=20.0, A_plus=0.05, A_minus=0.05),
+        tau_plus=1.0, tau_minus=2.0, A_plus=0.5, A_minus=0.5),
     weight_dependence=sim.AdditiveWeightDependence(
-        w_min=0.1, w_max=5.0))  #, weight=start_w)
+        w_min=0.1, w_max=4.0), weight=start_w,
+    delay=sim.RandomDistribution('uniform', (2.0, 15.0)))
 
 # define the projections
 # connector = sim.OneToOneConnector
-connector = sim.FixedProbabilityConnector(0.1)
+connector = sim.FixedProbabilityConnector(0.01)
 proj = sim.Projection(
     pop_src1, populations[0], connector,
     receptor_type="excitatory", synapse_type=stdp_model)
+# proj = sim.Projection(
+#     pop_src1, populations[0], connector,
+#     receptor_type="excitatory",
+#     synapse_type=sim.StaticSynapse(
+#         weight=4.0, delay=sim.RandomDistribution('uniform', (2.0, 15.0))))
 
 populations[0].record("all")
 sim.run(runtime)
 
 np.set_printoptions(threshold=np.inf)
-print(proj.get(["weight", "delay"], "list"))
+weights_delays = proj.get(["weight", "delay"], "list")
+print(weights_delays)
+print(len(weights_delays))
 
 sim.end()
