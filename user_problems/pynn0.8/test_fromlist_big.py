@@ -2,17 +2,19 @@ import spynnaker8 as sim
 
 sim.setup(timestep=1.0, min_delay=1, max_delay=144)
 
-n_pop = 2
+n_pop = 513
+list_size = 500
 runtime = 1
 
 input_pop = sim.Population(n_pop, sim.IF_curr_exp(), label="input")
 out_pop = sim.Population(n_pop, sim.IF_curr_exp(), label="out_pop")
 
 list1 = []
-for i in range(255):
-    list1.append((0, 0, 0.5, 1))
+# for i in range(list_size):
+#     list1.append((i, i, 0.5, 1))
 
-list1.append((1, 0, 0.5, 2))
+list1.append((260, 200, 0.5, 2))
+list1.append((3, 3, 0.8, 5))
 
 fromlist_in2out = sim.FromListConnector(list1)
 
