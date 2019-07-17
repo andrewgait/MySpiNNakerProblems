@@ -18,14 +18,14 @@ projection = sim.Projection(pop1, pop2, connector,
 #projection = sim.Projection(pop1, pop2, sim.FromListConnector([[0,0]]),
 #                            synapse_type=synapse_type)
 # sim.run(0)
-from_pro = projection.get(["weight", "delay"], "list")
-print('projection.get was called before run')
+# from_pro = projection.get(["weight", "delay"], "list")
+# print('projection.get was called before run')
 sim.run(1)
-# after_pro = projection.get(["weight", "delay"], "list")
+after_pro = projection.get(["weight", "delay"], "list")
 
-print(from_pro)
-print(len(from_pro))
-# print(after_pro)
-# print(len(after_pro))
+# print(from_pro)
+# print(len(from_pro))
+print(after_pro)
+print(len(after_pro))
 
 sim.end()
