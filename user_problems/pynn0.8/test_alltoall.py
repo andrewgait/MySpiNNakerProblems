@@ -2,8 +2,8 @@ import spynnaker8 as sim
 
 sim.setup(1.0)
 
-sources = 500
-destinations = 500
+sources = 128*128
+destinations = 128*128
 
 # onetoone = sim.OneToOneConnector()
 alltoall = sim.AllToAllConnector()
