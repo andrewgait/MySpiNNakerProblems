@@ -22,7 +22,7 @@ with open("box_mix_pushbot_whitepaper.txt", "r") as f:
             x = int(more_bits[0])
             y = int(more_bits[1])
             p = int(p_and_count[0])
-            neuron_id = (x-1)*128+y-1
+            neuron_id = (x*128)+y
             if (neuron_id,neuron_id) not in connection:
                 connection.append((neuron_id, neuron_id))
             if p == 1:
@@ -36,6 +36,12 @@ with open("box_mix_pushbot_whitepaper.txt", "r") as f:
 
 f.close()
 
+
+print('source_connection0: ', source_connection0)
+print('size: ', len(source_connection0))
+print('source_connection1: ', source_connection1)
+print('size: ', len(source_connection1))
+
 neuron_size = 128*128
 sp.setup(timestep=1.0)
 cell_params_lif = {'cm': 0.25,
@@ -48,8 +54,11 @@ cell_params_lif = {'cm': 0.25,
                    'v_rest': -65.0,
                    'v_thresh': -50.0
                    }
-Input0 = sp.Population(1, sp.SpikeSourceArray(spike_times=spike_time[0]))
-Input1 = sp.Population(1, sp.SpikeSourceArray(spike_times=spike_time[1]))
+
+sp.set_number_of_neurons_per_core(sp.IF_curr_exp, 175)
+
+Input0 = sp.Population(1, sp.SpikeSourceArray(spike_times=spike_time[0]), label='input0')
+Input1 = sp.Population(1, sp.SpikeSourceArray(spike_times=spike_time[1]), label='input1')
 off = sp.Population(neuron_size, sp.IF_curr_exp(**cell_params_lif), label='B_off')
 on = sp.Population(neuron_size, sp.IF_curr_exp(**cell_params_lif), label='B_on')
 Output = sp.Population(neuron_size, sp.IF_curr_exp(**cell_params_lif), label='output')
