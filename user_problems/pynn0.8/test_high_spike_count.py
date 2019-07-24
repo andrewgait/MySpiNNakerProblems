@@ -2,9 +2,9 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 import spynnaker8 as p
 
-p.setup(timestep=1)
+p.setup(timestep=1.0)
 
-p.set_number_of_neurons_per_core(p.IF_cond_exp, 100)
+p.set_number_of_neurons_per_core(p.IF_curr_exp, 20)
 
 # cell_params_lif_cond = {'cm': 0.25,
 #                         'i_offset': 0.0,
