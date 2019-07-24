@@ -42,6 +42,8 @@ for i in range(N):
                         'tau_syn_E':1.0},\
                        label="pop")
 
+        neurons[(i,j)].record('spikes')
+
         neurons_connect[(i,j)] =  p.Population(C, \
                        p.IF_curr_exp, \
                        {'v_thresh': -57.5, \
@@ -49,6 +51,8 @@ for i in range(N):
                         'tau_m':2.5,  \
                         'tau_syn_E':1.0},\
                        label="con")
+
+        neurons_connect[(i,j)].record('spikes')
 
         p.Projection(neurons[(i,j)], neurons[(i,j)], \
                                 connector, \
@@ -143,7 +147,7 @@ p.run(2500.0)
 
 data = dict()
 for q in neurons:
-    data[q] = neurons_experi[q].get_data('spikes')
+    data[q] = neurons[q].get_data('spikes')
 p.end()
 
 pickle.dump(data,open(str(uuid.uuid4())+'.pk', 'wb'))
