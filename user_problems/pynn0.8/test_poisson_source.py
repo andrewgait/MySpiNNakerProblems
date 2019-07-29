@@ -8,7 +8,7 @@ rates = [400, 800, 1200]
 n_neurons = 128 # 20 # number of neurons in each population
 # tstep = 0.1
 tstep = 1.0
-simtime = 0.1 * 1000 * tstep
+simtime = 0.001 * 1000 * tstep
 
 sim.setup(timestep=tstep, min_delay=1.0*tstep, max_delay=144.0*tstep)
 # sim.setup(timestep=0.1, min_delay=0.1, max_delay=14.4)
