@@ -9,7 +9,12 @@ rates = [0, 0.00015625, 0.0003125, 0.000625, 0.00125, 0.0025, 0.005, 0.01,
          10485.76, 20971.52, 41943.04, 83886.08, 167772.16]
 
 # rates = [2000, 3000]
-n_neurons = 100 # 20 # number of neurons in each population
+n_neurons = 50 # 20 # number of neurons in each population
+
+# command line arguments
+if (len(sys.argv) == 2):
+    n_neurons = int(sys.argv[1])
+
 # tstep = 0.1
 tstep = 1.0
 simtime = 100 * 1000 * tstep
