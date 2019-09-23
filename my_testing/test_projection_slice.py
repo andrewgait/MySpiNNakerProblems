@@ -3,7 +3,7 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
 sources = 260
-destinations = 260
+destinations = 270
 
 sim.setup(timestep=1.0)
 # sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, 200)
@@ -18,12 +18,12 @@ synapse_type = sim.StaticSynapse(weight=5.5, delay=2)
 # pop1view = pop1[250:258]
 # pop2view = pop2[250:258]
 pop1view = pop1[1:6]
-pop2view = pop2[253:258]
+pop2view = pop2[258:263]
 
 pop2view.set(i_offset=0.1)
 
-connector = sim.OneToOneConnector()
-# connector = sim.AllToAllConnector()
+# connector = sim.OneToOneConnector()
+connector = sim.AllToAllConnector()
 # projection = sim.Projection(pop1, pop2, connector,
 #                             synapse_type=synapse_type)
 projection = sim.Projection(pop1view, pop2view, connector,
