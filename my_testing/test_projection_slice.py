@@ -32,15 +32,19 @@ pop2view_all2 = pop2[190:205]
 pop1view_fp = pop1[25:45]
 pop2view_fp = pop2[65:85]
 
+pop1view_wrong = pop1[26:57]
+pop2view_wrong = pop2[36:49]
+
 # pop2view.set(i_offset=0.1)
 
 onetoone_connector = sim.OneToOneConnector()
 alltoall_connector = sim.AllToAllConnector()
 alltoall_connector2 = sim.AllToAllConnector(allow_self_connections=False)
+onetoone_connector2 = sim.OneToOneConnector()
 
-rng = NumpyRNG(seed=random.randint(0, 98766987), parallel_safe=True)
+rng = NumpyRNG(seed=None, parallel_safe=True)
 
-fixedprob_connector = sim.FixedProbabilityConnector(0.25) #, rng=rng)
+fixedprob_connector = sim.FixedProbabilityConnector(0.25, rng=rng)
 
 projection_one = sim.Projection(pop1view, pop2view, onetoone_connector,
                                 synapse_type=synapse_type_onetoone)
@@ -50,6 +54,8 @@ projection_all_same = sim.Projection(pop2view_all2, pop2view_all2, alltoall_conn
                                      synapse_type=synapse_type_alltoall2)
 projection_fp = sim.Projection(pop1view_fp, pop2view_fp, fixedprob_connector,
                                synapse_type=synapse_type_fp)
+projection_one2 = sim.Projection(pop1view_wrong, pop2view_wrong, onetoone_connector2,
+                                 synapse_type=synapse_type_onetoone)
 
 # sim.run(0)
 
@@ -59,6 +65,7 @@ before_pro_one = projection_one.get(["weight", "delay"], "list")
 before_pro_all = projection_all.get(["weight", "delay"], "list")
 before_pro_all2 = projection_all_same.get(["weight", "delay"], "list")
 before_pro_fp = projection_fp.get(["weight", "delay"], "list")
+before_pro_one2 = projection_one2.get(["weight", "delay"], "list")
 
 runtime=100
 sim.run(runtime)
@@ -67,6 +74,7 @@ after_pro_one = projection_one.get(["weight", "delay"], "list")
 after_pro_all = projection_all.get(["weight", "delay"], "list")
 after_pro_all2 = projection_all_same.get(["weight", "delay"], "list")
 after_pro_fp = projection_fp.get(["weight", "delay"], "list")
+after_pro_one2 = projection_one2.get(["weight", "delay"], "list")
 
 ioffset2 = pop2.get('i_offset')
 
@@ -80,6 +88,8 @@ print(before_pro_all2)
 print(len(before_pro_all2))
 print(before_pro_fp)
 print(len(before_pro_fp))
+print(before_pro_one2)
+print(len(before_pro_one2))
 
 print(after_pro_one)
 print(len(after_pro_one))
@@ -89,6 +99,8 @@ print(after_pro_all2)
 print(len(after_pro_all2))
 print(after_pro_fp)
 print(len(after_pro_fp))
+print(after_pro_one2)
+print(len(after_pro_one2))
 
 v = pop2.get_data('v')
 gsyn_exc = pop2.get_data('gsyn_exc')
