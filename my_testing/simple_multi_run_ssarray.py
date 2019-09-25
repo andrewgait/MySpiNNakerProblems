@@ -17,9 +17,11 @@ loopruns = 3
 runtime = 10
 spike_in = list()
 spike_rec = list()
+spike_rec_full = list()
 for n in range(loopruns):
     sim.run(runtime)
     in_pop.set(spike_times=[[22]])
+    spike_rec_full.append(rec_pop.get_data('spikes'))
     spike_in.append(in_pop.spinnaker_get_data('spikes'))
     spike_rec.append(rec_pop.spinnaker_get_data('spikes'))
 

@@ -1,52 +1,94 @@
 import spynnaker8 as sim
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
+from pyNN.random import NumpyRNG
+import random
 
-sources = 260
-destinations = 270
+sources = 240
+destinations = 250
 
 sim.setup(timestep=1.0)
-# sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, 200)
-# sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 200)
+sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, 200)
+sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 200)
 
 pop1 = sim.Population(sources, sim.SpikeSourceArray(spike_times=[10,50]),
                       label="input")
 pop2 = sim.Population(destinations, sim.IF_curr_exp(),
                       label="pop2")
-synapse_type = sim.StaticSynapse(weight=5.5, delay=2)
+synapse_type_onetoone = sim.StaticSynapse(weight=5.5, delay=2)
+synapse_type_alltoall = sim.StaticSynapse(weight=0.5, delay=5)
+synapse_type_alltoall2 = sim.StaticSynapse(weight=1.5, delay=5)
+synapse_type_fp = sim.StaticSynapse(weight=2.5, delay=5)
 
 # pop1view = pop1[250:258]
 # pop2view = pop2[250:258]
 pop1view = pop1[1:6]
-pop2view = pop2[258:263]
+pop2view = pop2[198:203]
 
-pop2view.set(i_offset=0.1)
+pop1view_all = pop1[200:210]
+pop2view_all = pop2[100:105]
+pop2view_all2 = pop2[190:205]
 
-# connector = sim.OneToOneConnector()
-connector = sim.AllToAllConnector()
-# projection = sim.Projection(pop1, pop2, connector,
-#                             synapse_type=synapse_type)
-projection = sim.Projection(pop1view, pop2view, connector,
-                            synapse_type=synapse_type)
+pop1view_fp = pop1[25:45]
+pop2view_fp = pop2[65:85]
+
+# pop2view.set(i_offset=0.1)
+
+onetoone_connector = sim.OneToOneConnector()
+alltoall_connector = sim.AllToAllConnector()
+alltoall_connector2 = sim.AllToAllConnector(allow_self_connections=False)
+
+rng = NumpyRNG(seed=random.randint(0, 98766987), parallel_safe=True)
+
+fixedprob_connector = sim.FixedProbabilityConnector(0.25) #, rng=rng)
+
+projection_one = sim.Projection(pop1view, pop2view, onetoone_connector,
+                                synapse_type=synapse_type_onetoone)
+projection_all = sim.Projection(pop1view_all, pop2view_all, alltoall_connector,
+                                synapse_type=synapse_type_alltoall)
+projection_all_same = sim.Projection(pop2view_all2, pop2view_all2, alltoall_connector2,
+                                     synapse_type=synapse_type_alltoall2)
+projection_fp = sim.Projection(pop1view_fp, pop2view_fp, fixedprob_connector,
+                               synapse_type=synapse_type_fp)
 
 # sim.run(0)
 
 pop2.record('all')
 
-before_pro = projection.get(["weight", "delay"], "list")
-print('projection.get was called before run')
+before_pro_one = projection_one.get(["weight", "delay"], "list")
+before_pro_all = projection_all.get(["weight", "delay"], "list")
+before_pro_all2 = projection_all_same.get(["weight", "delay"], "list")
+before_pro_fp = projection_fp.get(["weight", "delay"], "list")
+
 runtime=100
 sim.run(runtime)
-after_pro = projection.get(["weight", "delay"], "list")
+
+after_pro_one = projection_one.get(["weight", "delay"], "list")
+after_pro_all = projection_all.get(["weight", "delay"], "list")
+after_pro_all2 = projection_all_same.get(["weight", "delay"], "list")
+after_pro_fp = projection_fp.get(["weight", "delay"], "list")
 
 ioffset2 = pop2.get('i_offset')
 
 print(ioffset2)
 
-print(before_pro)
-print(len(before_pro))
-print(after_pro)
-print(len(after_pro))
+print(before_pro_one)
+print(len(before_pro_one))
+print(before_pro_all)
+print(len(before_pro_all))
+print(before_pro_all2)
+print(len(before_pro_all2))
+print(before_pro_fp)
+print(len(before_pro_fp))
+
+print(after_pro_one)
+print(len(after_pro_one))
+print(after_pro_all)
+print(len(after_pro_all))
+print(after_pro_all2)
+print(len(after_pro_all2))
+print(after_pro_fp)
+print(len(after_pro_fp))
 
 v = pop2.get_data('v')
 gsyn_exc = pop2.get_data('gsyn_exc')
