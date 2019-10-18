@@ -11,14 +11,7 @@ runtime = 1
 input_pop = sim.Population(n_pop, sim.SpikeSourceArray(spike_times=[0]), label="input")
 out_pop = sim.Population(n_pop, sim.IF_curr_exp(), label="out_pop")
 
-list1 = []
-for i in range(list_size):
-    list1.append((i, 0, 0.5, 1))
-
-list1.append((260, 200, 0.5, 2))
-list1.append((3, 3, 0.8, 5))
-
-np.save('list.npy', list1)
+list1 = np.load('list.npy')
 
 fromlist_in2out = sim.FromListConnector(list1)
 

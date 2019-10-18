@@ -26,7 +26,7 @@ start_w = 0.5
 
 stdp_model = sim.STDPMechanism(
     timing_dependence=sim.SpikePairRule(
-        tau_plus=1.0, tau_minus=2.0, A_plus=0.5, A_minus=0.5),
+        tau_plus=1.1, tau_minus=1.1, A_plus=0.5, A_minus=0.5),
     weight_dependence=sim.AdditiveWeightDependence(
         w_min=0.1, w_max=4.0), weight=start_w,
     delay=sim.RandomDistribution('uniform', (2.0, 15.0)))

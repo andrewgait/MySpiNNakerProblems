@@ -17,16 +17,26 @@ pop_1 = sim.Population(n_pop, sim.IF_curr_exp(), label="pop_1")
 sim.Projection(input, pop_1, sim.OneToOneConnector(),
                synapse_type=sim.StaticSynapse(weight=5, delay=1))
 
+pop1view = pop_1[2:6]
+
 # pop_1.set(v=-60.0)
 pop_1.tset(v=-60.0)
 
 pop_1.record(["spikes", "v", "gsyn_exc"])
+spike_count_view_pre = pop1view.get_spike_counts()
 
 sim.run(runtime)
 
 v = pop_1.spinnaker_get_data("v")
 v1 = pop_1.get_data("v")
 spikes1 = pop_1.get_data("spikes")
+
+spike_count = pop_1.get_spike_counts()
+spike_count_view = pop1view.get_spike_counts()
+
+print('spike_count: ', spike_count)
+print('spike_count_view: ', spike_count_view)
+print('spike_count_view_pre: ', spike_count_view_pre)
 
 print(v)
 
