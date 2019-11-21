@@ -77,9 +77,9 @@ grid_pop.record(['v','spikes'])
 
 p.run(runtime)
 
-exc_connector.show_connection_set()
+exc_connector.show_connection_set(n*n, n*n)
 csa.gplotsel2d(grid, exc_connector_set, range(n*n), range(n*n), N0=n*n)
-inh_connector.show_connection_set()
+inh_connector.show_connection_set(n*n, n*n)
 csa.gplotsel2d(grid, inh_connector_set, range(n*n), range(n*n), N0=n*n)
 
 v = grid_pop.get_data('v')

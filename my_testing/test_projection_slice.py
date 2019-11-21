@@ -32,7 +32,7 @@ pop2view_all2 = pop2[190:205]
 pop1view_fp = pop1[25:45]
 pop2view_fp = pop2[65:85]
 
-pop1view_wrong = pop1[24,25,27,29]
+pop1view_wrong = pop1[24,25,26,27,28,29]
 pop2view_wrong = pop2[36:49]
 
 # pop2view.set(i_offset=0.1)

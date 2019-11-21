@@ -5,10 +5,10 @@ sim.setup(timestep=1.0)
 runtime = 5000
 populations = []
 
-n_pop = 2000
+n_pop = 3000
 n_input = 100
-sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 50)
-sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, 50)
+sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 100)
+# sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, 50)
 
 spikeat = []
 for n in range(runtime):
@@ -26,9 +26,9 @@ start_w = 0.5
 
 stdp_model = sim.STDPMechanism(
     timing_dependence=sim.SpikePairRule(
-        tau_plus=1.1, tau_minus=1.1, A_plus=0.5, A_minus=0.5),
+        tau_plus=10.0, tau_minus=10.0, A_plus=0.5, A_minus=0.5),
     weight_dependence=sim.AdditiveWeightDependence(
-        w_min=0.1, w_max=4.0), weight=start_w,
+        w_min=0.01, w_max=4.0), weight=start_w,
     delay=sim.RandomDistribution('uniform', (2.0, 15.0)))
 
 # define the projections

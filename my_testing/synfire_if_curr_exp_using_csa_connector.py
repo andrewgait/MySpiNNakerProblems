@@ -92,10 +92,10 @@ populations[3].record(['v', 'spikes'])
 p.run(runtime)
 
 # Use the show functionality of CSA implementation to display connection sets
-CSA_loop_connector.show_connection_set()
-CSA_random_connector.show_connection_set()
-CSA_onetoone_connector.show_connection_set()
-CSA_randomblock_connector.show_connection_set()
+CSA_loop_connector.show_connection_set(nNeurons, nNeurons)
+CSA_random_connector.show_connection_set(nNeurons, nNeurons)
+CSA_onetoone_connector.show_connection_set(nNeurons, nNeurons)
+CSA_randomblock_connector.show_connection_set(nNeurons, nNeurons)
 
 # get data (could be done as one, but can be done bit by bit as well)
 v = populations[0].get_data('v')

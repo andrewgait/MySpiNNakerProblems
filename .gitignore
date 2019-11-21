@@ -17,3 +17,10 @@ MANIFEST
 *.tgz
 *.DS_Store
 */Bernabe_USeville/
+*.png
+*.npy
+*/parsl_testing/*.txt
+*.log
+*.h5
+*.pickle
+*.pkl
