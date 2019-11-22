@@ -60,6 +60,7 @@ weight_inh = 0.002 # uS weight for inhibitory to excitatory connections
 ################
 setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
 set_number_of_neurons_per_core(IF_cond_exp, 100)
+# set_number_of_neurons_per_core(SpikeSourceArray, 100)
 
 
 # list of excitatory populations
@@ -72,7 +73,7 @@ all_populations = []
 ################
 ## Create Groups
 ################
-print "Creating ", n_groups, " SynfireGroups"
+print("Creating ", n_groups, " SynfireGroups")
 for group_index in range(n_groups):
     # create the excitatory Population
     exc_pop = Population(n_exc, IF_cond_exp(**cell_params),
@@ -100,9 +101,9 @@ for group_index in range(n_groups):
 ###################################################
 ## Create Stimulus and connect it to first group
 ###################################################
-print "Create Stimulus Population"
+print("Create Stimulus Population")
 # We create a Population of SpikeSourceArrays of the same dimension as excitatory neurons in a synfire group
-pop_stim = Population(n_exc, SpikeSourceArray({}), label= "pop_stim")
+pop_stim = Population(n_exc, SpikeSourceArray([]), label= "pop_stim")
 
 # We create a normal distribution around pp_start with sigma = pp_sigma
 rd = pyNN.random.RandomDistribution('normal', [pp_start, pp_sigma])
@@ -121,7 +122,7 @@ pop_stim.set(spike_times=all_spiketimes) # 'topographic' setting of parameters. 
 ###########################################
 ## Connect Groups with the subsequent ones
 ###########################################
-print "Connecting Groups with subsequent ones"
+print("Connecting Groups with subsequent ones")
 for group_index in range(n_groups-1):
 #for group_index in range(n_groups):
     Projection(exc_pops[group_index%n_groups],
@@ -147,7 +148,7 @@ Projection(exc_pops[1], exc_pops[1],
 ##########################################
 ## Connect the Stimulus to the first group
 ##########################################
-print "Connecting Stimulus to first group"
+print("Connecting Stimulus to first group")
 Projection(pop_stim, inh_pops[0],
            FixedNumberPostConnector(120, rng=rng, verbose=True),
            synapse_type=StaticSynapse(weight=weight_exc, delay=20.),
@@ -173,14 +174,14 @@ for p in all_populations:
 ###############
 ## Run
 ###############
-print "Run the simulation"
+print("Run the simulation")
 run(sim_duration)
 
 
 ###############
 ## Plot
 ##############
-print "Simulation finished, now collect all spikes and plot them"
+print("Simulation finished, now collect all spikes and plot them")
 
 pop_stim.write_data("stim_neo.mat", 'spikes')
 stim_spikes = pop_stim.spinnaker_get_data('spikes')
@@ -198,8 +199,8 @@ for group in range(n_groups):
     INH_spikes[:,0]+=group*(n_exc+n_inh) + n_exc
     spklist_exc+=EXC_spikes.tolist()
     spklist_inh+=INH_spikes.tolist()
-    print 'spiklist_exc, len: ', len(spklist_exc)
-    print 'spiklist_inh, len: ', len(spklist_inh)
+    print('spklist_exc, len: ', len(spklist_exc))
+    print('spklist_inh, len: ', len(spklist_inh))
 # Create a NeuroTools SpikeList from it
 
 #print EXC_spikes

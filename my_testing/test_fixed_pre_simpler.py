@@ -6,7 +6,7 @@ sim.setup(timestep=1.0)
 
 n_pre_neurons = 60
 n_post_neurons = 80
-n_pop2 = 100
+n_pop2 = 150
 sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 40)  # n_post_neurons // 2)
 
 runtime = 100
