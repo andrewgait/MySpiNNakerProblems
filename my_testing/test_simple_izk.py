@@ -45,7 +45,7 @@ sim.end()
 
 # run again with timestep 0.1
 
-sim.setup(timestep=1.0)
+sim.setup(timestep=0.1)
 runtime1 = 500
 
 spike_times1 = list(n for n in range(0, runtime1, 100))
@@ -127,7 +127,7 @@ Figure(
           xlabel="Time (ms)", xticks=True,
           ylabel="gsyn inhibitory (mV)",
           data_labels=[pop_izh1.label], yticks=True, xlim=(0, runtime1)),
-    title="Single-neuron Izhikevich example (0.1)",
+    title="Single-neuron Izhikevich example (1.0 vs 0.1)",
     annotations="Simulated with {}".format(sim.name())
 )
 plt.show()

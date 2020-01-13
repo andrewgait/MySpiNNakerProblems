@@ -25,7 +25,8 @@ for i in range(1):
     sim.run(15)
     v3 = pop.spinnaker_get_data('v')
 
-    pop.initialize(v=-61.0)
+#     pop.initialize(v=-61.0)
+    pop.set_initial_value(variable="v", value=-61.0)
     pop.set(v_thresh=-54.0)
     sim.run(15)
     v4 = pop.spinnaker_get_data('v')
@@ -45,7 +46,7 @@ print("v segment 2 [15]", v.segments[2].filter(name='v')[0][15])
 
 print('len segment 0', len(v.segments[0].filter(name='v')[0]))
 
-print("v segment 1 [15]", v.segments[1].filter(name='v')[0][15])
+print("v segment 1 [14]", v.segments[1].filter(name='v')[0][14])
 
 
 
