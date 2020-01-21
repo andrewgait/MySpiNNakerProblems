@@ -24,3 +24,5 @@ MANIFEST
 *.h5
 *.pickle
 *.pkl
+my_testing/*txt
+my_testing/*mat
