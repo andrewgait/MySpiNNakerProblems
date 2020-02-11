@@ -16,7 +16,7 @@ p2view = p2[3:9]
 connector_prob = sim.FixedProbabilityConnector(0.5)
 
 # proj_prob = sim.Projection(p1view, p2view, connector_prob,
-proj_prob = sim.Projection(p1, p2, connector_prob,
+proj_prob = sim.Projection(p1view, p2view, connector_prob,
                            synapse_type=sim.StaticSynapse(
                                weight=weights, delay=delays))
 sim.run(10)
