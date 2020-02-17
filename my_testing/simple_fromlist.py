@@ -26,7 +26,8 @@ receiver = sim.Population(2, sim.IF_curr_exp(**cell_params_lif),
 columns = ["delay", "weight"]
 connection_list = [
     (0, 0, 1.0, 5.0),
-    (0, 1, 2.0, 8.0)
+    (0, 1, 2.0, 8.0),
+    (0, 4, 3.0, 4.0)
     ]
 
 conn = sim.FromListConnector(connection_list, column_names=columns)
