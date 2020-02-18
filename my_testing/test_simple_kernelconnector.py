@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 sim.setup(timestep=1.0)
 
 # pre and post shape
-psh = 4
-psw = 4
+psh = 270
+psw = 270
 n_pop = psw*psh
 runtime = (n_pop*5)+1000
 
@@ -23,8 +23,8 @@ pop = sim.Population(n_pop // 4, sim.IF_curr_exp(), label="pop")
 weights = 5.0
 delays = 17.0
 
-ksh = 2
-ksw = 2
+ksh = 20
+ksw = 20
 pre_start = [0, 0]
 post_start = [1, 1]
 pre_step = [1, 1]
@@ -36,9 +36,9 @@ shape_post = [psh // 2, psw // 2]
 # shape_post = [psh, psw]
 shape_kernel = [ksh, ksw]
 # weight_list = [[(a+1)*2.0 + (b+1)*1.0 for a in range(ks)] for b in range(ks)]
-weight_list = [[7.0 if (a+b)%2==0 else 5.0 for a in range(ksw)] for b in range(ksh)]
+weight_list = [[2.0 if (a == 10) or (b == 10) else 0.0 for a in range(ksw)] for b in range(ksh)]
 # delay_list = [[(a+1)*1.0 + (b+1)*2.0 for a in range(ks)] for b in range(ks)]
-delay_list = [[20.0 if (a+b)%2==1 else 10.0 for a in range(ksw)] for b in range(ksh)]
+delay_list = [[10.0 if (a == 10) or (b == 10) else 1.0 for a in range(ksw)] for b in range(ksh)]
 print('weight_list', weight_list)
 print('delay_list', delay_list)
 weight_kernel = np.asarray(weight_list)
