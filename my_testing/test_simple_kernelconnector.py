@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 sim.setup(timestep=1.0)
 
 # pre and post shape
-psh = 36
-psw = 36
+psh = 4
+psw = 4
 n_pop = psw*psh
 runtime = (n_pop*5)+1000
 
@@ -23,12 +23,12 @@ pop = sim.Population(n_pop // 4, sim.IF_curr_exp(), label="pop")
 weights = 5.0
 delays = 17.0
 
-ksh = 3
-ksw = 3
+ksh = 2
+ksw = 2
 pre_start = [0, 0]
-post_start = [0, 0]
+post_start = [1, 1]
 pre_step = [1, 1]
-post_step = [1, 1]
+post_step = [2, 2]
 
 shape_pre = [psh, psw]
 shape_post = [psh // 2, psw // 2]
@@ -46,11 +46,12 @@ delay_kernel = np.asarray(delay_list)
 # pre_step = [2, 2]
 # post_step = [2, 2]
 kernel_connector = sim.KernelConnector(shape_pre, shape_post, shape_kernel,
+#                                        shape_common=shape_post,
                                        weight_kernel=weight_kernel,
                                        delay_kernel=delay_kernel,
                                        pre_sample_steps=pre_step,
-                                       post_sample_steps=post_step,
                                        pre_start_coords=pre_start,
+                                       post_sample_steps=post_step,
                                        post_start_coords=post_start)
 print('kernel connector is: ', kernel_connector)
 c2 = sim.Projection(input_pop, pop, kernel_connector,
@@ -81,6 +82,16 @@ Figure(
     title="kernel connector testing",
     annotations="Simulated with {}".format(sim.name())
 )
+
+plt.show()
+
+plt.xlabel("pre")
+plt.ylabel("post")
+plt.title("n_pre={}, n_post={}, without replacement, no self-conn".format(
+    n_pop, n_pop // 4))
+plt.plot(list(weightsdelays[n][0] for n in range(len(weightsdelays))),
+         list(weightsdelays[n][1] for n in range(len(weightsdelays))),
+         'ro', markersize=0.5)
 
 plt.show()
 
