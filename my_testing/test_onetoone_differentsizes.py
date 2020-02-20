@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 sim.setup(timestep=1.0)
 
-n1 = 30
-n2 = 32
+n1 = 14
+n2 = 17
 runtime = 100
 sim.set_number_of_neurons_per_core(sim.IF_curr_exp(), 10)
 
@@ -18,7 +18,7 @@ delays = 1.0
 
 # proj1 = sim.Projection(pop1, pop2, sim.OneToOneConnector(),
 #                        sim.StaticSynapse(weight=weights, delay=delays))
-proj2 = sim.Projection(pop1[2:11], pop2[3:16], sim.OneToOneConnector(),
+proj2 = sim.Projection(pop1[6:12], pop2[9:16], sim.OneToOneConnector(),
                        sim.StaticSynapse(weight=weights, delay=delays),
                        label='check')
 
@@ -26,7 +26,8 @@ sim.run(runtime)
 
 # is there a way of getting the (number of edges in the) graph here?
 graph = globals_variables.get_simulator()._machine_graph
-labelled_edges = [edge for edge in graph.edges if edge.label is not None]
+labelled_edges = [edge for edge in graph.edges if (
+    edge.label=='machine_edge_forcheck')]
 print(labelled_edges)
 print(len(labelled_edges))
 
