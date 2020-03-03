@@ -12,9 +12,9 @@ alltoall = sim.AllToAllConnector()
 # fixedprob = sim.FixedProbabilityConnector(1.0)
 # fixedtotal = sim.FixedTotalNumberConnector(200*200)
 
-spike_times = [[10*i+1] for i in range(sources)]
-pop1 = sim.Population(sources, sim.SpikeSourceArray(spike_times), label="pop1")
-# pop1 = sim.Population(sources, sim.IF_curr_exp(), label="pop1")
+# spike_times = [[10*i+1] for i in range(sources)]
+# pop1 = sim.Population(sources, sim.SpikeSourceArray(spike_times), label="pop1")
+pop1 = sim.Population(sources, sim.IF_curr_exp(), label="pop1")
 pop2 = sim.Population(destinations, sim.IF_curr_exp(), label="pop2")
 synapse_type = sim.StaticSynapse(weight=50, delay=1)
 projection = sim.Projection(
@@ -22,11 +22,12 @@ projection = sim.Projection(
 
 pop2.record('all')
 
-runtime=10000
+runtime=100
 sim.run(runtime)
 
 weights = projection.get(["weight"], "list")
 print(weights)
+print(sum(weight[2] for weight in weights))
 print(len(weights))
 
 v = pop2.get_data('v')

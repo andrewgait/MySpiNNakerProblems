@@ -27,6 +27,7 @@ columns = ["delay", "weight"]
 connection_list = [
     (0, 0, 1.0, 5.0),
     (0, 1, 2.0, 8.0),
+#     (0, 1, 2.0, 8.0),
     (0, 4, 3.0, 4.0)
     ]
 
@@ -52,20 +53,20 @@ spikes_rec = receiver.spinnaker_get_data("spikes")
 
 post_weights_delays = proj.get(["weight", "delay"], format="list")
 
-sim.end()
-
 print(voltages)
 print(spikes)
 print(spikes_rec)
 print(pre_weights_delays)
 print(post_weights_delays)
 
+sim.end()
+
 pylab.figure()
 pylab.xlim((0, 40.0))
 pylab.plot([i[1] for i in spikes], [i[0] for i in spikes], ".")
 pylab.xlabel('Time/ms')
 pylab.ylabel('spikes')
-pylab.title('Spike source poisson')
+pylab.title('Spike source array')
 
 pylab.figure()
 pylab.xlim((0, 40.0))

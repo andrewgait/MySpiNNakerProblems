@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 sim.setup(timestep=1.0)
 
 # pre and post shape
-psh = 270
-psw = 270
+psh = 20
+psw = 10
 n_pop = psw*psh
 runtime = (n_pop*5)+1000
 
@@ -23,12 +23,12 @@ pop = sim.Population(n_pop // 4, sim.IF_curr_exp(), label="pop")
 weights = 5.0
 delays = 17.0
 
-ksh = 20
-ksw = 20
-pre_start = [0, 0]
-post_start = [1, 1]
-pre_step = [1, 1]
-post_step = [2, 2]
+ksh = 4
+ksw = 2
+pre_start_in_post = [0, 0]
+post_start_in_pre = [2, 1]
+pre_step_in_post = [1, 1]
+post_step_in_pre = [2, 1]
 
 shape_pre = [psh, psw]
 shape_post = [psh // 2, psw // 2]
@@ -36,9 +36,9 @@ shape_post = [psh // 2, psw // 2]
 # shape_post = [psh, psw]
 shape_kernel = [ksh, ksw]
 # weight_list = [[(a+1)*2.0 + (b+1)*1.0 for a in range(ks)] for b in range(ks)]
-weight_list = [[2.0 if (a == 10) or (b == 10) else 0.0 for a in range(ksw)] for b in range(ksh)]
+weight_list = [[2.5 if (a == 2) or (b == 2) else 0.0 for a in range(ksw)] for b in range(ksh)]
 # delay_list = [[(a+1)*1.0 + (b+1)*2.0 for a in range(ks)] for b in range(ks)]
-delay_list = [[10.0 if (a == 10) or (b == 10) else 1.0 for a in range(ksw)] for b in range(ksh)]
+delay_list = [[10.0 if (a == 2) or (b == 2) else 1.0 for a in range(ksw)] for b in range(ksh)]
 print('weight_list', weight_list)
 print('delay_list', delay_list)
 weight_kernel = np.asarray(weight_list)
@@ -49,10 +49,10 @@ kernel_connector = sim.KernelConnector(shape_pre, shape_post, shape_kernel,
 #                                        shape_common=shape_post,
                                        weight_kernel=weight_kernel,
                                        delay_kernel=delay_kernel,
-                                       pre_sample_steps=pre_step,
-                                       pre_start_coords=pre_start,
-                                       post_sample_steps=post_step,
-                                       post_start_coords=post_start)
+                                       pre_sample_steps_in_post=pre_step_in_post,
+                                       pre_start_coords_in_post=pre_start_in_post,
+                                       post_sample_steps_in_pre=post_step_in_pre,
+                                       post_start_coords_in_pre=post_start_in_pre)
 print('kernel connector is: ', kernel_connector)
 c2 = sim.Projection(input_pop, pop, kernel_connector,
                     sim.StaticSynapse(weight=weights, delay=delays))
