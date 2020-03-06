@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 
 sim.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)  #, min_delay=1.0, max_delay=144.0)
 
-runtime = 500
+runtime = 50
 
-inp = sim.Population(2, sim.SpikeSourceArray(spike_times=([5,200],[15,210])),
+inp = sim.Population(2, sim.SpikeSourceArray(spike_times=([2,20],[3,21])),
                      label='input')
 out = sim.Population(2, sim.IF_curr_exp(), label='test')
 
 weight = 5.0
-delay = 105
+delay = 5
 # delay = sim.RandomDistribution('uniform', [6,14])
 
 static_synapse = sim.StaticSynapse(weight=weight, delay=delay)
