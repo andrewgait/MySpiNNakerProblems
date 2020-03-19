@@ -11,7 +11,7 @@ start_location = np.asarray((shape_kernel/2).astype(int))
 shape_post = np.asarray([int((x_res - shape_kernel[0]) / pre_sample_steps[0]) + 1,
                          int((y_res - shape_kernel[1]) / pre_sample_steps[1]) + 1])
 
-kernels = [np.clip(np.random.rand(*shape_kernel), a_min=0, a_max=None) for i in range(32)]
+kernels = [np.clip(np.random.rand(*shape_kernel), a_min=0, a_max=None) for i in range(24)]
 
 
 print("shape_pre", shape_pre)
@@ -47,3 +47,5 @@ projections = [make_projection(kernel) for kernel in kernels]
 
 runtime = x_res*y_res
 p.run(runtime)
+
+p.end()
