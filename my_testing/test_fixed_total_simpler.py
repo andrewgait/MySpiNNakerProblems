@@ -4,16 +4,18 @@ import matplotlib.pyplot as plt
 
 sim.setup(timestep=1.0)
 
-n_pre = 1027
-n_post = 1031
+n_pre = 127
+n_post = 131
 sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 64)  # n_post // 2)
 # sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, 64)
 
-n_conns = 105884
+# n_conns = 105884
+# n_conns = sim.RandomDistribution('uniform', [200,400])
+n_conns = 1000
 runtime = 100
 
-# input_pop = sim.Population(n_pre, sim.SpikeSourceArray([0]), label="input")
-input_pop = sim.Population(n_pre, sim.IF_curr_exp(), label="input")
+input_pop = sim.Population(n_pre, sim.SpikeSourceArray([0]), label="input")
+# input_pop = sim.Population(n_pre, sim.IF_curr_exp(), label="input")
 pop = sim.Population(n_post, sim.IF_curr_exp(), label="pop")
 
 weights = 3.0
