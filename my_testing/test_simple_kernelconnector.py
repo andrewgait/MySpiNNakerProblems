@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 sim.setup(timestep=1.0)
 
 # pre and post shape
-psh = 20
-psw = 10
+psh = 36
+psw = 36
 n_pop = psw*psh
 runtime = (n_pop*5)+1000
 
