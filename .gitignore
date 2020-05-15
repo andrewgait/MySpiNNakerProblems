@@ -26,3 +26,7 @@ MANIFEST
 *.pkl
 my_testing/*txt
 my_testing/*mat
+*.aplx
+*.dict
+*.npz
+*.dat
