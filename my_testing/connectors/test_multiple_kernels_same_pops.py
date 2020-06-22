@@ -1,13 +1,13 @@
 import numpy as np
 import spynnaker8 as p
 
-x_res = 100.
-y_res = 100.
+x_res = 304
+y_res = 240
 
 shape_pre = np.asarray([x_res, y_res])
-shape_kernel = np.asarray([5, 5])
+shape_kernel = np.asarray([100, 100])
 pre_sample_steps = (1,1)
-start_location = np.asarray((shape_kernel/2).astype(int))
+# start_location = np.asarray((shape_kernel/2).astype(int))
 shape_post = np.asarray([int((x_res - shape_kernel[0]) / pre_sample_steps[0]) + 1,
                          int((y_res - shape_kernel[1]) / pre_sample_steps[1]) + 1])
 
@@ -18,11 +18,12 @@ print("shape_pre", shape_pre)
 print("shape_post", shape_post)
 print("shape_kernel", shape_kernel)
 print("pre_sample_steps", pre_sample_steps)
-print("start_location", start_location)
+# print("start_location", start_location)
+print("n_kernels", len(kernels))
 
 p.setup(timestep=1)
-p.set_number_of_neurons_per_core(p.IF_curr_exp, 16)
-p.set_number_of_neurons_per_core(p.SpikeSourceArray, 16)
+# p.set_number_of_neurons_per_core(p.IF_curr_exp, 64)
+p.set_number_of_neurons_per_core(p.SpikeSourceArray, 255)
 
 
 spike_times = [[i] for i in range(int(x_res*y_res))]
@@ -38,14 +39,22 @@ def make_projection(kernel):
                                           shape_post=shape_post,
                                           shape_kernel=shape_kernel,
                                           weight_kernel=kernel,
-                                          post_sample_steps_in_pre=pre_sample_steps,
-                                          post_start_coords_in_pre=start_location),
+                                          post_sample_steps_in_pre=pre_sample_steps),
+#                                           post_start_coords_in_pre=start_location),
                         receptor_type='excitatory')
+#     return p.Projection(pre_pop, post_pop,
+#                         p.AllToAllConnector(),
+#                         p.StaticSynapse(weight=1.0, delay=1),
+#                         receptor_type='excitatory')
 
 
 projections = [make_projection(kernel) for kernel in kernels]
 
 runtime = x_res*y_res
 p.run(runtime)
+
+conn_data = projections[0].get(['weights, delays'], 'list')
+
+print(len(conn_data), conn_data)
 
 p.end()
