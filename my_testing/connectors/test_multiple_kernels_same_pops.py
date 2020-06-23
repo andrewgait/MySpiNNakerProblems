@@ -53,7 +53,7 @@ projections = [make_projection(kernel) for kernel in kernels]
 runtime = x_res*y_res
 p.run(runtime)
 
-conn_data = projections[0].get(['weights, delays'], 'list')
+conn_data = projections[0].get(["weight", "delay"], "list")
 
 print(len(conn_data), conn_data)
 

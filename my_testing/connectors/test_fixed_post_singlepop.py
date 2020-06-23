@@ -14,8 +14,8 @@ p2 = sim.Population(n_neurons, sim.IF_curr_exp, {}, label='pop2')
 # p1view = p1[2:6]
 # p2view = p2[3:8]
 
-# n_post = 2
-n_post = sim.RandomDistribution('uniform', [2, 5])
+n_post = 2
+# n_post = sim.RandomDistribution('uniform', [2, 5])
 
 connector_post = sim.FixedNumberPostConnector(n_post) #,
 #                                               with_replacement=True)
