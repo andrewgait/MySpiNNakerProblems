@@ -139,6 +139,7 @@ for stim_i in range(n_stimuli):
     lgn_pop.set(rate=inputPatch*maxFR)
     sim.run(sim_duration)
     #if (stim_i%50) == 0 :
+    time.sleep(0.1)
     print('Run Stim:%i'%(stim_i))
     #w_LGNtoV1 = connections.get(variables=['weight','array'], clear = True)
 t_1 = time.time() # time point after simulation loop
@@ -159,3 +160,5 @@ for i in range(1, width*height+1):
     if i == nNeurons/2:
         break
 plt.savefig('RFs_V1.png')
+
+sim.end()
