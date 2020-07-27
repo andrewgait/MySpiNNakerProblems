@@ -16,11 +16,11 @@ pop2 = sim.Population(n2, sim.IF_curr_exp(), label="pop2")
 weights = 1.0
 delays = 1.0
 
-# proj1 = sim.Projection(pop1, pop2, sim.OneToOneConnector(),
-#                        sim.StaticSynapse(weight=weights, delay=delays))
-proj2 = sim.Projection(pop1[6:12], pop2[9:16], sim.OneToOneConnector(),
-                       sim.StaticSynapse(weight=weights, delay=delays),
-                       label='check')
+proj1 = sim.Projection(pop1, pop2, sim.OneToOneConnector(),
+                       sim.StaticSynapse(weight=weights, delay=delays))
+# proj2 = sim.Projection(pop1[6:12], pop2[9:16], sim.OneToOneConnector(),
+#                        sim.StaticSynapse(weight=weights, delay=delays),
+#                        label='check')
 
 sim.run(runtime)
 
@@ -31,7 +31,7 @@ labelled_edges = [edge for edge in graph.edges if (
 print(labelled_edges)
 print(len(labelled_edges))
 
-# print(proj1.get(['weight', 'delay'], 'list'))
-print(proj2.get(['weight', 'delay'], 'list'))
+print(proj1.get(['weight', 'delay'], 'list'))
+# print(proj2.get(['weight', 'delay'], 'list'))
 
 sim.end()

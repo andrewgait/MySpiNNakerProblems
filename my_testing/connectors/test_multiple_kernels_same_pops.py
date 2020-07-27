@@ -1,27 +1,30 @@
 import numpy as np
 import spynnaker8 as p
 
-x_res = 304
-y_res = 240
-# x_res = 5
-# y_res = 5
+# x_res = 304
+# y_res = 240
+x_res = 5
+y_res = 5
 
 shape_pre = np.asarray([x_res, y_res])
 # shape_pre = np.asarray([2,2])
-shape_kernel = np.asarray([100, 100])
-overlap = 0.4
-pre_sample_steps = shape_kernel * (1.0 - overlap)
-# pre_sample_steps = np.asarray([4, 4])
+# shape_kernel = np.asarray([100, 100])
+shape_kernel = np.asarray([3, 3])
+# overlap = 0.4
+# pre_sample_steps = shape_kernel * (1.0 - overlap)
+pre_sample_steps = np.asarray([4, 4])
 # post_sample_steps = np.asarray([4, 4])
-# start_location = np.asarray([0, 0])
-start_location = np.asarray((shape_kernel/2).astype(int))
+start_location = np.asarray([0, 0])
+# start_location = np.asarray((shape_kernel/2).astype(int))
 # shape_post = np.asarray([int((x_res - shape_kernel[0]) / pre_sample_steps[0]) + 1,
 #                          int((y_res - shape_kernel[1]) / pre_sample_steps[1]) + 1])
-post_sample_steps = shape_kernel * (1.0 - overlap)
-# shape_post = np.asarray([2, 2])
-shape_post = shape_pre
+# post_sample_steps = shape_kernel * (1.0 - overlap)
+post_sample_steps = np.asarray([1, 1])
+shape_post = np.asarray([2, 2])
+# shape_post = shape_pre
 
-kernels = [np.clip(np.random.rand(*shape_kernel), a_min=0, a_max=None) for i in range(1)]
+# kernels = [np.clip(np.random.rand(*shape_kernel), a_min=0, a_max=None) for i in range(1)]
+kernels = [[[(a+1)*0.1 + (b+1)*1.0 for a in range(3)] for b in range(3)]]
 
 print("shape_pre", shape_pre)
 print("shape_post", shape_post)
@@ -38,6 +41,9 @@ p.setup(timestep=1)
 spike_times = [[i] for i in range(int(x_res*y_res))]
 
 pre_pop = p.Population(x_res*y_res, p.SpikeSourceArray(spike_times=spike_times))
+
+# pre_pop2 = p.Population(x_res*y_res//2, p.SpikeSourceArray(spike_times=spike_times))
+
 
 post_pop = p.Population(shape_post[0]*shape_post[1], p.IF_curr_exp())
 
@@ -59,7 +65,8 @@ def make_projection(kernel):
 #                         receptor_type='excitatory')
 
 
-projections = [make_projection(kernel) for kernel in kernels]
+# projections = [make_projection(kernel) for kernel in kernels]
+projections = [make_projection(np.asarray(kernel)) for kernel in kernels]
 
 runtime = x_res*y_res
 p.run(runtime)
