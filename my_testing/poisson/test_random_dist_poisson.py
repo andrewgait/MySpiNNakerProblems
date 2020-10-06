@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 sim.setup(timestep=1.0)
 runtime = 100
-n_neurons = 1
+n_neurons = 4
 
 spike_times = list(n for n in range(0, runtime, 5))
 print(spike_times)
@@ -22,7 +22,8 @@ pop_lif = sim.Population(n_neurons, sim.IF_curr_exp(**cell_params_lif),
                          label="lif")
 
 # weight = sim.RandomDistribution('normal', [2.0, 1.0])
-weight = sim.RandomDistribution('poisson', lambda_=3.0)
+# weight = sim.RandomDistribution('poisson', lambda_=3.0)
+weight = sim.RandomDistribution('uniform', (0.05, 50.5))
 delay = sim.RandomDistribution('uniform', (3.0, 10.0))
 
 # define the projection

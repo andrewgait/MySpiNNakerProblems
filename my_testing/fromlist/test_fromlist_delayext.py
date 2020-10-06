@@ -9,11 +9,14 @@ runtime = 1
 input_pop = sim.Population(n_pop, sim.IF_curr_exp(), label="input")
 out_pop = sim.Population(n_pop, sim.IF_curr_exp(), label="out_pop")
 
-list1 = [(0, 0, 0.5, 16.1),
-         (1, 1, 0.5, 17)]
+list1 = [(0, 0, 2.0, 10),
+         (0, 1, 2.6, 1),
+         (1, 1, 3.2, 17)]
 # list1 = [(0, 0, 0.5, 1.61),
 #          (1, 1, 0.5, 1.7)]
 fromlist_in2out = sim.FromListConnector(list1)
+
+# fromlist_in2out = sim.FromListConnector([(0, 0, 2.5, 2), (1, 0, 4.76, 20)])
 
 # proj_in2out = sim.Projection(input_pop, out_pop, sim.OneToOneConnector(),
 proj_in2out = sim.Projection(input_pop, out_pop, fromlist_in2out,

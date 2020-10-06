@@ -26,7 +26,6 @@ v_distr = p.RandomDistribution('uniform', [-55, -95], rng)
 
 cell_params_lif_in = {
     'tau_m': 32,
-    'v_init': -80,
     'v_rest': -75,
     'v_reset': -95,
     'v_thresh': -55,
@@ -38,7 +37,6 @@ cell_params_lif_in = {
 
 cell_params_lif = {
     'tau_m': 32,
-    'v_init': -80,
     'v_rest': -75,
     'v_reset': -95,
     'v_thresh': -55,
