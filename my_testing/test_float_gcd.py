@@ -21,3 +21,7 @@ def float_gcd(a, b):
 print("gcd of 2.5 and 3.5: ", float_gcd(2.5, 3.5))
 print("gcd of 0.5 and 2.25: ", float_gcd(0.5, 2.25))
 print("gcd of 0.003125 and 0.5: ", float_gcd(0.0003125, 0.5))
+print("gcd of 5.125 and 3.15625: ", float_gcd(5.125, 3.15625))
+print("gcd of 0.005 and 0.0035", float_gcd(0.005, 0.0035))
+print("gcd of 0.00023 and 0.0000013", float_gcd(0.00023, 0.0000013))
+print("gcd of 0.303847577293368 and 1.0", float_gcd(0.303847577293368, 1.0))

@@ -122,7 +122,7 @@ post_syn_pop = p.Population(pop_size, model(**cell_params),label='Post-synaptic 
 # ADD THE PLASTIC CONNECTIONS BETWEEN THE PRE- AND THE POST-SYNAPTIC POPULATIONS
 stdp_model = p.STDPMechanism(
      timing_dependence=p.SpikePairRule(
-     tau_plus=20., tau_minus=20.0, A_plus=0.02, A_minus=0.02),
+         tau_plus=20.0, tau_minus=20.0, A_plus=0.02, A_minus=0.02),
      weight_dependence=p.AdditiveWeightDependence(w_min=0.01, w_max=0.1))
 
 plastic_projection = p.Projection(
@@ -135,7 +135,7 @@ plastic_projection = p.Projection(
 p.Projection(spike_source_periodic_preTraining, pre_syn_pop, p.FixedProbabilityConnector(p_connect=0.5), p.StaticSynapse(weight=weight_spike_source_to_pop), receptor_type='excitatory')
 ## NOW WE START TRAINING WITH 20 PERIODIC STIMULI TO BOTH PRE AND POST-SYNAPTIC POPULATION
 p.Projection(spike_source_periodic_Training, pre_syn_pop, p.FixedProbabilityConnector(p_connect=0.5), p.StaticSynapse(weight=weight_spike_source_to_pop), receptor_type='excitatory')
-p.Projection(spike_source_periodic_Training, post_syn_pop, p.FixedProbabilityConnector(p_connect=0.5), p.StaticSynapse(weight=weight_spike_source_to_pop, delay=10), receptor_type='excitatory')
+p.Projection(spike_source_periodic_Training, post_syn_pop, p.FixedProbabilityConnector(p_connect=0.5), p.StaticSynapse(weight=weight_spike_source_to_pop, delay=10.0), receptor_type='excitatory')
 ## NOW WE TEST THE EFFECT OF TRAINING BY PROVIDING ANOTHER TRAIN OF INPUT STIMULI
 p.Projection(spike_source_periodic_Testing, pre_syn_pop, p.FixedProbabilityConnector(p_connect=0.5), p.StaticSynapse(weight=weight_spike_source_to_pop), receptor_type='excitatory')
 
@@ -179,8 +179,8 @@ Figure(
           yticks=True, markersize=0.2, xlim=(0, simtime)),
     title="stdp example curr"
 )
-# plt.show()
-plt.savefig('stdp_izkcond_example.png')
+plt.show()
+# plt.savefig('stdp_izkcond_example.png')
 
 # RELEASE THE MACHINE
 p.end()
