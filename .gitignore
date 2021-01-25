@@ -31,3 +31,5 @@ my_testing/*mat
 *.npz
 *.dat
 *.mat
+*NRP*
+*ipynb

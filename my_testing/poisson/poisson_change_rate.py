@@ -11,9 +11,10 @@ to_plot_wgts = False
 
 p.setup(1)
 
-simtime = 300
+simtime = 1000
 
-pop_src2 = p.Population(1, p.SpikeSourcePoisson(rate=0), label="drive")
+pop_src2 = p.Population(1, p.SpikeSourcePoisson(rate=0), label="drive",
+                        additional_parameters={"seed": 1000})
 pop_ex = p.Population(1, p.IF_curr_exp(), label="test")
 
 proj2 = p.Projection(pop_src2,  pop_ex,  p.OneToOneConnector(),
