@@ -1,4 +1,5 @@
 import spynnaker8 as p
+from pyNN.random import NumpyRNG
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
@@ -22,7 +23,7 @@ def create_grid(n, label, dx=1.0, dy=1.0):
                         structure=grid_structure, label=label)
 
 
-n = 10
+n = 4
 # tau_exc = 1.0
 # tau_inh = 1.0
 weight_to_spike = 5.0
@@ -41,22 +42,15 @@ p.Projection(inj_pop, grid, p.FromListConnector(injectionConnection),
              p.StaticSynapse(weight=weight_to_spike, delay=5))
 
 # Connectors
-dist_dep_exc = "d<2.5"
-dist_dep_inh = "d<1.5"
-#dist_dep_exc = "exp(-d)/{tau_exc}".format(tau_exc=tau_exc)
-#dist_dep_inh = 'exp(-0.5*d)/{tau_inh}'.format(tau_inh=tau_inh)
-
-exc_connector = p.DistanceDependentProbabilityConnector(
-    dist_dep_exc, allow_self_connections=False)
-
-inh_connector = p.DistanceDependentProbabilityConnector(
-    dist_dep_inh, allow_self_connections=False)
+exc_connector = p.AllToAllConnector()
+# inh_connector = p.AllToAllConnector()
+inh_connector = p.FixedProbabilityConnector(0.5, rng=NumpyRNG(seed=10101))
 
 # Wire grid
 exc_proj = p.Projection(grid, grid, exc_connector,
-                        p.StaticSynapse(weight=2.0, delay=5))
+                        p.StaticSynapse(weight="1.0 + 2.0*exp(-d)", delay=5))
 inh_proj = p.Projection(grid, grid, inh_connector,
-                        p.StaticSynapse(weight=1.5, delay=10))
+                        p.StaticSynapse(weight=1.5, delay="2 + 2.0*d"))
 
 grid.record(['v','spikes'])
 
@@ -69,6 +63,8 @@ exc_conns = exc_proj.get(['weight', 'delay'], 'array')
 print(exc_conns)
 inh_conns = inh_proj.get(['weight', 'delay'], 'array')
 print(inh_conns)
+inh_conns_list = inh_proj.get(['weight', 'delay'], 'list')
+print(inh_conns_list)
 
 Figure(
     # raster plot of the presynaptic neurons' spike times
@@ -78,7 +74,7 @@ Figure(
     Panel(v.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
           data_labels=[grid.label], yticks=True, xlim=(0, runtime), xticks=True),
-    title="Simple grid distance-dependent prob connector",
+    title="Simple 2D grid distance-dependent weights and delays",
     annotations="Simulated with {}".format(p.name())
 )
 plt.show()
