@@ -151,7 +151,7 @@ synapse_dynamics_neuromod = sim.STDPMechanism(
 for i in range(n_pops):
     mid_projections.append(sim.Projection(
         stimulation[i], mid_pops[i],
-        sim.FixedProbabilityConnector(0.05),  # small initial connections
+        sim.FixedProbabilityConnector(0.05),  # small number of initial conns
         synapse_type=structure_model_with_stdp,
         label="stim-mid projection"))
     plastic_projections.append(
@@ -197,7 +197,7 @@ for i in range(n_pops):
         for x in spikes_mid[j]:
             mid_spikes.append([(i*n_neurons)+j+1, x])
 
-plot_spikes(mid_spikes, post_spikes, "post-synaptic neuron activity",
+plot_spikes(mid_spikes, post_spikes, "mid- and post-synaptic neuron activity",
             n_pops, n_neurons)
 pylab.plot(rewards, [0.5 for x in rewards], 'g^')
 pylab.plot(punishments, [0.5 for x in punishments], 'r^')

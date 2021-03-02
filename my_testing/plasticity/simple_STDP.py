@@ -39,7 +39,7 @@ delay = 3.0              # (ms) synaptic time delay
 
 # === Set up the simulator ==================================================
 
-sim.setup(timestep=0.05, min_delay=delay, max_delay=delay)
+sim.setup(timestep=0.1, min_delay=delay, max_delay=delay)
 
 # === Build the network =====================================================
 
@@ -88,12 +88,13 @@ connections = sim.Projection(p1, p2, sim.AllToAllConnector(), stdp_model)
 # the connection weight from the driver neuron is very strong, to ensure the
 # postsynaptic neuron fires at the correct times
 driver_connection = sim.Projection(p3, p2, sim.OneToOneConnector(),
-                                   sim.StaticSynapse(weight=15.0, delay=delay))
+                                   sim.StaticSynapse(weight=15.0, delay=delay),
+                                   receptor_type="excitatory")
 
 # === Instrument the network =================================================
 
 p1.record('spikes')
-p2.record(['spikes', 'v'])
+p2.record('all')
 
 # === Run the simulation =====================================================
 
@@ -104,6 +105,8 @@ sim.run(t_stop)
 presynaptic_spikes = p1.get_data('spikes').segments[0]
 postsynaptic_spikes = p2.get_data('spikes').segments[0]
 postsynaptic_v = p2.get_data('v').segments[0]
+postsynaptic_gsynexc = p2.get_data('gsyn_exc').segments[0]
+postsynaptic_gsyninh = p2.get_data('gsyn_inh').segments[0]
 print("Post-synaptic spike times: %s" % postsynaptic_spikes.spiketrains[0])
 
 weights = connections.get(["weight"], "list")
@@ -112,13 +115,24 @@ deltas = delta_t * numpy.arange(n // 2, -n // 2, -1)
 print("Final weights: %s" % final_weights)
 plasticity_data = DataTable(deltas, final_weights)
 
+driver_conns = driver_connection.get(["weight", "delay"], "list")
+print("driver weights and delays: %s " % driver_conns)
+
 Figure(
     # raster plot of the presynaptic neuron spike times
     Panel(presynaptic_spikes.spiketrains,
           yticks=True, markersize=0.2, xlim=(0, t_stop)),
-        # membrane potential of the postsynaptic neuron
+    # membrane potential of the postsynaptic neuron
     Panel(postsynaptic_v.filter(name='v')[0],
           ylabel="Membrane potential (mV)",
+          data_labels=[p2.label], xticks=True, yticks=True, xlim=(0, t_stop)),
+    # membrane potential of the postsynaptic neuron
+    Panel(postsynaptic_gsynexc.filter(name='gsyn_exc')[0],
+          ylabel="gsyn_exc",
+          data_labels=[p2.label], xticks=True, yticks=True, xlim=(0, t_stop)),
+    # membrane potential of the postsynaptic neuron
+    Panel(postsynaptic_gsyninh.filter(name='gsyn_inh')[0],
+          ylabel="gsyn_inh",
           data_labels=[p2.label], xticks=True, yticks=True, xlim=(0, t_stop)),
     # evolution of the synaptic weights with time
 #     Panel(weights, xticks=True, yticks=True, xlabel="Time (ms)",
