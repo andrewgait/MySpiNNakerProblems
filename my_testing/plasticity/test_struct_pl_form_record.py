@@ -1,7 +1,11 @@
 import math
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import spynnaker8 as sim
+import numpy as np
+
+plt.rc('animation', ffmpeg_path='/opt/local/bin/ffmpeg')
 
 sim.setup(1.0)
 
@@ -24,7 +28,8 @@ pop = sim.Population(n_neurons, sim.IF_curr_exp(), label="pop")
 proj = sim.Projection(
     stim, pop, sim.FromListConnector([]), sim.StructuralMechanismStatic(
         partner_selection=sim.LastNeuronSelection(),
-        formation=sim.DistanceDependentFormation([gd, gd], 1.0),
+        formation=sim.DistanceDependentFormation(
+            [gd, gd], p_form_forward=1.0, sigma_form_forward=5.5),
         elimination=sim.RandomByWeightElimination(4.0, 0, 0),
         f_rew=1000, initial_weight=2.0, initial_delay=3.0,
         s_max=n_neurons, seed=0, weight=0.0, delay=1.0,
@@ -37,6 +42,7 @@ pop.record("v")
 
 # Get the initial connections
 initial_conns = proj.get(["weight", "delay"], "list")
+initial_conns_array = proj.get(["weight"], "array")
 
 # run for enough time that every connection forms
 sim.run(sim_time)
@@ -51,13 +57,24 @@ print("spikes: ", spikes.segments[0].spiketrains)
 print("struct_pl: ", struct_pl, struct_pl_array)
 print("post v: ", post_v.segments[0].filter(name='v')[0])
 
-struct_pl_decoded = []
+# Get the final connections
+conns = list(proj.get(["weight", "delay"], "list"))
 
+print("Initial connections")
+print(list(initial_conns))
+print("Final connections")
+print(conns)
+
+# end sim
+sim.end()
+
+struct_pl_decoded = []
 struct_pl_adds = []
 
 for i in range(sim_time):
     preid = []
     postid = []
+    postlocalid = []
     addedremoved = []
     for j in range(n_neurons):
         if (int(struct_pl_array[i][j]) == -1):
@@ -75,27 +92,19 @@ for i in range(sim_time):
             bin_preid = "0b"+(bin_val[:23])
             bin_postid = "0b"+(bin_val[23:31])
             preidval = int(bin_preid, 2)
-            postidval = int(bin_postid, 2)
+            postlocalidval = int(bin_postid, 2)
+            postidval = j
             addedremovedval = int(bin_addedremoved, 2)
             preid.append(preidval)
+            postlocalid.append(postlocalidval)
             postid.append(postidval)
             addedremoved.append(addedremovedval)
             struct_pl_adds.append([i, preidval, postidval, addedremovedval])
 
-    struct_pl_decoded.append(preid)
-    struct_pl_decoded.append(postid)
-    struct_pl_decoded.append(addedremoved)
+    struct_pl_decoded.append([i, preid, postid, addedremoved])
 
-print("struct_pl_decoded: ", struct_pl_decoded)
-print("struct_pl_adds: ", struct_pl_adds, len(struct_pl_adds))
-
-# Get the final connections
-conns = list(proj.get(["weight", "delay"], "list"))
-
-print("Initial connections")
-print(list(initial_conns))
-print("Final connections")
-print(conns)
+# print("struct_pl_decoded: ", len(struct_pl_decoded), struct_pl_decoded)
+print("struct_pl_adds: ", len(struct_pl_adds), struct_pl_adds)
 
 Figure(
     # raster plot of the post neuron spike times
@@ -109,5 +118,56 @@ Figure(
 )
 plt.show()
 
-sim.end()
+# probably possible to create an animation of "forming" connections
+print(initial_conns_array)
+print(struct_pl_adds[-1])
 
+anim_length = struct_pl_adds[-1][0] + 10
+
+conns_arrays = []
+conns_arrays.append(initial_conns_array)
+
+add = struct_pl_adds.pop(0)
+print(add)
+
+for i in range(anim_length):
+    initial_conns_array = initial_conns_array.copy()
+    if (add[0] == i):
+        initial_conns_array[add[1]][add[2]] = 1
+        if (len(struct_pl_adds)):
+            add = struct_pl_adds.pop(0)
+
+    conns_arrays.append(initial_conns_array)
+
+print(conns_arrays[0])
+print(conns_arrays[10])
+
+x = np.linspace(0, n_neurons, len(conns_arrays[0][0])+1)
+y = np.linspace(0, n_neurons, len(conns_arrays[0])+1)
+xmesh, ymesh = np.meshgrid(x,y)
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+
+ims = []
+print("Animating ", len(conns_arrays), " connection arrays")
+conn_range = range(len(conns_arrays))
+for n in conn_range:
+    mess = "Time "+str(n)+" of "+str(anim_length)
+    ttl = plt.text(0.5, 1.01, mess, ha="center", va="bottom",
+                   transform=ax.transAxes)
+# for n in range(100):
+    if n % 20 == 0:
+        print(n)
+    array = np.flipud(np.array(conns_arrays[n]))
+# print(array)
+    plotcolor = ax.pcolor(xmesh, ymesh, array)
+    ims.append([plotcolor, ttl,])
+
+
+im_ani = animation.ArtistAnimation(fig, ims, interval=10, repeat_delay=10000,
+                                   blit=False)
+my_writer = animation.FFMpegWriter(metadata={'code':'andrewgait'})
+im_ani.save('connections_forming.mp4', writer=my_writer)
+
+plt.show()
