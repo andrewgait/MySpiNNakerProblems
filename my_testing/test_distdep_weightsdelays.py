@@ -32,6 +32,7 @@ runtime = 200
 
 # Network
 grid = create_grid(n, 'grid')
+grid2 = create_grid(3, 'grid', dx=1.0, dy=2.0)
 
 # SpikeInjector
 injectionConnection = [(0, 0)]
@@ -48,9 +49,12 @@ inh_connector = p.FixedProbabilityConnector(0.5, rng=NumpyRNG(seed=10101))
 
 # Wire grid
 exc_proj = p.Projection(grid, grid, exc_connector,
-                        p.StaticSynapse(weight="1.0 + 2.0*exp(-d)", delay=5))
+                        p.StaticSynapse(weight="2.0 + 2.0*d", delay=5))
 inh_proj = p.Projection(grid, grid, inh_connector,
-                        p.StaticSynapse(weight=1.5, delay="2 + 2.0*d"))
+                        p.StaticSynapse(weight=1.5, delay="3.0 + 3.0*d"))
+
+exc_proj2 = p.Projection(grid2, grid2, exc_connector,
+                         p.StaticSynapse(weight="1.5 + 1.5*d", delay=8))
 
 grid.record(['v','spikes'])
 
@@ -65,6 +69,10 @@ inh_conns = inh_proj.get(['weight', 'delay'], 'array')
 print(inh_conns)
 inh_conns_list = inh_proj.get(['weight', 'delay'], 'list')
 print(inh_conns_list)
+exc_conns_list = exc_proj.get(['weight', 'delay'], 'list')
+print(exc_conns_list)
+exc2_conns_list = exc_proj2.get(['weight', 'delay'], 'list')
+print(exc2_conns_list)
 
 Figure(
     # raster plot of the presynaptic neurons' spike times
