@@ -33,7 +33,7 @@ sim.setup(timestep=1.0)
 
 # === Create four cells and inject current into each one =====================
 
-cells = sim.Population(4, sim.IF_curr_exp(
+cells = sim.Population(1, sim.IF_curr_exp(
     v_thresh=-55.0, tau_refrac=5.0, tau_m=10.0))
 
 current_sources = [sim.DCSource(amplitude=0.5, start=50.0, stop=400.0),
@@ -44,8 +44,8 @@ current_sources = [sim.DCSource(amplitude=0.5, start=50.0, stop=400.0),
                    sim.NoisyCurrentSource(mean=0.5, stdev=0.2, start=50.0,
                                           stop=450.0, dt=1.0)]
 
-for cell, current_source in zip(cells, current_sources):
-    cell.inject(current_source)
+for current_source in current_sources:
+    cells.inject(current_source)
 
 cells.record('v')
 
@@ -62,7 +62,7 @@ sim.end()
 Figure(
     Panel(vm, y_offset=-10 * mV, xticks=True, yticks=True,
           xlabel="Time (ms)", ylabel="Membrane potential (mV)",
-          ylim=(-96, -59)),
+          ylim=(-70, -50)),
     title="Current injection example",
     annotations="Simulated with {}".format(sim.name())
 )

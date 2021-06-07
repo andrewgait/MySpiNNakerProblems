@@ -13,10 +13,10 @@ pop_lif2 = sim.Population(10, sim.IF_curr_exp(
     v_thresh=-55.0, tau_refrac=5.0, tau_m=10.0), label="lif2")
 
 dc_source = sim.DCSource(amplitude=0.5, start=20.0, stop=80.0)
-# dc_source2 = sim.DCSource(amplitude=1.5, start=40.0, stop=90.0)
+dc_source2 = sim.DCSource(amplitude=1.5, start=40.0, stop=90.0)
 
-pop_lif[3,7].inject(dc_source)
-# pop_lif[2,6].inject(dc_source2)
+pop_lif[3,8].inject(dc_source)
+pop_lif[2,8].inject(dc_source2)
 
 pop_lif.record("all")
 pop_lif2.record("all")

@@ -12,11 +12,14 @@ pop_lif2 = sim.Population(4, sim.IF_curr_exp(
 
 step_source = sim.StepCurrentSource(times=[50.0, 110.0, 150.0, 210.0],
                                     amplitudes=[0.4, 0.6, -0.2, 0.2])
-# step_source2 = sim.StepCurrentSource(times=[20.0, 130.0, 160.0, 200.0, 220.0],
-#                                     amplitudes=[1.4, 1.6, -1.2, 1.2, 0.8])
+step_source2 = sim.StepCurrentSource(times=[20.0, 130.0, 160.0, 200.0, 220.0],
+                                    amplitudes=[1.4, 1.6, -1.2, 1.2, 0.8])
 
-pop_lif[1,3].inject(step_source)
-# pop_lif[2].inject(step_source2)
+# step_source.set_parameters(times=[150.0, 180.0, 200.0, 220.0],
+#                            amplitudes=[0.1, -0.5, 0.8, 0.3])
+
+pop_lif[1,2].inject(step_source)
+pop_lif[3].inject(step_source2)
 
 pop_lif.record("all")
 pop_lif2.record("all")
