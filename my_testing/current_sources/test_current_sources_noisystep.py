@@ -13,7 +13,7 @@ pop = sim.Population(
     19, sim.IF_cond_exp(v_thresh=-57.0, v_rest=-70.0, v_reset=-70.0,
                         tau_refrac=2.0, tau_m=10.0, cm=0.29, e_rev_E=0.0,
                         e_rev_I=75.0, tau_syn_E=1.5, tau_syn_I=10.0),
-    initial_values=initial_values, label="X_ON")
+    initial_values={v: -70.0}, label="X_ON")
 
 for i, lgn_cell in enumerate(pop.all_cells):
     offset = i * 0.1 + 0.1
