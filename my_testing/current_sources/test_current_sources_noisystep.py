@@ -25,8 +25,8 @@ for i, lgn_cell in enumerate(pop.all_cells):
         t.append(offset + j * 0.1)
         a.append(random.random())
 
-    print("times: ", times)
-    print("amplitudes: ", amplitudes)
+    print("times: ", t)
+    print("amplitudes: ", a)
     scs = sim.StepCurrentSource(times=t, amplitudes=a)
     lgn_cell.inject(scs)
 
