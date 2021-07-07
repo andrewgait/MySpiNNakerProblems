@@ -8,6 +8,7 @@ sim.set_number_of_neurons_per_core(sim.IF_cond_exp, 20)
 
 runtime = 500
 
+initial_values=-70.0
 pop = sim.Population(
     19, sim.IF_cond_exp(v_thresh=-57.0, v_rest=-70.0, v_reset=-70.0,
                         tau_refrac=2.0, tau_m=10.0, cm=0.29, e_rev_E=0.0,
