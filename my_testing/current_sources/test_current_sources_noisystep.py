@@ -19,9 +19,11 @@ pop.initialize(v=-70.0)
 
 for i, lgn_cell in enumerate(pop.all_cells):
     offset = i * 0.1 + 0.1
+    t = []
+    a = []
     for j in range(300):
-        times[j] = offset + j * 0.1
-        amplitudes = random.random()
+        t.append(offset + j * 0.1)
+        a.append(random.random())
 
     print("times: ", times)
     print("amplitudes: ", amplitudes)
