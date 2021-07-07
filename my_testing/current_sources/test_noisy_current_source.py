@@ -10,11 +10,12 @@ pop_lif = sim.Population(4, sim.IF_curr_exp(
 
 noisy_source = sim.NoisyCurrentSource(
     mean=0.5, stdev=0.2, start=50.0, stop=450.0, dt=0.1)
-# noisy_source2 = sim.NoisyCurrentSource(
-#     mean=1.5, stdev=1.0, start=150.0, stop=480.0, dt=0.1)
+noisy_source2 = sim.NoisyCurrentSource(
+    mean=1.5, stdev=1.0, start=150.0, stop=480.0, dt=0.1)
 
-# pop_lif[1,2].inject(noisy_source2)
+pop_lif[1,2].inject(noisy_source2)
 pop_lif[0,3].inject(noisy_source)
+# pop_lif.inject(noisy_source)
 
 pop_lif.record("all")
 sim.run(runtime)
