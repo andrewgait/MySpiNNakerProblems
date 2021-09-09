@@ -6,8 +6,8 @@ import spynnaker8 as p
 import matplotlib.pyplot as plt
 import pyNN.utility.plotting as plot
 
-p.setup(0.1)
-runtime = 50
+p.setup(1.0)
+runtime = 5000
 populations = []
 title = "PyNN0.8 alpha synapse testing"
 

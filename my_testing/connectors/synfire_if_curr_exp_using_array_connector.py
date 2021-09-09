@@ -33,10 +33,10 @@ loopConnections = numpy.array([numpy.linspace(0,nNeurons-2,nNeurons/2),
                                numpy.linspace(2,nNeurons+1,nNeurons/2)],
                                numpy.uint32)
 # connect the final neuron to the first neuron
-loopConnections[1,(nNeurons/2)-1] = 0
+loopConnections[1,int((nNeurons/2)-1)] = 0
 #print loopConnections[0,nNeurons-1]
 #print loopConnections[1,nNeurons-1]
-print loopConnections
+print(loopConnections)
 #for i in range(0, nNeurons):
 #    singleConnection = ((i, (i + 1) % nNeurons, weight_to_spike, delay))
 #    loopConnections.append(singleConnection)
