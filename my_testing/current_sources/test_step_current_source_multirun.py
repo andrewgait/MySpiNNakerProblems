@@ -42,7 +42,7 @@ step_source.set_parameters(times=times, amplitudes=amplitudes)
 # step_source2 = sim.StepCurrentSource(times=times, amplitudes=amplitudes)
 # pop_lif.inject(step_source2)
 #
-# sim.reset()
+sim.reset()
 
 sim.run(runtime)
 
