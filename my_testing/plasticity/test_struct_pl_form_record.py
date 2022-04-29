@@ -11,7 +11,7 @@ sim.setup(1.0)
 
 n_neurons = 4
 # run long enough to form all connections
-sim_time = 3000
+sim_time = 400
 
 gd = int(math.sqrt(n_neurons))
 print('Structural plasticity formation, ', n_neurons, ' neurons, grid, ', gd)
@@ -25,27 +25,60 @@ stim = sim.Population(n_neurons,
 pop = sim.Population(n_neurons, sim.IF_curr_exp(), label="pop")
 
 # Formation with random selection (0 probability elimination)
+# proj = sim.Projection(
+#     stim, pop, sim.FromListConnector([]), sim.StructuralMechanismStatic(
+#         partner_selection=sim.LastNeuronSelection(),
+#         formation=sim.DistanceDependentFormation(
+#             [gd, gd], p_form_forward=1.0, sigma_form_forward=10.5),
+#         elimination=sim.RandomByWeightElimination(4.0, 0, 0),
+#         f_rew=1000, initial_weight=2.0, initial_delay=3.0,
+#         s_max=n_neurons, seed=0, weight=0.0, delay=1.0,
+#         with_replacement=False))
 proj = sim.Projection(
-    stim, pop, sim.FromListConnector([]), sim.StructuralMechanismStatic(
+    stim, pop, sim.FromListConnector([]), sim.StructuralMechanismSTDP(
         partner_selection=sim.LastNeuronSelection(),
         formation=sim.DistanceDependentFormation(
             [gd, gd], p_form_forward=1.0, sigma_form_forward=10.5),
         elimination=sim.RandomByWeightElimination(4.0, 0, 0),
         f_rew=1000, initial_weight=2.0, initial_delay=3.0,
         s_max=n_neurons, seed=0, weight=0.0, delay=1.0,
-        with_replacement=False))
+        with_replacement=False,
+        timing_dependence=sim.SpikePairRule(
+            tau_plus=20., tau_minus=20.0, A_plus=0.1, A_minus=0.02),
+        weight_dependence=sim.AdditiveWeightDependence(w_min=0, w_max=1.)))
+
 
 # set stuff to record
 pop.record("spikes")
 pop.record("v")
 pop.record("rewiring")
+pop.record("packets-per-timestep")
 
 # Get the initial connections
 initial_conns = proj.get(["weight", "delay"], "list")
 initial_conns_array = proj.get(["weight"], "array")
 
 # run for enough time that every connection forms
-sim.run(sim_time)
+# sim.run(sim_time)
+sim.run(sim_time//2)
+
+# Add another population
+pop2 = sim.Population(n_neurons, sim.IF_curr_exp(), label="pop2")
+
+# Add another projection: Formation with random selection (0 probability elimination)
+# proj2 = sim.Projection(
+#     stim, pop2, sim.FromListConnector([]), sim.StructuralMechanismStatic(
+#         partner_selection=sim.LastNeuronSelection(),
+#         formation=sim.DistanceDependentFormation(
+#             [gd, gd], p_form_forward=1.0, sigma_form_forward=10.5),
+#         elimination=sim.RandomByWeightElimination(4.0, 0, 0),
+#         f_rew=1000, initial_weight=2.0, initial_delay=3.0,
+#         s_max=n_neurons, seed=0, weight=0.0, delay=1.0,
+#         with_replacement=False))
+
+sim.reset()
+
+sim.run(sim_time//2)
 
 # get data back
 spikes = pop.get_data("spikes")
@@ -60,18 +93,30 @@ Figure(
     Panel(post_v.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
           data_labels=[pop.label], yticks=True, xlim=(0, sim_time)),
+    Panel(spikes.segments[1].spiketrains,
+          yticks=True, markersize=0.5, xlim=(0, sim_time)),
+    # plot v for post neuron
+    Panel(post_v.segments[1].filter(name='v')[0],
+          ylabel="Membrane potential (mV)",
+          data_labels=[pop.label], yticks=True, xlim=(0, sim_time)),
     title="Structural plasticity formation to full",
 )
 plt.show()
+
+pps = pop.get_data("packets-per-timestep")
 
 rewiring = pop.get_data("rewiring")
 # rewiring_array = rewiring.segments[0].filter(name='rewiring')[0]
 rewiring_events_form = rewiring.segments[0].events[0]
 rewiring_events_elim = rewiring.segments[0].events[1]
+rewiring_events_form2 = rewiring.segments[1].events[0]
+rewiring_events_elim2 = rewiring.segments[1].events[1]
 
 # print("spikes: ", spikes.segments[0].spiketrains)
 print("rewiring: ", rewiring, rewiring_events_form, rewiring_events_elim)
 print("rewiring labels: ", rewiring_events_form.labels)
+print("rewiring 2: ", rewiring, rewiring_events_form2, rewiring_events_elim2)
+print("rewiring labels 2: ", rewiring_events_form2.labels)
 # print("post v: ", post_v.segments[0].filter(name='v')[0])
 
 # Get the final connections

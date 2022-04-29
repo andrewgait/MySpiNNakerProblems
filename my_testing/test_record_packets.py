@@ -26,6 +26,11 @@ proj = sim.Projection(pop_src, pop_lif, sim.OneToOneConnector(),
 pop_lif.record("all")  # ("packets-per-timestep")
 # sim.run(runtime)
 sim.run(runtime//2)
+
+pop2 = sim.Population(1, sim.IF_curr_exp(), label="pop2")
+
+sim.reset()
+
 sim.run(runtime//2)
 
 # print(proj.get(["weight", "delay"], "list"))
