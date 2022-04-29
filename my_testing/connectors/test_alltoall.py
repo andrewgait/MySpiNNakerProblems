@@ -1,9 +1,9 @@
 import spynnaker8 as sim
 
-sim.setup(1.0)
+sim.setup(timestep=1.0)
 
-sources = 128*128
-destinations = 128*128
+sources = 128  # *128
+destinations = 128  # *128
 
 # onetoone = sim.OneToOneConnector()
 alltoall = sim.AllToAllConnector()
@@ -14,7 +14,8 @@ alltoall = sim.AllToAllConnector()
 # pop1 = sim.Population(sources, sim.SpikeSourceArray(spike_times), label="pop1")
 pop1 = sim.Population(sources, sim.IF_curr_exp(), label="pop1")
 pop2 = sim.Population(destinations, sim.IF_curr_exp(), label="pop2")
-synapse_type = sim.StaticSynapse(weight=5, delay=1)
+synapse_type = sim.StaticSynapse(weight=sim.RandomDistribution(
+    "uniform", [1, 5]), delay=1)
 projection = sim.Projection(
     pop1, pop2, alltoall, synapse_type=synapse_type)
 

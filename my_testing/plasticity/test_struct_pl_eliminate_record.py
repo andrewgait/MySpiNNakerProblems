@@ -5,7 +5,7 @@ import spynnaker8 as sim
 import numpy as np
 import math
 
-plt.rc('animation', ffmpeg_path='/opt/local/bin/ffmpeg')
+plt.rc('animation', ffmpeg_path='/usr/bin/ffmpeg')
 
 sim.setup(1.0)
 
@@ -48,7 +48,9 @@ pop.record("rewiring")
 initial_conns = proj.get(["weight", "delay"], "list")
 initial_conns_array = proj.get(["weight"], "array")
 
-sim.run(sim_time)
+sim.run(sim_time//2)
+pop.set(i_offset=0.0)
+sim.run(sim_time//2)
 
 # get data
 pre_spikes = stim.get_data("spikes")
