@@ -1,4 +1,4 @@
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 
 def print_spikes(trains):
     nseg = len(trains.segments)

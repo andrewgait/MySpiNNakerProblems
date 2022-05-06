@@ -3,7 +3,7 @@
 #matplotlib.use('SVG')
 from pyNN.utility.plotting import Figure, Panel
 
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 import matplotlib.pyplot as plt
 import numpy as np
 simtime=1000.7

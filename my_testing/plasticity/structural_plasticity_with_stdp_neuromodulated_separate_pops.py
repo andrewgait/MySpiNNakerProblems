@@ -35,7 +35,7 @@ post-synaptic neurons to the same stimuli.
 try:
     import pyNN.spiNNaker as sim
 except Exception:
-    import spynnaker8 as sim
+    import pyNN.spiNNaker as sim
 import pylab
 import numpy as np
 

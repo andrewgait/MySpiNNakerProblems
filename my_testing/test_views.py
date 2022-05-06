@@ -1,4 +1,4 @@
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 from spinn_front_end_common.utilities import globals_variables
 
 sim.setup(timestep=1.0)

@@ -1,7 +1,7 @@
 """
 Synfirechain-like example
 """
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 
 runtime = 5000
 p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)

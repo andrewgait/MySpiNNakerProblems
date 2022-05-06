@@ -1,4 +1,4 @@
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 import os
 import numpy
 from pyNN.utility.plotting import Figure, Panel

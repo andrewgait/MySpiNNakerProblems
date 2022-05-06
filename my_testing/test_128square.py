@@ -1,4 +1,4 @@
-import spynnaker8 as sp
+import pyNN.spiNNaker as sp
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 source_connection0 = []

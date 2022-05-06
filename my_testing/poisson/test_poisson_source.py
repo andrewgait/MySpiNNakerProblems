@@ -1,7 +1,7 @@
 import matplotlib.pyplot as pylab
 import statistics
 import math
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 
 rates = [400, 800, 1200]
 

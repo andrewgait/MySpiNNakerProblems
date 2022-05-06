@@ -1,4 +1,4 @@
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 from spynnaker.pyNN.models.neuron.synapse_dynamics import (
     calculate_spike_pair_additive_stdp_weight)
 from pyNN.utility.plotting import Figure, Panel

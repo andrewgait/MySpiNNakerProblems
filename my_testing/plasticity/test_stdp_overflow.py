@@ -1,4 +1,4 @@
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 import numpy as np
 
 sim.setup(timestep=1.0)

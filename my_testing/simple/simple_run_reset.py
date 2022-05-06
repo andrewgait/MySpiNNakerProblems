@@ -1,4 +1,4 @@
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 
 sim.setup(1.0)
 pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")

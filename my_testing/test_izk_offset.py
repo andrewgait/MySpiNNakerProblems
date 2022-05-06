@@ -1,4 +1,4 @@
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 
 n_neurons = 1
 p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)

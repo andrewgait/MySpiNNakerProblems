@@ -2,7 +2,7 @@
 script finding timeout with rate increase
 """
 
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 
 p.setup(1.0)
 inp = p.Population(40, p.SpikeSourcePoisson(rate=2),

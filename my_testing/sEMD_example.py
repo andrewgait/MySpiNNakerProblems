@@ -7,7 +7,7 @@ See https://www.cit-ec.de/en/nbs/spiking-insect-vision for more details
 """
 
 # imports
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 # from spynnaker.pyNN.models.neuron.builds import IFCurrExpSEMD
 import numpy
 import matplotlib.pyplot as plt

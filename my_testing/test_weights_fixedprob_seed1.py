@@ -1,4 +1,4 @@
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 from pyNN.random import NumpyRNG
 
 sim.setup(timestep=1.0)

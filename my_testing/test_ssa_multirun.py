@@ -1,4 +1,4 @@
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 sim.setup(timestep=1.0)
 input = sim.Population(1, sim.SpikeSourceArray(spike_times=[1, 12, 23]), label="input")
 input.record("spikes")

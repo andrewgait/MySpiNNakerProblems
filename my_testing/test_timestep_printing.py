@@ -1,4 +1,4 @@
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 import numpy
 numpy.set_printoptions(threshold=numpy.nan)
 

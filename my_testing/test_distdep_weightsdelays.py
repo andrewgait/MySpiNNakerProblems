@@ -1,4 +1,4 @@
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 from pyNN.random import NumpyRNG
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt

@@ -1,5 +1,5 @@
 from spinn_front_end_common.utilities import globals_variables
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 

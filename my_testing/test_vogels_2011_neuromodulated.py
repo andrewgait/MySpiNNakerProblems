@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pyNN.random import NumpyRNG
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 import numpy
 import os
 import matplotlib.pyplot as pylab

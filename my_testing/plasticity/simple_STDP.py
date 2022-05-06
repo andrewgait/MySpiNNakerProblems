@@ -16,7 +16,7 @@ so some alteration of parameters is necessary to get a similar effect.
 """
 
 import numpy
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 # from quantities import ms
 from pyNN.utility.plotting import Figure, Panel, DataTable
 import matplotlib.pyplot as plt

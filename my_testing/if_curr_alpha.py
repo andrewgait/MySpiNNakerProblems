@@ -2,7 +2,7 @@
 # don't know why it hasn't been merged; going to test it
 # and then see whether it's possible to build an IFCondAlpha
 
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 import matplotlib.pyplot as plt
 import pyNN.utility.plotting as plot
 

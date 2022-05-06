@@ -1,4 +1,4 @@
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 from pyNN.random import NumpyRNG
 
 p.setup(1.0)

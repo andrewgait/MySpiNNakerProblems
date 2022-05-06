@@ -4,7 +4,7 @@ Q:Does having both a 1:1 connector + an ALL:ALL connector between the same
 pair of populations affect the behaviour of one of them? Particularly,
 do edges relevant for the ALL to ALL connector get pruned?
 """
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 import matplotlib.pyplot as plt
 import numpy as np
 

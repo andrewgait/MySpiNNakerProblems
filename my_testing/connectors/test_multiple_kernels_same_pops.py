@@ -1,5 +1,5 @@
 import numpy as np
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 
 # x_res = 304
 # y_res = 240

@@ -1,7 +1,7 @@
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 import numpy as np
 import math
 

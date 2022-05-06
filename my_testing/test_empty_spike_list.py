@@ -1,5 +1,5 @@
 # test weirdness with end / import ... and empty lists to SSAs
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 import numpy
 
 def run_script(simtime):

@@ -1,7 +1,7 @@
 """
 Synfirechain-like example
 """
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 

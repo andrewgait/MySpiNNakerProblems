@@ -6,7 +6,7 @@ for some reason the PyNN8Examples version is completely different... ?
 try:
     import pyNN.spiNNaker as p
 except Exception as e:
-    import spynnaker8 as p
+    import pyNN.spiNNaker as p
 import matplotlib.pyplot as py_plot
 import numpy
 

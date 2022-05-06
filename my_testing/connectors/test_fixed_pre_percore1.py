@@ -1,4 +1,4 @@
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 # from pyNN.random import NumpyRNG, RandomDistribution
 
 n_neurons = 100

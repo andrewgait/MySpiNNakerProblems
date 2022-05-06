@@ -9,7 +9,7 @@ import pathos.multiprocessing
 import csv
 from ast import literal_eval
 import itertools
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 import time
 # import numpy as np
 # from rank_inverted_pendulum.python_models.rank_pendulum import Rank_Pendulum

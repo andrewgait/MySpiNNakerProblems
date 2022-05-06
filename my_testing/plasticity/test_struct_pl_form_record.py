@@ -2,7 +2,7 @@ import math
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 import numpy as np
 
 plt.rc('animation', ffmpeg_path='/opt/local/bin/ffmpeg')

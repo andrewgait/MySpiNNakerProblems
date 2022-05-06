@@ -1,5 +1,5 @@
 import pylab
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 sim.setup(timestep=1.0)
 poisson = sim.Population(2, sim.SpikeSourcePoisson(
     duration=1.0e10, rate=100.0, start=0.0))

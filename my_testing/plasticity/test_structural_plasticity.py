@@ -32,7 +32,7 @@ date  : March, 2018
 
 import numpy as np
 import pylab as plt
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 from pyNN.utility.plotting import Figure, Panel
 
 # SpiNNaker setup

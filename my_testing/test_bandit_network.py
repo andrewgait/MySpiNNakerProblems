@@ -1,4 +1,4 @@
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 
 # Testing the bandit network without the bandit pop, to see if there's some
 # weirdness going on

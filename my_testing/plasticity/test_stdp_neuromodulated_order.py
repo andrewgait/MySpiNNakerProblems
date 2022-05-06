@@ -20,7 +20,7 @@ Testing whether the order of projections is important or not
 try:
     import pyNN.spiNNaker as sim
 except Exception:
-    import spynnaker8 as sim
+    import pyNN.spiNNaker as sim
 import pylab
 import numpy as np
 from pyNN.random import NumpyRNG

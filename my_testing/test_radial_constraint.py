@@ -1,4 +1,4 @@
-import spynnaker8 as sim
+import pyNN.spiNNaker as sim
 from pacman.model.constraints.placer_constraints import (
     RadialPlacementFromChipConstraint)
 from pyNN.utility.plotting import Figure, Panel

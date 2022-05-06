@@ -1,4 +1,4 @@
-import spynnaker8 as p
+import pyNN.spiNNaker as p
 import matplotlib.pyplot as plt
 import numpy as np
 p.setup(timestep=1.0)
