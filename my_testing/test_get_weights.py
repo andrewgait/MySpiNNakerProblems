@@ -20,12 +20,16 @@ projection = sim.Projection(pop1, pop2, connector,
 # sim.run(0)
 before_pro = projection.get(["weight", "delay"], "list")
 print('projection.get was called before run')
-sim.run(1)
+sim.run(1000)
 after_pro = projection.get(["weight", "delay"], "list")
+sim.run(1000)
+after_pro2 = projection.get(["weight", "delay"], "list")
 
 print(before_pro)
 print(len(before_pro))
 print(after_pro)
 print(len(after_pro))
+print(after_pro2)
+print(len(after_pro2))
 
 sim.end()
