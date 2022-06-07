@@ -73,7 +73,7 @@ sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 50)
 width = 720
 height = 510
 neurons = width*height
-sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, neurons // 4)
+sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, neurons // 8)
 input = sim.Population(neurons, sim.SpikeSourceArray(spike_array))
 pop_1 = sim.Population(neurons, sim.IF_curr_exp())
 
@@ -103,5 +103,6 @@ Figure(
     annotations="Simulated with {}".format(sim.name())
 )
 
-plt.show()
+#plt.show()
+plt.savefig("test_ssa.png")
 
