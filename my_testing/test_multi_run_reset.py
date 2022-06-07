@@ -33,9 +33,13 @@ print('delay after reset: ', static_synapse.delay)
 
 # out.set(v_thresh=-58.0)
 
+proj2 = sim.Projection(inp, out, sim.FixedProbabilityConnector(0.5),
+                       static_synapse)
+
 sim.run(runtime/2)
 
 weightsdelays2 = proj.get(['weight', 'delay'], 'list')
+weightsdelays3 = proj2.get(['weight', 'delay'], 'list')
 
 spikes_in = inp.get_data("spikes")
 v1 = out.get_data("v")
@@ -78,5 +82,6 @@ print(v1.segments[0].filter(name='v')[0])
 print(v1.segments[1].filter(name='v')[0])
 print(weightsdelays1)
 print(weightsdelays2)
+print(weightsdelays3)
 
 sim.end()

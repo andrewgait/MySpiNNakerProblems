@@ -129,8 +129,8 @@ SplitterAbstractPopulationVertexNeuronsSynapses, SplitterPoissonDelegate)
 Total_Duration=50000##msec - at a resolution of 1 msec --> 180 seconds i.e. 3 minutes
 nFS = 20
 nRS = 80
-chooseFS = 1
-chooseRS = 4
+chooseFS = 10
+chooseRS = 40
 
 # In[6]:
 
@@ -166,16 +166,16 @@ FS_cell_params = {'cm': 0.3,  # nF
 
 
 # %%capture --no-display
-p.setup(timestep=0.1)
+p.setup(timestep=1.0)
 p.set_number_of_neurons_per_core(p.IF_curr_exp,100)
 
 
 # In[9]:
 
 
-RS_neurons=p.Population(nRS, p.IF_curr_exp, {}, label="rs",
-                        additional_parameters={
-                            "splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
+RS_neurons=p.Population(nRS, p.IF_curr_exp, {}, label="rs") #,
+                        # additional_parameters={
+                        #     "splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
 
 
 # In[10]:
@@ -284,23 +284,23 @@ noise_input_projection_fs=p.Projection(spike_source_Poisson_base_fs,FS_neurons,p
 
 
 
-projections_RStoRS=p.Projection(RS_neurons,RS_neurons,p.FixedProbabilityConnector(p_connect=0.1),
-                                       synapse_type=synapse_dynamics_reward,
-                                       receptor_type='excitatory', label='rs2rs')
+# projections_RStoRS=p.Projection(RS_neurons,RS_neurons,p.FixedProbabilityConnector(p_connect=0.1),
+#                                        synapse_type=synapse_dynamics_reward,
+#                                        receptor_type='excitatory', label='rs2rs')
 
-projections_RStoFS=p.Projection(RS_neurons,FS_neurons,p.FixedProbabilityConnector(p_connect=0.1),
+projections_RStoFS=p.Projection(RS_neurons,FS_neurons,p.AllToAllConnector(),#p.FixedProbabilityConnector(p_connect=0.1),
                                        synapse_type=synapse_dynamics_reward,
                                        receptor_type='excitatory', label='rs2fs')
 
-projections_FStoFS=p.Projection(FS_neurons,FS_neurons ,
-                            p.FixedProbabilityConnector(p_connect=0.1),
-                            p.StaticSynapse(weight=1),
-#                                 synapse_type=synapse_dynamics_reward,
-                            receptor_type='inhibitory', label='fs2fs')
+# projections_FStoFS=p.Projection(FS_neurons,FS_neurons ,
+#                             p.FixedProbabilityConnector(p_connect=0.1),
+#                             p.StaticSynapse(weight=1),
+# #                                 synapse_type=synapse_dynamics_reward,
+#                             receptor_type='inhibitory', label='fs2fs')
 
 
-projections_FStoRS=p.Projection(FS_neurons,RS_neurons ,
-                            p.FixedProbabilityConnector(p_connect=0.1),
+projections_FStoRS=p.Projection(FS_neurons,RS_neurons,p.AllToAllConnector(),
+                            # p.FixedProbabilityConnector(p_connect=0.1),
                             p.StaticSynapse(weight=1),
 #                                 synapse_type=synapse_dynamics_reward,
                             receptor_type='inhibitory', label='fs2rs')
@@ -313,10 +313,10 @@ projections_FStoRS=p.Projection(FS_neurons,RS_neurons ,
 
 
 '''BSB log: I have kept the parameters same as pynn8example file by Andy.'''
-reward_projections_to_RS_neurons=p.Projection(reward_pop,RS_neurons,p.OneToOneConnector(),
-                                          synapse_type=p.extra_models.Neuromodulation(
-                                          weight=0.05, tau_c=200.0, tau_d=10.0, w_max=5),
-                                          receptor_type='reward', label='reward_synapses1')
+# reward_projections_to_RS_neurons=p.Projection(reward_pop,RS_neurons,p.OneToOneConnector(),
+#                                           synapse_type=p.extra_models.Neuromodulation(
+#                                           weight=0.05, tau_c=200.0, tau_d=10.0, w_max=5),
+#                                           receptor_type='reward', label='reward_synapses1')
 
 reward_projections_to_FS_neurons=p.Projection(reward_pop2,FS_neurons,p.OneToOneConnector(),
                                           synapse_type=p.extra_models.Neuromodulation(
@@ -468,7 +468,7 @@ duration = Total_Duration/n_repeats
 
 for time in range(n_repeats):
     p.run(duration)
-    projections_RStoRS_w.append(projections_RStoRS.get(["weight"], "list"))
+    # projections_RStoRS_w.append(projections_RStoRS.get(["weight"], "list"))
     projections_RStoFS_w.append(projections_RStoFS.get(["weight"], "list"))
 #     noise_input_projection_rs_w.append(noise_input_projection_rs.get(["weight"], "list"))
 #     noise_input_projection_fs_w.append(noise_input_projection_fs.get(["weight"], "list"))
@@ -484,12 +484,12 @@ for time in range(n_repeats):
 projections_RStoRS_max=[]
 projections_RStoFS_max=[]
 for i in range(0,n_repeats):
-    projections_RStoRS_w_last = np.asarray(projections_RStoRS_w[i])
-    projections_RStoRS_max.append(max(projections_RStoRS_w_last[:,2]))
+    # projections_RStoRS_w_last = np.asarray(projections_RStoRS_w[i])
+    # projections_RStoRS_max.append(max(projections_RStoRS_w_last[:,2]))
 
     projections_RStoFS_w_last = np.asarray(projections_RStoFS_w[i])
     projections_RStoFS_max.append(max(projections_RStoFS_w_last[:,2]))
-    print("rs2rs: ", projections_RStoRS_w_last)
+    # print("rs2rs: ", projections_RStoRS_w_last)
     print("rs2fs: ", projections_RStoFS_w_last)
 
 

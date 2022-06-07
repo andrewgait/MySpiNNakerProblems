@@ -10,7 +10,16 @@ run3 = 40
 run4 = 60
 run5 = 40
 runtime = run1 + run2 + run3 + run4 + run5
-pop = sim.Population(2, sim.IF_curr_exp(), label='test')
+inp = sim.Population(2, sim.SpikeSourceArray,
+                     {'spike_times': [10,20]}, label='input')
+pop = sim.Population(2, sim.IF_curr_exp(), label='test',
+                     additional_parameters={"min_weights": [0.3, 0.2],
+                                            "weight_random_sigma": 3,
+                                            "max_stdp_spike_delta": 30})
+
+proj = sim.Projection(inp, pop, sim.AllToAllConnector(),
+                      sim.StaticSynapse(weight=1.25, delay=4),
+                      label='input to pop')
 
 pop.record(["v", "spikes"])
 

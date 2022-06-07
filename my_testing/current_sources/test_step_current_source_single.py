@@ -3,31 +3,35 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 import random
 
-sim.setup(timestep=0.1)
+sim.setup(timestep=1.0)
 
-n_neurons = 200
+n_neurons = 10
 
 runtime = 400 + n_neurons
 
-sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 22)
+sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 5)
 pop_lif = sim.Population(n_neurons, sim.IF_curr_exp(
     v_thresh=-55.0, tau_refrac=5.0, tau_m=10.0), label="lif")
 # pop_lif2 = sim.Population(n_neurons, sim.IF_curr_exp(
 #     v_thresh=-55.0, tau_refrac=5.0, tau_m=10.0), label="lif")
 
-n_steps = 100
-for n in range(n_neurons):
-    times=[]
-    amplitudes=[]
-    for n_step in range(n_steps):
-        times.append(50.0 + n_step + n)
-        amplitudes.append(random.random())
+times=[]
+amplitudes=[]
+n_steps = 10
+for n_step in range(n_steps):
+    times.append(50.0 + (10 * n_step))
+    amplitudes.append(random.random())
 
-    step_source = sim.StepCurrentSource(times=times, amplitudes=amplitudes)
-    pop_lif[n].inject(step_source)
+print(times, amplitudes)
 
-pop_lif.inject(sim.NoisyCurrentSource(
-    mean=0.5, stdev=0.2, start=50.0, stop=450.0, dt=0.1))
+step_source = sim.StepCurrentSource(times=times, amplitudes=amplitudes)
+pop_lif.inject(step_source)
+
+step_source2 = sim.StepCurrentSource(times=[300,400], amplitudes=[1.1,-0.2])
+pop_lif[3:8].inject(step_source2)
+
+# pop_lif.inject(sim.NoisyCurrentSource(
+#     mean=0.5, stdev=0.2, start=50.0, stop=450.0, dt=0.1))
 
 # step_source2 = sim.StepCurrentSource(times=[20.0, 130.0, 160.0, 200.0, 220.0],
 #                                     amplitudes=[0.7, 1.0, -1.2, 0.7, 0.8])
