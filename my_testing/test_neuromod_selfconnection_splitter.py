@@ -1,5 +1,6 @@
 import pyNN.spiNNaker as sim
-
+from pyNN.utility.plotting import Figure, Panel
+import matplotlib.pyplot as plt
 from spynnaker.pyNN.extra_algorithms.splitter_components import (
     SplitterAbstractPopulationVertexNeuronsSynapses)
 
@@ -44,7 +45,7 @@ post_stim = sim.Population(2, sim.SpikeSourceArray, {
 # Create post synaptic population which will be modulated by DA concentration.
 post_pop = sim.Population(
     2, sim.IF_curr_exp, cell_params,
-    label='post1')  #, additional_parameters={
+    label='post1') #, additional_parameters={
         # "splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
 
 # Stimulate post-synaptic neuron
@@ -79,7 +80,7 @@ plastic_projection = sim.Projection(
     synapse_type=synapse_dynamics,
     receptor_type='excitatory', label='post-post projection')
 
-# # Create dopaminergic connection
+# Create dopaminergic connection
 # reward_projection = sim.Projection(
 #     reward_pop, post_pop,
 #     sim.AllToAllConnector(),
@@ -88,13 +89,29 @@ plastic_projection = sim.Projection(
 #         tau_c=1000, tau_d=200, weight=DA_concentration, w_max=20.0),
 #     receptor_type='reward', label='reward synapses')
 
-post_pop.record("spikes")
+post_pop.record(["spikes", "v"])
 
 sim.run(duration)
 
 # End simulation on SpiNNaker
 print("Final weight: ", plastic_projection.get('weight', 'list'))
 
-print("post-pop spikes: ", post_pop.get_data("spikes").segments[0].spiketrains)
+spikes = post_pop.get_data("spikes")
+v = post_pop.get_data("v")
+print("post-pop spikes: ", spikes.segments[0].spiketrains)
+
+Figure(
+    # raster plot of the presynaptic neuron spike times
+    Panel(spikes.segments[0].spiketrains,
+          yticks=True, markersize=0.2, xlim=(0, duration)),
+    # membrane potential of the postsynaptic neuron
+    Panel(v.segments[0].filter(name='v')[0],
+          xlabel="Time (ms)", xticks=True,
+          ylabel="Membrane potential (mV)",
+          data_labels=[post_pop.label], yticks=True, xlim=(0, duration)),
+    title="Weird self-connected STDP example",
+    annotations="Simulated with {}".format(sim.name())
+)
+plt.show()
 
 sim.end()
