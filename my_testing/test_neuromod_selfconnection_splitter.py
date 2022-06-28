@@ -45,8 +45,8 @@ post_stim = sim.Population(2, sim.SpikeSourceArray, {
 # Create post synaptic population which will be modulated by DA concentration.
 post_pop = sim.Population(
     2, sim.IF_curr_exp, cell_params,
-    label='post1') #, additional_parameters={
-        # "splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
+    label='post1', additional_parameters={
+        "splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
 
 # Stimulate post-synaptic neuron
 sim.Projection(
@@ -81,13 +81,13 @@ plastic_projection = sim.Projection(
     receptor_type='excitatory', label='post-post projection')
 
 # Create dopaminergic connection
-# reward_projection = sim.Projection(
-#     reward_pop, post_pop,
-#     sim.AllToAllConnector(),
-#     # sim.FromListConnector([(0,1)]),
-#     synapse_type=sim.extra_models.Neuromodulation(
-#         tau_c=1000, tau_d=200, weight=DA_concentration, w_max=20.0),
-#     receptor_type='reward', label='reward synapses')
+reward_projection = sim.Projection(
+    reward_pop, post_pop,
+    sim.AllToAllConnector(),
+    # sim.FromListConnector([(0,1)]),
+    synapse_type=sim.extra_models.Neuromodulation(
+        tau_c=1000, tau_d=200, weight=DA_concentration, w_max=20.0),
+    receptor_type='reward', label='reward synapses')
 
 post_pop.record(["spikes", "v"])
 
