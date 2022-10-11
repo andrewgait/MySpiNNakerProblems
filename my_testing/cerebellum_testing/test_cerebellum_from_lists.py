@@ -26,7 +26,7 @@ basket = sim.Population(603, sim.IF_cond_exp, label="basket")
 granule = sim.Population(88158, sim.IF_cond_exp, label="granule")
 golgi = sim.Population(219, sim.IF_cond_exp, label="golgi")
 dcn = sim.Population(12, sim.IF_cond_exp, label="dcn")
-spikeArray = {'spike_times': [[1]]}
+spikeArray = {'spike_times': [1]}
 glomerulus = sim.Population(
     7073, sim.SpikeSourceArray(**spikeArray), label="glomerulus")
 
