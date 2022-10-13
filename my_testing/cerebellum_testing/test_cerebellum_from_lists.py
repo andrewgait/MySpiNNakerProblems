@@ -17,6 +17,13 @@
 
 import numpy as np
 import pyNN.spiNNaker as sim
+import argparse
+
+parser = argparse.ArgumentParser(description='parser')
+parser.add_argument("-n", "--neurons_per_core", help="Number of neurons per core.", 
+    type=int, default=64)
+args = parser.parse_args()
+print("neurons per core is ", args.neurons_per_core)
 
 sim.setup(timestep=1.0)
 
@@ -30,7 +37,7 @@ spikeArray = {'spike_times': [1]}
 glomerulus = sim.Population(
     7073, sim.SpikeSourceArray(**spikeArray), label="glomerulus")
 
-global_n_neurons_per_core = 64
+global_n_neurons_per_core = args.neurons_per_core
 
 stellate.set_max_atoms_per_core(global_n_neurons_per_core)
 basket.set_max_atoms_per_core(global_n_neurons_per_core)
@@ -74,70 +81,70 @@ print("check: pf_sc ", len(pf_sc), pf_sc[0])
 sc_pc = np.loadtxt("conn_sc_pc.txt")
 print("check: sc_pc ", len(sc_pc), sc_pc[0])
 
-aa_goc_proj = sim.Projection(granule, golgi,
-                             sim.FromListConnector(aa_goc),
-                             receptor_type="excitatory",
-                             label="aa_goc")
+#aa_goc_proj = sim.Projection(granule, golgi,
+#                             sim.FromListConnector(aa_goc),
+#                             receptor_type="excitatory",
+#                             label="aa_goc")
 aa_pc_proj = sim.Projection(granule, purkinjie,
                             sim.FromListConnector(aa_pc),
                             receptor_type="excitatory",
                             label="aa_pc")
-bc_pc_proj = sim.Projection(basket, purkinjie,
-                            sim.FromListConnector(bc_pc),
-                            receptor_type="inhibitory",
-                            label="bc_pc")
-gj_bc_proj = sim.Projection(basket, basket,
-                            sim.FromListConnector(gj_bc),
-                            receptor_type="inhibitory",
-                            label="gj_bc")
-gj_goc_proj = sim.Projection(golgi, golgi,
-                             sim.FromListConnector(gj_goc),
-                             receptor_type="inhibitory",
-                             label="gj_goc")
-gj_sc_proj = sim.Projection(stellate, stellate,
-                            sim.FromListConnector(gj_sc),
-                            receptor_type="inhibitory",
-                            label="gj_sc")
-glom_dcn_proj = sim.Projection(glomerulus, dcn,
-                               sim.FromListConnector(glom_dcn),
-                               receptor_type="excitatory",
-                               label="glom_dcn")
-glom_goc_proj = sim.Projection(glomerulus, golgi,
-                               sim.FromListConnector(glom_goc),
-                               receptor_type="excitatory",
-                               label="glom_goc")
-glom_grc_proj = sim.Projection(glomerulus, granule,
-                               sim.FromListConnector(glom_grc),
-                               receptor_type="excitatory",
-                               label="glom_grc")
-goc_grc_proj = sim.Projection(golgi, granule,
-                              sim.FromListConnector(goc_grc),
-                              receptor_type="inhibitory",
-                              label="goc_grc")
+#bc_pc_proj = sim.Projection(basket, purkinjie,
+#                            sim.FromListConnector(bc_pc),
+#                            receptor_type="inhibitory",
+#                            label="bc_pc")
+#gj_bc_proj = sim.Projection(basket, basket,
+#                            sim.FromListConnector(gj_bc),
+#                            receptor_type="inhibitory",
+#                            label="gj_bc")
+#gj_goc_proj = sim.Projection(golgi, golgi,
+#                             sim.FromListConnector(gj_goc),
+#                             receptor_type="inhibitory",
+#                             label="gj_goc")
+#gj_sc_proj = sim.Projection(stellate, stellate,
+#                            sim.FromListConnector(gj_sc),
+#                            receptor_type="inhibitory",
+#                            label="gj_sc")
+#glom_dcn_proj = sim.Projection(glomerulus, dcn,
+#                               sim.FromListConnector(glom_dcn),
+#                               receptor_type="excitatory",
+#                               label="glom_dcn")
+#glom_goc_proj = sim.Projection(glomerulus, golgi,
+#                               sim.FromListConnector(glom_goc),
+#                               receptor_type="excitatory",
+#                               label="glom_goc")
+#glom_grc_proj = sim.Projection(glomerulus, granule,
+#                               sim.FromListConnector(glom_grc),
+#                               receptor_type="excitatory",
+#                               label="glom_grc")
+#goc_grc_proj = sim.Projection(golgi, granule,
+#                              sim.FromListConnector(goc_grc),
+#                              receptor_type="inhibitory",
+#                              label="goc_grc")
 pc_dcn_proj = sim.Projection(purkinjie, dcn,
                              sim.FromListConnector(pc_dcn),
                              receptor_type="inhibitory",
                              label="pc_dcn")
-pf_bc_proj = sim.Projection(granule, basket,
-                            sim.FromListConnector(pf_bc),
-                            receptor_type="excitatory",
-                            label="pf_bc")
-pf_goc_proj = sim.Projection(granule, golgi,
-                             sim.FromListConnector(pf_goc),
-                             receptor_type="excitatory",
-                             label="pf_goc")
+#pf_bc_proj = sim.Projection(granule, basket,
+#                            sim.FromListConnector(pf_bc),
+#                            receptor_type="excitatory",
+#                            label="pf_bc")
+#pf_goc_proj = sim.Projection(granule, golgi,
+#                             sim.FromListConnector(pf_goc),
+#                             receptor_type="excitatory",
+#                             label="pf_goc")
 pf_pc_proj = sim.Projection(granule, purkinjie,
                             sim.FromListConnector(pf_pc),
                             receptor_type="excitatory",
                             label="pf_pc")
-pf_sc_proj = sim.Projection(granule, stellate,
-                            sim.FromListConnector(pf_sc),
-                            receptor_type="excitatory",
-                            label="pf_sc")
-sc_pc_proj = sim.Projection(stellate, purkinjie,
-                            sim.FromListConnector(sc_pc),
-                            receptor_type="inhibitory",
-                            label="sc_pc")
+#pf_sc_proj = sim.Projection(granule, stellate,
+#                            sim.FromListConnector(pf_sc),
+#                            receptor_type="excitatory",
+#                            label="pf_sc")
+#sc_pc_proj = sim.Projection(stellate, purkinjie,
+#                            sim.FromListConnector(sc_pc),
+#                            receptor_type="inhibitory",
+#                            label="sc_pc")
 
 sim.run(10000)
 
