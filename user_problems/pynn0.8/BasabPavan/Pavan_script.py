@@ -185,7 +185,7 @@ current_bias_snc =15 #15.0 ###in literature 9.0
 
 '''SETTING NUMBER OF NEURONS PER CHANNEL'''
 
-numCellsPerCol_STR = 1255#314# <--1/4th of 1255 #### 90% of 50% of 2790000 = 1255500
+numCellsPerCol_STR = 63#125#1255#314# <--1/4th of 1255 #### 90% of 50% of 2790000 = 1255500
 numCellsPerCol_FSI = 84####139
 numCellsPerCol_STN = 14 ###13560
 numCellsPerCol_SNR = 27 ####26320
@@ -228,7 +228,7 @@ strd1_cell_params = {'a': strd1_a,
                  'v': strd1_v_init,
                  'u': strd1_u_init,
                  'tau_syn_E': tau_ampa,
-                 # 'tau_syn_E2':tau_nmda,
+                 'tau_syn_E2':tau_nmda,
                  'tau_syn_I': tau_gabaa,
                  'i_offset': current_bias_str,
                  'isyn_exc': E_ampa,
@@ -242,7 +242,7 @@ strd2_cell_params = {'a': strd2_a,
                  'v': strd2_v_init,
                  'u': strd2_u_init,
                  'tau_syn_E': tau_ampa,
-                 # 'tau_syn_E2':tau_nmda,
+                 'tau_syn_E2':tau_nmda,
                  'tau_syn_I': tau_gabaa,
                  'i_offset': current_bias_str,
                  'isyn_exc': E_ampa,
@@ -258,7 +258,7 @@ fsi_cell_params = { 'a': fsi_a,
                 'v': fsi_v_init,
                 'u': fsi_u_init,
                 'tau_syn_E': tau_ampa,
-                # 'tau_syn_E2':tau_nmda,
+                'tau_syn_E2':tau_nmda,
                 'tau_syn_I': tau_gabaa,
                 'i_offset': current_bias_fsi,
                 'isyn_exc': E_ampa,
@@ -306,7 +306,7 @@ stn_cell_params = {'a': stn_a,
                'v': stn_v_init,
                'u': stn_u_init,
                'tau_syn_E': tau_ampa,
-               # 'tau_syn_E2':tau_nmda,
+               'tau_syn_E2':tau_nmda,
                'tau_syn_I': tau_gabaa,
                'i_offset': current_bias_stn,
                'isyn_exc': E_ampa,
@@ -356,26 +356,26 @@ start_Poisson_Inp_base = 100
 Duration_Poisson_Inp_base = 9900
 # poisson_splitter = SplitterPoissonDelegate()
 spike_source_Poisson_base1_strd1 = p.Population(numPoissonInput_str, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1') #,
-                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1',
+                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
 spike_source_Poisson_base2_strd1 = p.Population(numPoissonInput_str, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2') #,
-                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2',
+                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
 
 spike_source_Poisson_base1_strd2 = p.Population(numPoissonInput_str, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1') #,
-                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1',
+                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
 spike_source_Poisson_base2_strd2 = p.Population(numPoissonInput_str, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2') #,
-                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2',
+                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
 
 
 spike_source_Poisson_base1_strfsi = p.Population(numPoissonInput_str_fsi, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1') #,
-                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1',
+                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
 spike_source_Poisson_base2_strfsi = p.Population(numPoissonInput_str_fsi, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2') #,
-                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2',
+                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
 
 '''This are used for the cortext to STN as in the original BG work(by Prof.basab) we have 2 poisson sources so I have not
 changed them.Thought of putting it to 14
@@ -440,7 +440,8 @@ distr_fsi  = RandomDistribution('uniform', (9,12), rng=NumpyRNG(seed=85523))
 
 
 ######projections for CHANEL 1
-poplist_ch1 = [strd1_pop1, strd2_pop1, fsi_pop1, stn_pop1]
+# poplist_ch1 = [strd1_pop1, strd2_pop1, fsi_pop1, stn_pop1]
+poplist_ch1 = [fsi_pop1, stn_pop1]
 
 g_pop = [g_cort2strd1, g_cort2strd2, g_cort2fsi, g_cort2stn]
 
@@ -467,8 +468,7 @@ projections_cort2_pop1.append(p.Projection(spike_source_Poisson_base2_strd1, str
             p.FixedProbabilityConnector(p_connect=pconn_cort2str),
             synapse_type=stdp_cort2strd1_NMDA,
 #              p.StaticSynapse(weight=g_cort2strd1/52, delay=distr_strd1),
-            receptor_type ='excitatory'))
-            # receptor_type ='excitatory2'))
+            receptor_type ='excitatory2'))
 
 
 projections_cort2_pop1.append(p.Projection(spike_source_Poisson_base1_strd2, strd2_pop1,
@@ -479,8 +479,7 @@ projections_cort2_pop1.append(p.Projection(spike_source_Poisson_base1_strd2, str
 p.Projection(spike_source_Poisson_base2_strd2, strd2_pop1,
             p.FixedProbabilityConnector(p_connect=pconn_cort2str),
             p.StaticSynapse(weight=g_cort2strd2/32, delay=distr_strd2),
-            # receptor_type ='excitatory2')
-            receptor_type ='excitatory')
+            receptor_type ='excitatory2')
 
 
 projections_cort2_pop1.append(p.Projection(spike_source_Poisson_base1_strfsi, fsi_pop1,
@@ -491,8 +490,7 @@ projections_cort2_pop1.append(p.Projection(spike_source_Poisson_base1_strfsi, fs
 p.Projection(spike_source_Poisson_base2_strfsi, fsi_pop1,
             p.FixedProbabilityConnector(p_connect=pconn_cort2str),
             p.StaticSynapse(weight=g_cort2fsi/9, delay=distr_fsi),
-            receptor_type ='excitatory')
-            # receptor_type ='excitatory2')
+            receptor_type ='excitatory2')
 
 
 projections_cort2_pop1.append(p.Projection(spike_source_Poisson_base1_stn, stn_pop1,
@@ -503,8 +501,7 @@ projections_cort2_pop1.append(p.Projection(spike_source_Poisson_base1_stn, stn_p
 p.Projection(spike_source_Poisson_base2_stn, stn_pop1,
             p.FixedProbabilityConnector(p_connect=pconn_cort2str),
             p.StaticSynapse(weight=g_cort2stn/22, delay=distr_stn),
-            receptor_type ='excitatory')
-            # receptor_type ='excitatory2')
+            receptor_type ='excitatory2')
 
 
 # In[16]:
@@ -837,7 +834,6 @@ strd1_pop1_g =strd1_pop1.spinnaker_get_data('gsyn_exc')
 strd2_pop2_g =strd2_pop1.spinnaker_get_data('gsyn_exc')
 fsi_pop1_g =fsi_pop1.spinnaker_get_data('gsyn_exc')
 stn_pop1_g=stn_pop1.spinnaker_get_data('gsyn_exc')
-
 
 p.end()
 
