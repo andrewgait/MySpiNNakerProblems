@@ -95,7 +95,7 @@ import time
 from pyNN.random import RandomDistribution, NumpyRNG
 start_time = time.time()
 
-from spinn_front_end_common.utilities import globals_variables
+# from spinn_front_end_common.utilities import globals_variables
 from quantities import ms
 import neo
 
