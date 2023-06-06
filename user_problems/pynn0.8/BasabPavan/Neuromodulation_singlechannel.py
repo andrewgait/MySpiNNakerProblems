@@ -216,8 +216,8 @@ fsi_hist1 = np.zeros((numtrials, checkpoint))
 
 ''' SET UP SPINNAKER AND BEGIN SIMULATION'''
 p.setup(timestep=0.1,time_scale_factor=10)
-p.set_number_of_neurons_per_core(p.extra_models.Izhikevich_cond_dual, 16)
-p.set_number_of_neurons_per_core(p.extra_models.Izhikevich_cond, 16)
+p.set_number_of_neurons_per_core(p.extra_models.Izhikevich_cond_dual, 8)
+p.set_number_of_neurons_per_core(p.extra_models.Izhikevich_cond, 8)
 
 # In[10]:
 
