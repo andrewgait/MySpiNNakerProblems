@@ -71,8 +71,6 @@ with open(filename, "w") as file:
 
         print("n_s_p_const, n_s_p_out: ", n_s_p_const, n_s_p_out)
 
-        # sim.reset()
-
         sim.end()
 
         time.sleep(1)
