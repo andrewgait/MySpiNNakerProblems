@@ -40,7 +40,8 @@ with open(filename, "w") as file:
 
         sim.setup(timestep=1, min_delay=1.0, max_delay=16.0, time_scale_factor=1)
 
-        p_const = sim.Population(1, sim.SpikeSourceArray,{'spike_times': [time_steps]}, label="constants")
+        p_const = sim.Population(1, sim.SpikeSourceArray,{'spike_times': [time_steps]},
+                                 label="constants")
         p_out = sim.Population(1, sim.IF_curr_exp(**cell_params_sync), label='out')
 
         w_const_out = 40.9
