@@ -216,8 +216,8 @@ fsi_hist1 = np.zeros((numtrials, checkpoint))
 
 ''' SET UP SPINNAKER AND BEGIN SIMULATION'''
 p.setup(timestep=0.1,time_scale_factor=100)
-p.set_number_of_neurons_per_core(p.extra_models.Izhikevich_cond_dual,4)
-p.set_number_of_neurons_per_core(p.extra_models.Izhikevich_cond,4)
+p.set_number_of_neurons_per_core(p.extra_models.Izhikevich_cond_dual, 8)
+p.set_number_of_neurons_per_core(p.extra_models.Izhikevich_cond, 8)
 
 '''STRIATUM OF THE BASAL GANGLIA: MEDIUM SPINY NEURONS (MSN - D1 / D2)'''
 
@@ -330,21 +330,28 @@ snc_cell_params = { 'a': snc_a,
 
 
 ''' THE FIRST CHANNEL'''
-strd1_pop1 = p.Population(numCellsPerCol_STR, p.extra_models.Izhikevich_cond_dual, strd1_cell_params,
-                          label='strd1_pop1', additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
-strd2_pop1 = p.Population(numCellsPerCol_STR, p.extra_models.Izhikevich_cond_dual, strd2_cell_params,
-                          label='strd2_pop1',additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
-fsi_pop1 = p.Population(numCellsPerCol_FSI, p.extra_models.Izhikevich_cond_dual, fsi_cell_params, label='fsi_pop1',
-                       additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
-gpe_pop1 = p.Population(numCellsPerCol_GPe, p.extra_models.Izhikevich_cond, gpe_cell_params, label='gpe_pop1',
-                       additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
-snr_pop1 = p.Population(numCellsPerCol_SNR, p.extra_models.Izhikevich_cond, snr_cell_params, label='snr_pop1',
-                       additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
-stn_pop1 = p.Population(numCellsPerCol_STN, p.extra_models.Izhikevich_cond_dual, stn_cell_params, label='stn_pop1',
-                       additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
+strd1_pop1 = p.Population(numCellsPerCol_STR, p.extra_models.Izhikevich_cond_dual,
+                          strd1_cell_params, label='strd1_pop1') #,
+                          # additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
+strd2_pop1 = p.Population(numCellsPerCol_STR, p.extra_models.Izhikevich_cond_dual,
+                          strd2_cell_params, label='strd2_pop1') #,
+                          # additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
+fsi_pop1 = p.Population(numCellsPerCol_FSI, p.extra_models.Izhikevich_cond_dual,
+                        fsi_cell_params, label='fsi_pop1') #,
+                        # additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
+gpe_pop1 = p.Population(numCellsPerCol_GPe, p.extra_models.Izhikevich_cond,
+                        gpe_cell_params, label='gpe_pop1') #,
+                        # additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
+snr_pop1 = p.Population(numCellsPerCol_SNR, p.extra_models.Izhikevich_cond,
+                        snr_cell_params, label='snr_pop1') #,
+                        # additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
+stn_pop1 = p.Population(numCellsPerCol_STN, p.extra_models.Izhikevich_cond_dual,
+                        stn_cell_params, label='stn_pop1') #,
+                        # additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
 
-snc_pop1=p.Population(numCellsPerCol_SNC, p.extra_models.Izhikevich_cond, snc_cell_params, label='reward_pop1'
-   , additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
+snc_pop1=p.Population(numCellsPerCol_SNC, p.extra_models.Izhikevich_cond,
+                      snc_cell_params, label='reward_pop1') #,
+                      # additional_parameters={"splitter": SplitterAbstractPopulationVertexNeuronsSynapses(1)})
 
 
 # In[12]:
@@ -356,26 +363,26 @@ start_Poisson_Inp_base = 100
 Duration_Poisson_Inp_base = 9900
 # poisson_splitter = SplitterPoissonDelegate()
 spike_source_Poisson_base1_strd1 = p.Population(numPoissonInput_str, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1',
-                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1') #,
+                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
 spike_source_Poisson_base2_strd1 = p.Population(numPoissonInput_str, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2',
-                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2') #,
+                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
 
 spike_source_Poisson_base1_strd2 = p.Population(numPoissonInput_str, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1',
-                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1') #,
+                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
 spike_source_Poisson_base2_strd2 = p.Population(numPoissonInput_str, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2',
-                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2') #,
+                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
 
 
 spike_source_Poisson_base1_strfsi = p.Population(numPoissonInput_str_fsi, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1',
-                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base1') #,
+                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
 spike_source_Poisson_base2_strfsi = p.Population(numPoissonInput_str_fsi, p.SpikeSourcePoisson, {'rate': Rate_Poisson_Inp_base,
-    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2',
-                                         additional_parameters={"splitter": SplitterPoissonDelegate()})
+    'duration': Duration_Poisson_Inp_base,'start': start_Poisson_Inp_base}, label='spike_source_Poisson_base2') #,
+                                         # additional_parameters={"splitter": SplitterPoissonDelegate()})
 
 '''This are used for the cortext to STN as in the original BG work(by Prof.basab) we have 2 poisson sources so I have not
 changed them.Thought of putting it to 14
