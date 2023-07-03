@@ -12,9 +12,11 @@ p.setup(1)
 simtime = 100
 
 init_rate = [0.15, 0.15]  # [0.1*i for i in range(nrn)]
-pop_src = p.Population(nrn, p.SpikeSourcePoisson(rate=init_rate), label="src")
+pop_src = p.Population(nrn, p.IF_curr_exp(), label="src")
 
-# pop_src.record('spikes')
+pop_src.set(i_offset=[0.15, 0.15])
+
+pop_src.record('spikes')
 
 pre_spikes_test = []
 
@@ -22,9 +24,9 @@ for i in range(simtime//dt):
     print(i)
     p.run(dt)
     new_rate = [0.1, 0.2]  # [np.random.rand()*(i+1) for j in range(nrn)]
-    pop_src.set(rate=new_rate)
+    pop_src.set(i_offset=new_rate)
 
-# pre_spikes = pop_src.get_data('spikes')
+pre_spikes = pop_src.get_data('spikes')
 
 plot_time = simtime
 
